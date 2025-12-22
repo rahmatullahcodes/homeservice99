@@ -99,75 +99,138 @@ export default function ServiceDetail() {
   const { addToCart } = useCart();
 
   const service = SERVICES.find(s => s.id === id);
-  if (!service) return <p>Service not found.</p>;
+  if (!service) return (
+    <div className="container" style={{ textAlign: 'center', padding: '60px 20px' }}>
+      <h2 style={{ marginBottom: 12 }}>Service not found</h2>
+      <p style={{ color: '#6b7280', marginBottom: 20 }}>The service you're looking for doesn't exist.</p>
+      <button className="btn-primary" onClick={() => navigate('/services')}>
+        Browse Services
+      </button>
+    </div>
+  );
 
   return (
     <div className="container">
 
-      {/* MAIN INFO */}
-      <section className="service-detail">
-        <img src={service.image} alt={service.title} className="service-img" />
+      {/* BREADCRUMB */}
+      <nav className="breadcrumb" style={{ fontSize: 13, color: '#6b7280', marginBottom: 16 }}>
+        <button onClick={() => navigate('/services')} style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer' }}>Services</button>
+        <span style={{ margin: '0 6px' }}>→</span>
+        <span>{service.title}</span>
+      </nav>
 
-        <div>
-          <h1>{service.title}</h1>
-          <p>{service.description}</p>
-
-          <div className="detail-meta">
-            <div aria-hidden>{`⏱ ${service.duration}`}</div>
-            <div aria-hidden>{`🛡 ${service.warranty}`}</div>
+      {/* HERO SECTION - Responsive image gallery + sticky booking panel */}
+      <section className="service-detail fade-in">
+        
+        {/* Image Gallery (left/top) */}
+        <div className="detail-gallery">
+          <img src={service.image} alt={service.title} className="gallery-main" />
+          <div className="gallery-thumbnails">
+            <img src={service.image} alt={`${service.title} - thumbnail`} />
+            <img src={service.image} alt={`${service.title} - thumbnail 2`} />
+            <img src={service.image} alt={`${service.title} - thumbnail 3`} />
           </div>
+        </div>
 
-          <h2>₹{service.price}</h2>
+        {/* Booking Panel (right/bottom) - Sticky on desktop */}
+        <aside className="detail-sidebar">
+          <div className="booking-card">
+            <h1>{service.title}</h1>
+            
+            <p className="service-desc">{service.description}</p>
 
-          <button
-            type="button"
-            className="btn-primary"
-            onClick={() => {
-              addToCart(service);
-              navigate("/cart");
-            }}
-            aria-label={`Add ${service.title} to cart`}
-          >
-            Add to Cart
-          </button>
+            {/* Meta info */}
+            <div className="detail-meta">
+              <div className="meta-item">
+                <span className="meta-icon">⏱</span>
+                <span>{service.duration}</span>
+              </div>
+              <div className="meta-item">
+                <span className="meta-icon">🛡</span>
+                <span>{service.warranty}</span>
+              </div>
+            </div>
+
+            {/* Price */}
+            <div className="price-section">
+              <span className="price-label">Starting from</span>
+              <h2 className="price-value">₹{service.price}</h2>
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="booking-actions">
+              <button
+                type="button"
+                className="btn-primary"
+                onClick={() => {
+                  addToCart(service);
+                  navigate("/cart");
+                }}
+                aria-label={`Add ${service.title} to cart`}
+              >
+                Add to Cart
+              </button>
+              <button
+                type="button"
+                className="btn-outline"
+                onClick={() => navigate('/services')}
+              >
+                Continue Shopping
+              </button>
+            </div>
+
+            {/* Trust badges */}
+            <div className="trust-badges">
+              <div className="badge">✓ Verified professionals</div>
+              <div className="badge">✓ Doorstep service</div>
+              <div className="badge">✓ Payment after service</div>
+            </div>
+          </div>
+        </aside>
+      </section>
+
+      {/* WHAT'S INCLUDED / EXCLUDED */}
+      <section className="detail-grid slide-up" style={{ marginTop: 40 }}>
+        <div className="detail-box">
+          <h3>✅ What's included</h3>
+          <ul className="detail-list">
+            {service.includes.map((i, k) => <li key={k}>{i}</li>)}
+          </ul>
+        </div>
+
+        <div className="detail-box">
+          <h3>❌ Not included</h3>
+          <ul className="detail-list">
+            {service.excludes.map((i, k) => <li key={k}>{i}</li>)}
+          </ul>
         </div>
       </section>
 
-      {/* INCLUDED / EXCLUDED */}
-      <section className="detail-grid">
-        <div className="detail-box">
-          <h3>What’s included</h3>
-          <ul>{service.includes.map((i, k) => <li key={k}>✅ {i}</li>)}</ul>
-        </div>
-
-        <div className="detail-box">
-          <h3>Not included</h3>
-          <ul>{service.excludes.map((i, k) => <li key={k}>❌ {i}</li>)}</ul>
-        </div>
-      </section>
-
-      {/* PROCESS */}
-      <section className="detail-process">
+      {/* HOW IT WORKS - Process steps */}
+      <section className="detail-process slide-up" style={{ marginTop: 40 }}>
         <h2>How it works</h2>
         <div className="detail-steps">
           {service.process.map((step, i) => (
             <div key={i} className="step">
-              {i + 1}. {step}
+              <span className="step-number">{i + 1}</span>
+              <span className="step-text">{step}</span>
             </div>
           ))}
         </div>
       </section>
 
-      {/* REVIEWS */}
-      <section style={{ marginTop: 30 }}>
-        <h2>Customer Reviews</h2>
-
-        {[5, 4, 5].map((r, i) => (
-          <div key={i} className="detail-box">
-            {"⭐".repeat(r)}
-            <p>Fast, clean and professional service.</p>
-          </div>
-        ))}
+      {/* CUSTOMER REVIEWS */}
+      <section className="review-section slide-up" style={{ marginTop: 40, marginBottom: 60 }}>
+        <h2>⭐ Customer Reviews ({[5, 4, 5].length})</h2>
+        <div className="review-grid">
+          {[5, 4, 5].map((r, i) => (
+            <div key={i} className="review-card detail-box">
+              <div className="review-stars">{"⭐".repeat(r)}</div>
+              <p className="review-text">Fast, clean and professional service. Highly recommend!</p>
+              <p className="review-author">— Customer {i + 1}</p>
+            </div>
+          ))}
+        </div>
       </section>
 
     </div>

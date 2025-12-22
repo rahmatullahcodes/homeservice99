@@ -35,29 +35,68 @@ export default function Login() {
 
   return (
     <div className="container">
-      <div className="form-card">
-        <h1>Login</h1>
+      <div className="auth-wrapper">
+        <div className="auth-form-card fade-in">
+          <div className="auth-header">
+            <h1>Welcome Back</h1>
+            <p>Login to your HomeService99 account</p>
+          </div>
 
-        {error && <p className="form-error">{error}</p>}
+          {error && <div className="auth-error">❌ {error}</div>}
 
-        <div className="form-field">
-          <label htmlFor="login-email">Email</label>
-          <input id="login-email" type="email" value={email} onChange={e => setEmail(e.target.value)} placeholder="you@example.com" />
+          <form className="auth-form" onSubmit={(e) => { e.preventDefault(); handleLogin(); }}>
+            <div className="form-field">
+              <label htmlFor="login-email">Email Address</label>
+              <input 
+                id="login-email" 
+                type="email" 
+                value={email} 
+                onChange={e => setEmail(e.target.value)} 
+                placeholder="you@example.com"
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label htmlFor="login-pass">Password</label>
+              <input 
+                id="login-pass" 
+                type="password" 
+                value={pass} 
+                onChange={e => setPass(e.target.value)} 
+                placeholder="••••••••"
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn-primary auth-btn" aria-label="Login">
+              Login
+            </button>
+          </form>
+
+          <div className="auth-divider">or</div>
+
+          <button type="button" className="btn-outline auth-btn">
+            🔐 Continue with Google
+          </button>
+
+          <div className="auth-footer">
+            <p>Don't have an account? <Link to="/signup">Sign up here</Link></p>
+            <details className="demo-credentials">
+              <summary>Demo Credentials</summary>
+              <div className="demo-box">
+                <p><strong>Email:</strong> demo@user.com</p>
+                <p><strong>Password:</strong> 123456</p>
+              </div>
+            </details>
+          </div>
         </div>
 
-        <div className="form-field">
-          <label htmlFor="login-pass">Password</label>
-          <input id="login-pass" type="password" value={pass} onChange={e => setPass(e.target.value)} placeholder="••••••••" />
-        </div>
-
-        <button type="button" className="btn-primary full" onClick={handleLogin} aria-label="Login">Login</button>
-
-        <div className="form-note">
-          New here? <Link to="/signup">Create an account</Link>
-        </div>
-
-        <div className="form-note">
-          Demo: <strong>demo@user.com</strong> / <strong>123456</strong>
+        {/* Trust badges - Hidden on very small screens */}
+        <div className="auth-trust">
+          <div className="trust-item">✓ 100% Secure</div>
+          <div className="trust-item">✓ Fast & Easy</div>
+          <div className="trust-item">✓ No Spam</div>
         </div>
       </div>
     </div>

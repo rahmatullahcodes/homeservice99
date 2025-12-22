@@ -24,40 +24,92 @@ export default function Signup() {
 
   return (
     <div className="container">
-      <div className="form-card">
+      <div className="auth-wrapper">
+        <div className="auth-form-card fade-in">
+          <div className="auth-header">
+            <h1>Create Account</h1>
+            <p>Join HomeService99 and book services instantly</p>
+          </div>
 
-        <h1>Create Account</h1>
+          {error && <div className="auth-error">❌ {error}</div>}
 
-        {error && <p className="form-error">{error}</p>}
+          <form className="auth-form" onSubmit={(e) => { e.preventDefault(); handleSignup(); }}>
+            <div className="form-field">
+              <label htmlFor="signup-name">Full Name</label>
+              <input 
+                id="signup-name" 
+                type="text"
+                placeholder="John Doe" 
+                value={name} 
+                onChange={e => setName(e.target.value)}
+                required
+              />
+            </div>
 
-        <div className="form-field">
-          <label htmlFor="signup-name">Full Name</label>
-          <input id="signup-name" placeholder="Your name" value={name} onChange={e => setName(e.target.value)} />
+            <div className="form-field">
+              <label htmlFor="signup-number">Phone Number</label>
+              <input 
+                id="signup-number"
+                type="tel"
+                placeholder="+91 9876543210" 
+                value={number} 
+                onChange={e => setNumber(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label htmlFor="signup-email">Email Address</label>
+              <input 
+                id="signup-email" 
+                type="email" 
+                placeholder="you@example.com" 
+                value={email} 
+                onChange={e => setEmail(e.target.value)}
+                required
+              />
+            </div>
+
+            <div className="form-field">
+              <label htmlFor="signup-pass">Password</label>
+              <input 
+                id="signup-pass" 
+                type="password" 
+                placeholder="Min 6 characters" 
+                value={pass} 
+                onChange={e => setPass(e.target.value)}
+                minLength="6"
+                required
+              />
+            </div>
+
+            <button type="submit" className="btn-primary auth-btn" aria-label="Create account">
+              Create Account
+            </button>
+          </form>
+
+          <div className="auth-divider">or</div>
+
+          <button type="button" className="btn-outline auth-btn">
+            🔐 Continue with Google
+          </button>
+
+          <div className="auth-footer">
+            <p>Already have an account? <Link to="/login">Login here</Link></p>
+            <div className="signup-benefits">
+              <p>✓ Book trusted services instantly</p>
+              <p>✓ Verified professionals</p>
+              <p>✓ 100% transparent pricing</p>
+            </div>
+          </div>
         </div>
 
- <div className="form-field">
-          <label htmlFor="signup-number">Number</label>
-          <input id="signup-number" placeholder="Your number" value={number} onChange={e => setNumber(e.target.value)} />
+        {/* Trust badges */}
+        <div className="auth-trust">
+          <div className="trust-item">✓ 100% Secure</div>
+          <div className="trust-item">✓ Fast Registration</div>
+          <div className="trust-item">✓ No Hidden Fees</div>
         </div>
-
-        <div className="form-field">
-          <label htmlFor="signup-email">Email</label>
-          <input id="signup-email" type="email" placeholder="you@example.com" value={email} onChange={e => setEmail(e.target.value)} />
-        </div>
-
-        <div className="form-field">
-          <label htmlFor="signup-pass">Password</label>
-          <input id="signup-pass" type="password" placeholder="Min 6 characters" value={pass} onChange={e => setPass(e.target.value)} />
-        </div>
-
-        <button type="button" className="btn-primary full" onClick={handleSignup} aria-label="Create account">
-          Create Account
-        </button>
-
-        <div className="form-note">
-          Already have an account? <Link to="/login">Login</Link>
-        </div>
-
       </div>
     </div>
   );

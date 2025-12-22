@@ -41,6 +41,7 @@ export default function Services() {
   const [search, setSearch] = useState("");
   const [category, setCategory] = useState("All");
   const [sort, setSort] = useState("default");
+  const [mobileFilterOpen, setMobileFilterOpen] = useState(false);
   const location = useLocation();
 
   // If a ?category= query param is provided, set category from URL
@@ -51,6 +52,12 @@ export default function Services() {
   }, [location.search]);
 
   const categories = ["All", "Cleaning", "Electrician", "Plumber", "Appliances"];
+
+  // close mobile filters when category is selected
+  function selectCategory(c) {
+    setCategory(c);
+    setMobileFilterOpen(false);
+  }
 
   let filtered = SERVICES.filter(
     s =>
@@ -83,21 +90,19 @@ export default function Services() {
         />
       </div>
 
-      {/* CATEGORY CHIPS */}
-      <div className="category-bar slide-up">
-        {categories.map(c => (
-          <div
-            key={c}
-            className={`category-chip ${category === c ? "active" : ""}`}
-            onClick={() => setCategory(c)}
-          >
-            {c}
-          </div>
-        ))}
-      </div>
+      {/* FILTER & SORT BAR (sticky on mobile) */}
+      <div className="services-filter-bar">
+        {/* Mobile Filter Toggle */}
+        <button
+          className="filter-toggle"
+          onClick={() => setMobileFilterOpen(!mobileFilterOpen)}
+          aria-label="Toggle filters"
+          aria-expanded={mobileFilterOpen}
+        >
+          ☰ Filters
+        </button>
 
-      {/* SORT */}
-      <div className="sort-row slide-up">
+        {/* Sort Dropdown */}
         <select
           aria-label="Sort services"
           className="service-select"
@@ -110,11 +115,30 @@ export default function Services() {
         </select>
       </div>
 
+      {/* CATEGORY CHIPS (Mobile Drawer + Desktop Bar) */}
+      <div className={`category-bar ${mobileFilterOpen ? 'open' : ''}`}>
+        {categories.map(c => (
+          <div
+            key={c}
+            className={`category-chip ${category === c ? 'active' : ''}`}
+            onClick={() => selectCategory(c)}
+            role="button"
+            tabIndex={0}
+            onKeyDown={(e) => e.key === 'Enter' && selectCategory(c)}
+          >
+            {c}
+          </div>
+        ))}
+      </div>
+
       {/* SERVICES */}
       <div className="service-grid">
 
         {filtered.length === 0 && (
-          <p>No services found.</p>
+          <div className="empty-state">
+            <p style={{ fontSize: '16px', fontWeight: 600 }}>No services found</p>
+            <p style={{ fontSize: '13px', color: '#6b7280', marginTop: 6 }}>Try adjusting your filters or search query</p>
+          </div>
         )}
 
         {filtered.map((s) => (

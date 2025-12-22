@@ -34,63 +34,134 @@ export default function Cart() {
   return (
     <div className="container">
 
-      <h1 className="section-title">Your Cart</h1>
+      <h1 className="section-title">Shopping Cart</h1>
 
-      {cart.length === 0 && <p>No services added yet.</p>}
+      {cart.length === 0 ? (
+        <div className="empty-cart">
+          <div className="empty-icon">🛒</div>
+          <h2>Your cart is empty</h2>
+          <p>No services added yet. Browse our services and add them to your cart.</p>
+          <button className="btn-primary" onClick={() => navigate('/services')}>
+            Browse Services
+          </button>
+        </div>
+      ) : (
+        <div className="cart-layout">
+          
+          {/* Cart Items List */}
+          <div className="cart-items">
+            {cart.map((s) => (
+              <div key={s.id} className="cart-item fade-in">
+                <img src={s.image} alt={s.title} className="cart-img" />
+                
+                <div className="cart-item-content">
+                  <h3>{s.title}</h3>
+                  <p className="item-price">₹{s.price} each</p>
 
-      {cart.map((s) => (
-        <div key={s.id} className="cart-item">
-          <img src={s.image} alt={s.title} className="cart-img" />
-          <div style={{ flex: 1 }}>
-            <strong>{s.title}</strong>
-            <p>₹{s.price} each</p>
+                  {/* Quantity Controls */}
+                  <div className="quantity-group">
+                    <button 
+                      type="button" 
+                      className="qty-btn" 
+                      onClick={() => updateQuantity(s.id, Math.max((s.quantity || 1) - 1, 1))}
+                      aria-label={`Decrease quantity for ${s.title}`}
+                    >
+                      −
+                    </button>
+                    <span className="qty-display">{s.quantity || 1}</span>
+                    <button 
+                      type="button" 
+                      className="qty-btn" 
+                      onClick={() => updateQuantity(s.id, (s.quantity || 1) + 1)}
+                      aria-label={`Increase quantity for ${s.title}`}
+                    >
+                      +
+                    </button>
+                  </div>
+                </div>
 
-            <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-              <button type="button" className="btn-outline" onClick={() => updateQuantity(s.id, (s.quantity || 1) - 1)} aria-label={`Decrease quantity for ${s.title}`}>-</button>
-              <div style={{ minWidth: 36, textAlign: 'center' }}>{s.quantity || 1}</div>
-              <button type="button" className="btn-outline" onClick={() => updateQuantity(s.id, (s.quantity || 1) + 1)} aria-label={`Increase quantity for ${s.title}`}>+</button>
+                {/* Item Total & Remove */}
+                <div className="cart-item-actions">
+                  <div className="item-total">
+                    <span className="label">Total</span>
+                    <span className="price">₹{s.price * (s.quantity || 1)}</span>
+                  </div>
+                  <button 
+                    type="button" 
+                    className="btn-remove" 
+                    onClick={() => removeFromCart(s.id)}
+                    aria-label={`Remove ${s.title}`}
+                  >
+                    ✕
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
 
-              <button type="button" className="btn-outline" onClick={() => removeFromCart(s.id)} aria-label={`Remove ${s.title}`} style={{ marginLeft: 'auto' }}>
-                Remove
+          {/* Summary Sidebar */}
+          <aside className="cart-summary-box">
+            <div className="summary-card">
+              <h2>Order Summary</h2>
+
+              {/* Subtotal */}
+              <div className="summary-row">
+                <span>Subtotal ({cart.length} item{cart.length !== 1 ? 's' : ''})</span>
+                <span>₹{total}</span>
+              </div>
+
+              {/* Discount */}
+              {discount > 0 && (
+                <div className="summary-row discount">
+                  <span>Discount</span>
+                  <span>−₹{discount}</span>
+                </div>
+              )}
+
+              {/* Coupon Section */}
+              <div className="coupon-section">
+                <h4>Apply Coupon</h4>
+                <div className="coupon-group">
+                  <input
+                    type="text"
+                    aria-label="Coupon code"
+                    className="coupon-input"
+                    value={coupon}
+                    onChange={(e) => setCoupon(e.target.value)}
+                    placeholder="SAVE50, FIRST100"
+                  />
+                  <button type="button" className="btn-apply-coupon" onClick={applyCoupon}>
+                    Apply
+                  </button>
+                </div>
+
+                {error && <p className="error-msg">❌ {error}</p>}
+                {discount > 0 && <p className="success-msg">✅ Coupon applied!</p>}
+              </div>
+
+              {/* Final Total */}
+              <div className="summary-divider"></div>
+              <div className="summary-row final-total">
+                <span>Final Amount</span>
+                <span>₹{finalTotal}</span>
+              </div>
+
+              {/* CTA */}
+              <button
+                className="btn-primary checkout-btn"
+                onClick={() => navigate("/checkout")}
+              >
+                Proceed to Checkout
+              </button>
+
+              <button
+                className="btn-outline continue-shopping"
+                onClick={() => navigate('/services')}
+              >
+                Continue Shopping
               </button>
             </div>
-
-          </div>
-        </div>
-      ))}
-
-      {cart.length > 0 && (
-        <div style={{ marginTop: 20 }}>
-
-          <h3>Apply Coupon</h3>
-
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center', marginTop: 8 }}>
-            <input
-              aria-label="Coupon code"
-              value={coupon}
-              onChange={(e) => setCoupon(e.target.value)}
-              placeholder="Enter coupon code"
-            />
-
-            <button type="button" className="btn-primary" onClick={applyCoupon}>
-              Apply
-            </button>
-          </div>
-
-          {error && <p style={{ color: "red", marginTop: 6 }}>{error}</p>}
-          {discount > 0 && <p style={{ color: "green" }}>Coupon applied successfully ✅</p>}
-
-          <h3 style={{ marginTop: 10 }}>Total: ₹{total}</h3>
-          <h3>Discount: ₹{discount}</h3>
-          <h2>Final Amount: ₹{finalTotal}</h2>
-
-          <button
-            className="btn-primary"
-            style={{ width: "100%", marginTop: 10 }}
-            onClick={() => navigate("/checkout")}
-          >
-            Proceed to Checkout
-          </button>
+          </aside>
 
         </div>
       )}

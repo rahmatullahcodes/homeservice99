@@ -159,11 +159,12 @@ export default function Home() {
 
   // offers data (used in Offers carousel)
   const OFFERS = [
-    { id: 1, title: 'Big transformations, zero stress.', subtitle: 'Revamp services starting at ₹1999', cta: 'Explore', img: 'https://images.unsplash.com/photo-1549187774-b4e9f043d2e3' },
-    { id: 2, title: 'Sofa deep cleaning', subtitle: 'Starting at ₹569', cta: 'Book now', img: 'https://images.unsplash.com/photo-1560184897-6b2d3d8a2b88' },
-    { id: 3, title: 'Salon for women', subtitle: 'Perfect look for any occasion', cta: 'Book now', img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1' },
-    { id: 4, title: 'AC servicing', subtitle: 'Summer-ready maintenance plans', cta: 'Book now', img: 'https://images.unsplash.com/photo-1547407969-5a0fa7a36f3d' },
-    { id: 5, title: 'Kitchen deep clean', subtitle: 'Hygienic & sparkling', cta: 'Explore', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c' }
+    { id: 1, title: 'Winter Home Care Special', subtitle: 'Get 20% off on all services', discount: '20%', cta: 'Claim Offer', img: 'https://images.unsplash.com/photo-1549187774-b4e9f043d2e3' },
+    { id: 2, title: 'Deep Sofa & Upholstery Cleaning', subtitle: 'Just ₹569 - Deep clean & sanitize', discount: 'Save ₹400', cta: 'Book Now', img: 'https://images.unsplash.com/photo-1560184897-6b2d3d8a2b88' },
+    { id: 3, title: 'Salon Services for Women', subtitle: 'Hair, makeup, spa - all under one app', discount: 'Starting ₹199', cta: 'Explore', img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1' },
+    { id: 4, title: 'AC Maintenance & Service', subtitle: 'Avoid summer breakdowns - preventive care', discount: 'Full inspection ₹599', cta: 'Schedule', img: 'https://images.unsplash.com/photo-1547407969-5a0fa7a36f3d' },
+    { id: 5, title: 'Complete Kitchen Deep Clean', subtitle: 'Hygienic, sparkling, and organized', discount: 'Starting ₹899', cta: 'Book Now', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c' },
+    { id: 6, title: 'Home Painting Services', subtitle: 'Interior & exterior - professional quality', discount: 'Free quote', cta: 'Get Quote', img: 'https://images.unsplash.com/photo-1600607686527-6fb886090705' }
   ];
 
   async function getLocation() {
@@ -310,12 +311,12 @@ export default function Home() {
 <section className="container hero fade-in">
   <div>
 
-    <span className="hero-badge">Trusted home services in {location}</span>
+    <span className="hero-badge">⭐ 50,000+ Happy Customers in {location}</span>
 
-    <h1 className="hero-title">Home Service at your Door-Step</h1>
+    <h1 className="hero-title">HomeService99: Trusted Home Services at Your Doorstep</h1>
 
     <p className="hero-subtitle">
-      Book vetted professionals for cleaning, repairs, beauty and more — with transparent pricing and assured quality.
+      Book verified professionals for cleaning, repairs, beauty, and maintenance in minutes. Transparent pricing, quality guaranteed, and payment after service completion.
     </p>
 
     <div className="search-card">
@@ -461,53 +462,155 @@ export default function Home() {
 
 {/* WHY CHOOSE US */}
 <section className="container slide-up">
-  <h2 className="section-title">Why homeowners choose us</h2>
+  <h2 className="section-title">Why 50,000+ Customers Trust HomeService99</h2>
   <div className="service-grid">
     {[
-      ["Quality Professionals", "Trained and experienced service providers"],
-      ["Affordable Pricing", "No hidden charges"],
-      ["On Time Service", "Your time matters"],
-      ["Safe & Secure", "Verified staff"]
+      { icon: "✓", title: "Background-Verified Experts", desc: "All professionals thoroughly screened and trained" },
+      { icon: "₹", title: "Transparent Pricing", desc: "No hidden charges - what you see is what you pay" },
+      { icon: "⏱", title: "On-Time Service", desc: "Average 30-min response time, professional reliability" },
+      { icon: "🔒", title: "Safe & Secure", desc: "Secure payments, customer protection guarantee" },
+      { icon: "⭐", title: "Quality Guaranteed", desc: "4.8+ average rating from verified customer reviews" },
+      { icon: "📱", title: "Easy Booking", desc: "Book in seconds, track your service in real-time" }
     ].map((item, idx) => (
-      <div key={idx} className="service-card">
-        <strong>{item[0]}</strong>
-        <p style={{ fontSize: "13px", color: "#6b7280" }}>{item[1]}</p>
+      <div key={idx} className="feature-card">
+        <div className="feature-icon">{item.icon}</div>
+        <strong>{item.title}</strong>
+        <p style={{ fontSize: "13px", color: "#6b7280" }}>{item.desc}</p>
+      </div>
+    ))}
+  </div>
+</section>
+
+
+
+{/* TESTIMONIALS */}
+<section className="container slide-up">
+  <h2 className="section-title">Loved by 50,000+ Satisfied Customers</h2>
+  <div className="testimonials-grid">
+    {[
+      {
+        name: "Priya Sharma",
+        city: "Mumbai",
+        service: "Home Cleaning",
+        rating: 5,
+        text: "Outstanding cleaning service! The team was professional and thorough. My home feels brand new. Highly recommended!",
+        avatar: "👩"
+      },
+      {
+        name: "Rajesh Patel",
+        city: "Bangalore",
+        service: "AC Service",
+        rating: 5,
+        text: "Technician arrived on time and fixed my AC efficiently. Transparent pricing, no hidden charges. Perfect experience!",
+        avatar: "👨"
+      },
+      {
+        name: "Ankit Singh",
+        city: "Delhi",
+        service: "Electrical Repair",
+        rating: 5,
+        text: "Very professional electrician. Completed the work safely and quickly. Payment after service was convenient. Will definitely hire again!",
+        avatar: "👨"
+      },
+      {
+        name: "Aadhya Nair",
+        city: "Hyderabad",
+        service: "Plumbing",
+        rating: 5,
+        text: "Quick response, professional work, and affordable pricing. The plumber explained everything clearly before starting. Excellent service!",
+        avatar: "👩"
+      }
+    ].map((review, idx) => (
+      <div key={idx} className="testimonial-card">
+        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
+          <span style={{ fontSize: "36px" }}>{review.avatar}</span>
+          <div>
+            <strong style={{ display: "block", fontSize: "14px" }}>{review.name}</strong>
+            <small style={{ color: "#6b7280", fontSize: "12px" }}>{review.city} • {review.service}</small>
+          </div>
+        </div>
+        <div style={{ display: "flex", gap: "2px", marginBottom: "10px" }}>
+          {[...Array(review.rating)].map((_, i) => <span key={i}>⭐</span>)}
+        </div>
+        <p style={{ fontSize: "13px", color: "#374151", lineHeight: "1.5", fontStyle: "italic" }}>"{review.text}"</p>
       </div>
     ))}
   </div>
 </section>
 
 {/* HOW IT WORKS */}
-<section className="container slide-up">
-  <h2 className="section-title">How it works</h2>
-  <div className="service-grid">
+<section className="container slide-up" style={{ marginTop: "60px" }}>
+  <h2 className="section-title">How HomeService99 Works</h2>
+  <div className="how-it-works-grid">
     {[
-      ["Explore services", "Find the right solution"],
-      ["Choose a professional", "View prices upfront"],
-      ["Relax at home", "We handle the rest"]
-    ].map((step, i) => (
-      <div key={i} className="service-card">
-        <strong>{i + 1}. {step[0]}</strong>
-        <p style={{ fontSize: "13px", color: "#6b7280" }}>{step[1]}</p>
+      { step: "1", icon: "🔍", title: "Browse Services", desc: "Explore thousands of services available in your area" },
+      { step: "2", icon: "📅", title: "Select Time", desc: "Choose your preferred date and time for the service" },
+      { step: "3", icon: "✓", title: "Confirm Booking", desc: "Complete details and confirm your appointment" },
+      { step: "4", icon: "👨‍🔧", title: "Professional Arrives", desc: "Expert arrives at your doorstep on scheduled time" },
+      { step: "5", icon: "⭐", title: "Service Completed", desc: "Service delivered with quality assurance" },
+      { step: "6", icon: "💰", title: "Pay & Rate", desc: "Safe payment after service + leave your review" }
+    ].map((item, idx) => (
+      <div key={idx} className="how-it-works-card">
+        <div className="how-step-circle">{item.step}</div>
+        <div style={{ fontSize: "32px", marginBottom: "8px" }}>{item.icon}</div>
+        <strong>{item.title}</strong>
+        <p style={{ fontSize: "13px", color: "#6b7280", textAlign: "center" }}>{item.desc}</p>
       </div>
     ))}
   </div>
 </section>
 
-{/* TESTIMONIALS */}
-<section className="container slide-up">
-  <h2 className="section-title">Loved by customers</h2>
-  <div className="service-grid">
+{/* FAQ SECTION */}
+<section className="container slide-up" style={{ marginTop: "60px", marginBottom: "60px" }}>
+  <h2 className="section-title">Frequently Asked Questions</h2>
+  <div className="faq-container">
     {[
-      ["Outstanding cleaning service. My home feels brand new.", "— Rahul, Kanpur"],
-      ["Technician arrived on time and fixed my AC easily.", "— Pooja, Delhi"],
-      ["Very professional electrician service.", "— Ankit, Lucknow"]
-    ].map((review, idx) => (
-      <div key={idx} className="service-card">
-        <p style={{ fontSize: "13px" }}>{review[0]}</p>
-        <span className="service-price">{review[1]}</span>
+      { 
+        q: "Is it safe to book services through HomeService99?", 
+        a: "Yes! All professionals are background-verified, trained, and insured. We guarantee customer safety and service quality. You can pay after the service is completed."
+      },
+      { 
+        q: "What if the professional doesn't turn up?", 
+        a: "If the professional doesn't arrive within 30 minutes of the scheduled time, you'll get a full refund or we'll reschedule at no extra cost."
+      },
+      { 
+        q: "Can I cancel my booking?", 
+        a: "Yes! You can cancel free of charge up to 3 hours before the scheduled service time. Cancellations after that may incur a small fee."
+      },
+      { 
+        q: "How are prices determined?", 
+        a: "Prices are transparent and vary based on service type, duration, and location. You'll see the exact cost before confirming your booking."
+      },
+      { 
+        q: "What if I'm not satisfied with the service?", 
+        a: "We have a 100% satisfaction guarantee. If you're unhappy, contact us within 24 hours for a rework or full refund."
+      },
+      { 
+        q: "Can I book recurring services?", 
+        a: "Yes! You can set up weekly, bi-weekly, or monthly recurring bookings for services like cleaning, laundry, and maintenance at special discounted rates."
+      }
+    ].map((item, idx) => (
+      <div key={idx} className="faq-item">
+        <details className="faq-details">
+          <summary className="faq-question">
+            <span>❓</span> {item.q}
+          </summary>
+          <p className="faq-answer">{item.a}</p>
+        </details>
       </div>
     ))}
+  </div>
+</section>
+
+{/* CTA SECTION */}
+<section className="container slide-up" style={{ marginBottom: "40px" }}>
+  <div className="cta-banner">
+    <h2 style={{ margin: "0 0 12px 0", fontSize: "24px" }}>Ready to Get Started?</h2>
+    <p style={{ margin: "0 0 20px 0", fontSize: "15px", color: "#6b7280" }}>Book your first service in seconds. No signup required for browsing.</p>
+    <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+      <button className="btn-primary" onClick={() => navigate('/services')}>Browse Services</button>
+      <button className="btn-outline" onClick={() => navigate('/about')}>Learn More</button>
+    </div>
   </div>
 </section>
 
