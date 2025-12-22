@@ -21,6 +21,21 @@ export default function Home() {
     { title: "More Services", key: "All", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c" }
   ];
 
+  // emoji icons used for compact mobile tiles (keeps assets lightweight and consistent)
+  const ICONS = {
+    Cleaning: '🧹',
+    Electrician: '💡',
+    Plumber: '🚰',
+    Appliances: '❄️',
+    Beauty: '💄',
+    Men: '💈',
+    Painting: '🎨',
+    Carpentry: '🪚',
+    Maintenance: '🔧',
+    Pest: '🐜',
+    All: '⋯'
+  };
+
   // small sample services (used in modal quick-list)
   const SAMPLE_SERVICES = [
     { id: "1", title: "Full Home Deep Cleaning", category: "Cleaning", price: 1999, image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952" },
@@ -333,7 +348,7 @@ export default function Home() {
       <div className="category-grid" aria-hidden={false}>
         {categories.slice(0, 9).map((c) => (
           <button key={c.key} className="category-tile" onClick={() => openCategoryModal(c.key)} aria-label={c.title}>
-            <img src={c.img} alt={c.title} />
+            <div className="category-icon" aria-hidden="true">{ICONS[c.key] || '🔧'}</div>
             <span>{c.title}</span>
           </button>
         ))}

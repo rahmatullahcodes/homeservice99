@@ -283,29 +283,56 @@ a {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   gap: 8px;
   border: 1px solid #eef2f7;
   font-size: 13px;
   color: var(--text);
   cursor: pointer;
   text-align: center;
+  min-height: 92px;
+  transition: transform .16s ease, box-shadow .16s ease;
 }
 
-.category-tile img {
-  width: 44px;
-  height: 44px;
-  object-fit: cover;
-  border-radius: 8px;
+/* lightweight emoji icon container to ensure consistent visuals on mobile */
+.category-icon {
+  width: 56px;
+  height: 56px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, rgba(37,99,235,0.12), rgba(14,165,164,0.08));
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 26px;
+  flex-shrink: 0;
 }
 
 .category-tile span {
-  font-size: 12px;
+  font-size: 13px;
   color: var(--muted);
+  line-height: 1.1;
 }
 
 .category-tile:hover {
   transform: translateY(-4px);
   box-shadow: 0 12px 30px rgba(2,6,23,0.06);
+}
+
+/* Make the first two special tiles (2 columns) similar to UrbanCompany's layout */
+.category-card > .category-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 980px) {
+  .category-card > .category-grid { grid-template-columns: repeat(3, 1fr); }
+}
+
+@media (max-width: 600px) {
+  .category-card > .category-grid { grid-template-columns: repeat(3, 1fr); gap: 10px }
+  .category-tile { padding: 10px; min-height: 84px }
+  .category-icon { width: 48px; height: 48px; font-size: 22px }
 }
 
 /* HERO MOSAIC */
@@ -416,6 +443,47 @@ a {
 @media (max-width: 860px) {
   .offer-card { min-width: 260px; }
   .offer-card img { width: 100px }
+}
+
+/* Improve responsiveness for hero, categories and modals */
+@media (max-width: 980px) {
+  .hero { grid-template-columns: 1fr; gap: 18px }
+  .hero-title { font-size: 26px }
+  .hero-subtitle { max-width: 100% }
+  .search-card { grid-template-columns: 1fr auto; gap: 8px }
+  .category-card { max-width: 100% }
+  .category-grid { grid-template-columns: repeat(3, 1fr) }
+  .hero-mosaic { grid-template-columns: 1fr 1fr; grid-auto-rows: 100px }
+  .offer-card { min-width: 240px }
+  .offers-nav.left { left: 6px }
+  .offers-nav.right { right: 6px }
+}
+
+@media (max-width: 600px) {
+  .hero-title { font-size: 20px }
+  .search-card { grid-template-columns: 1fr; grid-auto-rows: auto; padding: 12px; }
+  .search-location { order: 1 }
+  .search-input { order: 2 }
+  .search-card .btn-primary { order: 3; width: 100% }
+  .category-grid { grid-template-columns: repeat(2, 1fr); gap: 10px }
+  .category-tile { padding: 10px }
+  .offers-wrap { margin-bottom: 8px }
+  .offer-card { min-width: 200px }
+  .offers-indicators { left: 50%; transform: translateX(-50%); right: auto }
+  .modal.modal-large { max-width: 96%; padding: 12px }
+  .modal-grid { grid-template-columns: 1fr; gap: 8px }
+  .hero-mosaic { grid-template-columns: 1fr; grid-auto-rows: 120px }
+  .hero-mosaic .wide { height: 120px }
+}
+
+/* Service grid responsive tweaks */
+@media (max-width: 1024px) {
+  .service-grid { grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); }
+}
+@media (max-width: 600px) {
+  .service-grid { grid-template-columns: repeat(1, 1fr); gap: 10px }
+  .service-card { padding: 12px }
+  .service-card img { height: 120px }
 }
 
 @media (max-width: 540px) {
