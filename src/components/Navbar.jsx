@@ -85,12 +85,12 @@ export default function Navbar() {
           </>
         )}
 
-        {/* VENDOR CTA (ONLY IF NOT VENDOR) */}
+        {/* VENDOR CTA (ONLY IF NOT VENDOR)
         {!isVendor && (
           <Link to="/vendor-signup" className="btn-vendor">
             Become a Partner
           </Link>
-        )}
+        )} */}
 
         {/* MOBILE HAMBURGER (visible on small screens) */}
         <button className="mobile-hamburger btn-ghost" onClick={() => setMobileMenu(m => !m)} aria-expanded={mobileMenu} aria-label="Open mobile menu">
