@@ -1,0 +1,159 @@
+/* ===== ROOT NAVBAR ===== */
+.uc-navbar {
+  display: grid;
+  grid-template-columns: auto minmax(300px, 1fr) auto;
+  align-items: center;
+  gap: 20px;
+  padding: 12px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+/* ===== LOGO ===== */
+.uc-logo {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  cursor: pointer;
+}
+
+.logo-circle {
+  background: #111827;
+  color: #fff;
+  font-weight: 700;
+  padding: 6px 8px;
+  border-radius: 6px;
+  font-size: 14px;
+}
+
+.logo-text {
+  font-size: 15px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+/* ===== SEARCH BAR (KEY PART) ===== */
+.uc-search {
+  display: flex;
+  align-items: center;
+  width: 100%;
+  max-width: 720px;          /* makes it big like Urban */
+  border: 1px solid #d1d5db;
+  border-radius: 10px;
+  overflow: hidden;
+  background: #fff;
+}
+
+.location-box {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 0 12px;
+  background: #f9fafb;
+  border-right: 1px solid #e5e7eb;
+  font-size: 13px;
+  white-space: nowrap;
+}
+
+.location-box select {
+  border: none;
+  background: transparent;
+  outline: none;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.uc-search input {
+  flex: 1;                  /* THIS makes it wide */
+  padding: 12px 14px;
+  border: none;
+  outline: none;
+  font-size: 14px;
+}
+
+/* ===== RIGHT ACTIONS ===== */
+.uc-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.uc-cart {
+  position: relative;
+  font-size: 20px;
+  text-decoration: none;
+}
+
+.cart-badge {
+  position: absolute;
+  top: -6px;
+  right: -8px;
+  background: #ef4444;
+  color: #fff;
+  font-size: 11px;
+  padding: 2px 6px;
+  border-radius: 999px;
+}
+
+/* ===== BUTTONS ===== */
+.btn-outline {
+  border: 1px solid #d1d5db;
+  background: transparent;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.btn-primary {
+  background: #2563eb;
+  color: #fff;
+  border: none;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+}
+
+.btn-vendor {
+  background: #111827;
+  color: #fff;
+  padding: 7px 14px;
+  border-radius: 6px;
+  font-size: 13px;
+  text-decoration: none;
+}
+
+/* ===== MOBILE RESPONSIVE ===== */
+@media (max-width: 900px) {
+  .uc-navbar {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .uc-search {
+    max-width: 100%;
+  }
+
+  .uc-actions {
+    justify-content: space-between;
+  }
+
+  .logo-text {
+    display: none; /* Urban hides text on small screens */
+  }
+
+  /* Mobile hamburger and menu */
+  .mobile-hamburger { display: inline-flex; align-items: center; padding: 8px; border-radius: 8px; }
+
+  .mobile-menu-backdrop { display: none; }
+  .mobile-menu-backdrop.visible { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 1100 }
+
+  .mobile-menu { position: fixed; right: 12px; top: 64px; width: 260px; background: white; border-radius: 12px; box-shadow: 0 12px 30px rgba(2,6,23,0.12); border: 1px solid #eef2f7; z-index: 1110; display: none; transform-origin: top right; transform: scale(.98); opacity: 0; transition: all .18s ease; }
+  .mobile-menu.visible { display: block; transform: scale(1); opacity: 1 }
+  .mobile-menu-inner { display: flex; flex-direction: column; gap: 6px; padding: 12px }
+  .mobile-menu-link { display: block; padding: 8px 10px; border-radius: 8px; text-decoration: none; color: var(--text); background: transparent; border: none; text-align: left; cursor: pointer }
+  .mobile-menu-link:hover { background: #fbfdff }
+}
