@@ -1,10 +1,12 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 
 export default function AccountLayout() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');
   const [open, setOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(() => localStorage.getItem('accountSidebarCollapsed') === 'true');
+  const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' ? window.innerWidth <= 980 : false);
+  const navRef = useRef(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -14,6 +16,38 @@ export default function AccountLayout() {
   useEffect(() => {
     try { localStorage.setItem('accountSidebarCollapsed', collapsed ? 'true' : 'false'); } catch(e){}
   }, [collapsed]);
+
+  // update isMobile on resize
+  useEffect(() => {
+    function onResize(){ setIsMobile(window.innerWidth <= 980); }
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // lock body scroll when mobile sidebar is open
+  useEffect(() => {
+    if (isMobile && open) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      return () => { document.body.style.overflow = prev; };
+    }
+  }, [isMobile, open]);
+
+  // close on Escape when mobile overlay is open
+  useEffect(() => {
+    function onKey(e){ if (e.key === 'Escape' && isMobile && open) setOpen(false); }
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [isMobile, open]);
+
+  // focus first link when opening on mobile
+  useEffect(() => {
+    if (open && isMobile) {
+      setTimeout(() => {
+        try { navRef.current?.querySelector('a,button')?.focus(); } catch(e){}
+      }, 0);
+    }
+  }, [open, isMobile]);
 
   function toggleTheme(){ setTheme(t => (t === 'dark' ? 'light' : 'dark')); }
 
@@ -26,7 +60,13 @@ export default function AccountLayout() {
     <div className="container account-layout">
 
       <div className="account-topbar">
-        <button className="btn-ghost mobile-menu-btn" onClick={() => setOpen(o => !o)} aria-expanded={open} aria-label="Open menu">
+        <button
+          className="btn-ghost mobile-menu-btn"
+          onClick={() => setOpen(o => !o)}
+          aria-expanded={open}
+          aria-controls="account-sidebar"
+          aria-label={open ? 'Close account menu' : 'Open account menu'}
+        >
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6h16M4 12h16M4 18h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
         </button>
 
@@ -40,7 +80,12 @@ export default function AccountLayout() {
       <div className={`account-overlay ${open ? 'visible' : ''}`} onClick={() => setOpen(false)} aria-hidden={!open}></div>
 
       {/* SIDEBAR */}
-      <aside className={`account-sidebar ${open ? 'open' : ''} ${collapsed ? 'collapsed' : ''}`} aria-hidden={!open} aria-label="Account navigation">
+      <aside
+        id="account-sidebar"
+        className={`account-sidebar ${open ? 'open' : ''} ${collapsed && !isMobile ? 'collapsed' : ''}`}
+        aria-hidden={isMobile ? !open : false}
+        aria-label="Account navigation"
+      >
         <div className="account-sidebar-inner">
 
           <div className="account-sidebar-header" style={{ marginBottom: 8 }}>
@@ -53,13 +98,19 @@ export default function AccountLayout() {
             </div>
 
             <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-              <button className="btn-ghost collapse-toggle" onClick={() => setCollapsed(c => !c)} aria-pressed={collapsed} title={collapsed ? 'Expand' : 'Collapse'}>
+              <button
+                className="btn-ghost collapse-toggle"
+                onClick={() => setCollapsed(c => !c)}
+                aria-pressed={collapsed}
+                title={collapsed ? 'Expand' : 'Collapse'}
+                aria-label={collapsed ? 'Expand sidebar' : 'Collapse sidebar'}
+              >
                 {collapsed ? '➤' : '≡'}
               </button>
             </div>
           </div>
 
-         <nav className="account-nav" role="navigation" aria-label="Account navigation">
+         <nav ref={navRef} className="account-nav" role="navigation" aria-label="Account navigation">
 
       <NavLink to="/account/dashboard" title="Dashboard" className={({isActive}) => isActive ? 'active' : ''}>
         <span className="nav-ico">📊</span> <span className="label">Dashboard</span>

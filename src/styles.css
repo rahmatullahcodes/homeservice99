@@ -487,9 +487,17 @@ a {
   border: 1px solid var(--surface-border);
   position: sticky;
   top: 20px;
-  height: calc(100vh - 120px);
+  max-height: calc(100vh - 120px);
   overflow: auto;
   transition: all .22s ease;
+}
+
+/* Improve collapsed behaviour: avoid internal scroll and center icons */
+.account-sidebar.collapsed .account-sidebar-inner {
+  height: auto;
+  overflow: visible;
+  padding-left: 8px;
+  padding-right: 8px;
 }
 
 .logo-circle {
@@ -502,7 +510,21 @@ a {
   align-items:center;
   justify-content:center;
   font-weight:700;
+  flex-shrink:0;
 }
+
+.account-sidebar.collapsed .logo-circle { margin: 8px auto; }
+
+/* center icons when collapsed */
+.account-sidebar.collapsed .nav-ico {
+  width: 100%;
+  text-align: center;
+  display: inline-block;
+}
+
+/* subtle custom scrollbar for better UX */
+.account-sidebar .account-sidebar-inner::-webkit-scrollbar { width: 8px; }
+.account-sidebar .account-sidebar-inner::-webkit-scrollbar-thumb { background: rgba(15,23,42,0.06); border-radius: 8px; }
 
 .account-sidebar-header { display:flex; justify-content:space-between; align-items:center; gap:12px; }
 
@@ -519,6 +541,11 @@ a {
 .account-sidebar.collapsed { width: 72px }
 .account-sidebar.collapsed .label { display: none }
 .account-sidebar.collapsed .account-sidebar-inner { padding: 12px }
+
+/* When sidebar is explicitly opened (mobile) ignore collapsed state so labels are visible */
+.account-sidebar.open.collapsed { width: 260px }
+.account-sidebar.open.collapsed .label { display: inline }
+
 .account-content { padding: 6px 0 }
 
 .account-nav a:focus { outline: 2px solid rgba(37,99,235,0.12); outline-offset: 2px }
@@ -529,7 +556,9 @@ a {
   .mobile-menu-btn { display: inline-flex; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 8px; background: transparent; border: 1px solid var(--surface-border); }
   .account-sidebar { display: none }
   .account-overlay.visible { display: block; position: fixed; inset: 0; background: rgba(0,0,0,0.45); z-index: 72 }
-  .account-sidebar.open { display: block !important; position: fixed; left: 12px; top: 72px; z-index: 90; width: 260px; max-height: calc(100vh - 90px); overflow: auto }
+  .account-sidebar.open { display: block !important; position: fixed; left: 12px; top: 72px; z-index: 90; width: min(92%, 340px); max-height: calc(100vh - 90px); overflow: auto; box-shadow: 0 10px 30px rgba(2,6,23,0.08); border-radius: 12px }
+  .account-sidebar .collapse-toggle { display: none }
+  .account-sidebar.open .label { display: inline }
 }
 
 /* FOOTER */
