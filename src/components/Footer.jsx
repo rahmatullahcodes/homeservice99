@@ -1,11 +1,24 @@
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "../context/ToastContext";
 
 export default function Footer() {
+  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { addToast } = useToast();
+
+  // Service categories for quick access
+  const services = [
+    { name: "Cleaning", icon: "🧹", query: "Cleaning" },
+    { name: "Appliances", icon: "❄️", query: "Appliances" },
+    { name: "Electrician", icon: "⚡", query: "Electrician" },
+    { name: "Plumbing", icon: "🔧", query: "Plumber" },
+    { name: "Salon", icon: "✨", query: "Beauty" },
+    { name: "Painting", icon: "🎨", query: "Painter" },
+    { name: "Carpentry", icon: "🔨", query: "Carpenter" },
+    { name: "Pest Control", icon: "🐛", query: "Pest Control" }
+  ];
 
   function validateEmail(v) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -27,7 +40,7 @@ export default function Footer() {
       } else {
         list.push(email);
         localStorage.setItem('newsletter', JSON.stringify(list));
-        addToast('Subscribed! We will send updates to your inbox.', 'success');
+        addToast('✅ Subscribed! Check your inbox for updates.', 'success');
         setEmail("");
       }
     } catch (err) {
@@ -46,85 +59,137 @@ export default function Footer() {
       <div className="footer-inner">
         <div className="footer-grid">
 
-          {/* Company */}
+          {/* Company Info */}
           <div className="footer-col">
-            <div className="footer-col-title">Company</div>
+            <div className="footer-col-title">📱 Company</div>
+            <Link to="/" className="footer-link">Home</Link>
             <Link to="/about" className="footer-link">About Us</Link>
-            <Link to="/careers" className="footer-link">Careers</Link>
-            <Link to="/team" className="footer-link">Our Team</Link>
-            <Link to="/blog" className="footer-link">Blog</Link>
-            <Link to="/press" className="footer-link">Press</Link>
+            <Link to="/pricing" className="footer-link">Pricing</Link>
+            <Link to="/blog" className="footer-link">Blog & Articles</Link>
+            <Link to="/contact" className="footer-link">Contact Us</Link>
           </div>
 
-          {/* Services */}
+          {/* Browse Services */}
           <div className="footer-col">
-            <div className="footer-col-title">Popular Services</div>
-            {/* <Link to="/services?category=Cleaning" className="footer-link">Home Cleaning</Link>
+            <div className="footer-col-title">🛠️ Services</div>
+            <Link to="/services" className="footer-link">All Services</Link>
+            <Link to="/services?category=Cleaning" className="footer-link">Home Cleaning</Link>
             <Link to="/services?category=Appliances" className="footer-link">AC & Appliances</Link>
             <Link to="/services?category=Electrician" className="footer-link">Electrician</Link>
             <Link to="/services?category=Plumber" className="footer-link">Plumbing</Link>
-            <Link to="/services?category=Beauty" className="footer-link">Salon & Beauty</Link> */}
           </div>
 
           {/* For Professionals */}
           <div className="footer-col">
-            <div className="footer-col-title">For Professionals</div>
-            <Link to="/vendor-login" className="footer-link">Register as a professional</Link>
-            <Link to="/vendor-signup" className="footer-link">Become a partner</Link>
+            <div className="footer-col-title">👔 Professionals</div>
+            <Link to="/vendor-login" className="footer-link">Login as Professional</Link>
+            <Link to="/vendor-signup" className="footer-link">Register as Partner</Link>
+            <Link to="/pricing" className="footer-link">Partner Benefits</Link>
+            <Link to="/contact" className="footer-link">Support</Link>
           </div>
 
-          {/* Support */}
+          {/* Support & Policies */}
           <div className="footer-col">
-            <div className="footer-col-title">Support</div>
-            <Link to="/help" className="footer-link">Help Center</Link>
-            <Link to="/terms" className="footer-link">Terms & Conditions</Link>
+            <div className="footer-col-title">⚖️ Support</div>
+            <Link to="/terms-conditions" className="footer-link">Terms & Conditions</Link>
             <Link to="/privacy-policy" className="footer-link">Privacy Policy</Link>
-            <Link to="/refund-policy" className="footer-link">Refund Policy</Link>
-            <Link to="/complaint-policy" className="footer-link">Complaint Policy</Link>
+            <Link to="/cancellation-refund" className="footer-link">Cancellation & Refund</Link>
+            <Link to="/disclaimer" className="footer-link">Disclaimer</Link>
           </div>
 
-          {/* Newsletter + Social */}
+          {/* Newsletter & Social */}
           <div className="footer-col footer-newsletter">
-            <div className="footer-col-title">Stay updated</div>
-            <p className="form-note">Subscribe for offers, tips and service updates.</p>
+            <div className="footer-col-title">📧 Get Updates</div>
+            <p className="form-note">Subscribe for exclusive offers, tips & latest service updates delivered to your inbox.</p>
 
-            <form onSubmit={handleSubscribe} style={{ display: 'flex', gap: 8, marginTop: 8 }}>
-              <input
-                aria-label="Email for newsletter"
-                className="footer-input"
-                placeholder="you@example.com"
-                value={email}
-                onChange={e => setEmail(e.target.value)}
-              />
-              <button className="btn-primary" aria-label="Subscribe" disabled={submitting}>
-                {submitting ? '…' : 'Subscribe'}
-              </button>
+            <form onSubmit={handleSubscribe}>
+              <div className="footer-input-group">
+                <input
+                  aria-label="Email for newsletter"
+                  className="footer-input"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={e => setEmail(e.target.value)}
+                  type="email"
+                />
+                <button 
+                  className="btn-primary" 
+                  aria-label="Subscribe" 
+                  disabled={submitting}
+                  type="submit"
+                >
+                  {submitting ? '⏳' : '✉️ Subscribe'}
+                </button>
+              </div>
             </form>
 
-            <div style={{ marginTop: 12 }}>
-              <div className="footer-col-title" style={{ marginBottom: 8 }}>Follow us</div>
+            <div style={{ marginTop: 14 }}>
+              <div className="footer-col-title" style={{ marginBottom: 10 }}>Follow Us</div>
               <div className="social-list">
-                <a href="https://instagram.com" target="_blank" rel="noreferrer" aria-label="Instagram" className="social-link">📸</a>
-                <a href="https://facebook.com" target="_blank" rel="noreferrer" aria-label="Facebook" className="social-link">👍</a>
-                <a href="https://youtube.com" target="_blank" rel="noreferrer" aria-label="YouTube" className="social-link">▶️</a>
-                <a href="https://linkedin.com" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="social-link">💼</a>
+                <a href="https://instagram.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Instagram" className="social-link" title="Instagram">📸</a>
+                <a href="https://facebook.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Facebook" className="social-link" title="Facebook">👍</a>
+                <a href="https://youtube.com/homeservice99" target="_blank" rel="noreferrer" aria-label="YouTube" className="social-link" title="YouTube">▶️</a>
+                <a href="https://linkedin.com/company/homeservice99" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="social-link" title="LinkedIn">💼</a>
+                <a href="https://twitter.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Twitter" className="social-link" title="Twitter">𝕏</a>
               </div>
             </div>
 
             <div style={{ marginTop: 14 }}>
-              <div className="footer-col-title" style={{ marginBottom: 8 }}>We accept</div>
-              <div className="payments" aria-hidden="true">💳 UPI • Card • Netbanking</div>
+              <div className="footer-col-title" style={{ marginBottom: 10 }}>Payment Methods</div>
+              <div className="payments">
+                <span>💳 Credit/Debit Card</span>
+                <span>📱 UPI</span>
+                <span>🏦 Net Banking</span>
+              </div>
             </div>
           </div>
 
         </div>
 
+        {/* Quick Service Categories */}
+        <div className="footer-divider"></div>
+        
+        <div className="footer-quick-services">
+          <h3 className="footer-quick-title">Quick Service Access</h3>
+          <div className="footer-services-grid">
+            {services.map(service => (
+              <button
+                key={service.query}
+                className="footer-service-chip"
+                onClick={() => navigate(`/services?category=${service.query}`)}
+                title={`Browse ${service.name}`}
+              >
+                <span className="service-chip-icon">{service.icon}</span>
+                <span className="service-chip-name">{service.name}</span>
+              </button>
+            ))}
+          </div>
+        </div>
+
         {/* Footer Bottom */}
+        <div className="footer-divider"></div>
         <div className="footer-bottom">
-          <span>© {new Date().getFullYear()} HomeService99. All rights reserved.</span>
-          <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
-            <button className="btn-outline" onClick={backToTop} aria-label="Back to top">Back to top</button>
-            <span className="muted">Built with ❤️ in India · UI only</span>
+          <div className="footer-bottom-left">
+            <span className="copyright">© {new Date().getFullYear()} <strong>HomeService99</strong> · All rights reserved</span>
+            <span className="footer-tagline">Trusted by millions for professional home services</span>
+          </div>
+          <div className="footer-bottom-center">
+            <div className="footer-rating">
+              <span>⭐ 4.8/5 Rating</span>
+              <span>✅ 50K+ Services</span>
+              <span>👥 100K+ Professionals</span>
+            </div>
+          </div>
+          <div className="footer-bottom-right">
+            <button 
+              className="btn-back-to-top" 
+              onClick={backToTop} 
+              aria-label="Back to top"
+              title="Scroll to top"
+            >
+              ⬆️ Top
+            </button>
+            <span className="footer-credit">Made in India with ❤️</span>
           </div>
         </div>
       </div>

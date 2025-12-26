@@ -17,6 +17,9 @@ import Compare from "./pages/Compare.jsx";
 import BlogList from "./pages/BlogList.jsx";
 import BlogPost from "./pages/BlogPost.jsx";
 import ServiceDetail from "./pages/ServiceDetail.jsx";
+import Disclaimer from "./pages/Disclaimer.jsx";
+import CancellationRefund from "./pages/CancellationRefund.jsx";
+import TermsConditions from "./pages/TermsConditions.jsx";
 
 /* USER ACCOUNT MODULE */
 import AccountLayout from "./pages/account/AccountLayout.jsx";
@@ -83,6 +86,9 @@ export default function App() {
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<BlogList />} />
           <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/disclaimer" element={<Disclaimer />} />
+          <Route path="/cancellation-refund" element={<CancellationRefund />} />
+          <Route path="/terms-conditions" element={<TermsConditions />} />
 
           {/* USER AUTH */}
           <Route path="/login" element={<Login />} />

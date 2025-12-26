@@ -75,40 +75,40 @@ export default function Home() {
 
   const SERVICES_BY_CATEGORY = {
     Cleaning: [
-      { id: 'cl1', title: 'Full Home Deep Cleaning', price: 1999, image: 'https://img.icons8.com/fluency/96/broom.png' },
-      { id: 'cl2', title: 'Kitchen Deep Cleaning', price: 899, image: 'https://img.icons8.com/fluency/96/kitchen.png' },
-      { id: 'cl3', title: 'Bathroom & Toilet Cleaning', price: 499, image: 'https://img.icons8.com/fluency/96/bathtub.png' },
-      { id: 'cl4', title: 'Sofa Cleaning', price: 569, image: 'https://img.icons8.com/fluency/96/sofa.png' },
-      { id: 'cl5', title: 'Carpet Cleaning', price: 699, image: 'https://img.icons8.com/fluency/96/carpet.png' },
-      { id: 'cl6', title: 'Mattress Cleaning', price: 499, image: 'https://img.icons8.com/fluency/96/mattress.png' },
-      { id: 'cl7', title: 'Window & Glass Cleaning', price: 299, image: 'https://img.icons8.com/fluency/96/window.png' },
-      { id: 'cl8', title: 'Water Tank Cleaning', price: 799, image: 'https://img.icons8.com/fluency/96/water-tap.png' },
-      { id: 'cl9', title: 'Move-In / Move-Out Cleaning', price: 2499, image: 'https://img.icons8.com/fluency/96/moving-truck.png' },
-      { id: 'cl10', title: 'Post-Construction Cleaning', price: 2999, image: 'https://img.icons8.com/fluency/96/construction.png' }
+      { id: 'cl1', title: 'Full Home Deep Cleaning', price: 1999, image: 'https://i.postimg.cc/jdFmRtz7/Gemini-Generated-Image-kwxs91kwxs91kwxs.png' },
+      { id: 'cl2', title: 'Kitchen Deep Cleaning', price: 899, image: 'https://i.postimg.cc/HkSxYJ6n/Gemini-Generated-Image-20t86s20t86s20t8.png' },
+      { id: 'cl3', title: 'Bathroom & Toilet Cleaning', price: 499, image: 'https://i.postimg.cc/9f8JYBJQ/Gemini-Generated-Image-isvbauisvbauisvb.png' },
+      { id: 'cl4', title: 'Sofa Cleaning', price: 569, image: 'https://i.postimg.cc/rpNLV7V3/Gemini-Generated-Image-fw4oj8fw4oj8fw4o.png' },
+      { id: 'cl5', title: 'Carpet Cleaning', price: 699, image: 'https://i.postimg.cc/R0XbbmV3/Gemini-Generated-Image-x3ihmvx3ihmvx3ih.png' },
+      { id: 'cl6', title: 'Mattress Cleaning', price: 499, image: 'https://i.postimg.cc/nV0BjLSc/Gemini-Generated-Image-h4zojbh4zojbh4zo.png' },
+      { id: 'cl7', title: 'Window & Glass Cleaning', price: 299, image: 'https://i.postimg.cc/sgyMTdLz/Gemini-Generated-Image-93bou793bou793bo.png' },
+      { id: 'cl8', title: 'Water Tank Cleaning', price: 799, image: 'https://i.postimg.cc/Dz6Lryfs/Gemini-Generated-Image-nx1iasnx1iasnx1i.png' },
+      { id: 'cl9', title: 'Move-In / Move-Out Cleaning', price: 2499, image: 'https://i.postimg.cc/gky9qfR6/Gemini-Generated-Image-vfofnivfofnivfof.png' },
+      { id: 'cl10', title: 'Post-Construction Cleaning', price: 2999, image: 'https://i.postimg.cc/qM1wTwH2/Gemini-Generated-Image-22zfvo22zfvo22zf.png' }
     ],
 
     Electrician: [
-      { id: 'el1', title: 'Switch & Socket Repair', price: 199, image: 'https://img.icons8.com/fluency/96/switch.png' },
-      { id: 'el2', title: 'Fan Installation / Repair', price: 299, image: 'https://img.icons8.com/fluency/96/ceiling-fan.png' },
-      { id: 'el3', title: 'Light / Chandelier Installation', price: 399, image: 'https://img.icons8.com/fluency/96/lighting.png' },
-      { id: 'el4', title: 'MCB / Fuse Repair', price: 499, image: 'https://img.icons8.com/fluency/96/fuse.png' },
-      { id: 'el5', title: 'Inverter & UPS Installation', price: 799, image: 'https://img.icons8.com/fluency/96/inverter.png' },
-      { id: 'el6', title: 'Doorbell Installation', price: 249, image: 'https://img.icons8.com/fluency/96/doorbell.png' },
-      { id: 'el7', title: 'Wiring & Rewiring', price: 999, image: 'https://img.icons8.com/fluency/96/wiring.png' },
-      { id: 'el8', title: 'Short Circuit Fix', price: 399, image: 'https://img.icons8.com/fluency/96/short-circuit.png' },
-      { id: 'el9', title: 'Appliance Electrical Issues', price: 499, image: 'https://img.icons8.com/fluency/96/wrench.png' }
+      { id: 'el1', title: 'Switch & Socket Repair', price: 199, image: 'https://i.postimg.cc/hGmtLKL3/Gemini-Generated-Image-w66mf8w66mf8w66m.png' },
+      { id: 'el2', title: 'Fan Installation / Repair', price: 299, image: 'https://i.postimg.cc/v8NCs5FK/Gemini-Generated-Image-bx1oyjbx1oyjbx1o.png' },
+      { id: 'el3', title: 'Light / Chandelier Installation', price: 399, image: 'https://i.postimg.cc/1t2xJFyG/Gemini-Generated-Image-4krxr54krxr54krx.png' },
+      { id: 'el4', title: 'MCB / Fuse Repair', price: 499, image: 'https://i.postimg.cc/ncQVbH5D/Gemini-Generated-Image-36zmzq36zmzq36zm.png' },
+      { id: 'el5', title: 'Inverter & UPS Installation', price: 799, image: 'https://i.postimg.cc/sgmgKTqp/Gemini-Generated-Image-g6mtfog6mtfog6mt.png' },
+      { id: 'el6', title: 'Doorbell Installation', price: 249, image: 'https://i.postimg.cc/0jyfMWTn/Gemini-Generated-Image-9oknt09oknt09okn.png' },
+      { id: 'el7', title: 'Wiring & Rewiring', price: 999, image: 'https://i.postimg.cc/8cf70LMC/Gemini-Generated-Image-tamxt5tamxt5tamx.png' },
+      { id: 'el8', title: 'Short Circuit Fix', price: 399, image: 'https://i.postimg.cc/W1BkLWX2/Gemini-Generated-Image-419nud419nud419n.png' },
+      { id: 'el9', title: 'Appliance Electrical Issues', price: 499, image: 'https://i.postimg.cc/Kjh1CRNp/Gemini-Generated-Image-ftxwwlftxwwlftxw.png' }
     ],
 
     Plumber: [
-      { id: 'pl1', title: 'Tap & Mixer Repair', price: 199, image: 'https://img.icons8.com/fluency/96/faucet.png' },
-      { id: 'pl2', title: 'Basin & Sink Installation', price: 499, image: 'https://img.icons8.com/fluency/96/sink.png' },
-      { id: 'pl3', title: 'Toilet Repair / Installation', price: 599, image: 'https://img.icons8.com/fluency/96/toilet.png' },
-      { id: 'pl4', title: 'Pipe Leakage Fix', price: 349, image: 'https://img.icons8.com/fluency/96/leak.png' },
-      { id: 'pl5', title: 'Blockage Removal', price: 399, image: 'https://img.icons8.com/fluency/96/drain.png' },
-      { id: 'pl6', title: 'Water Motor Installation', price: 999, image: 'https://img.icons8.com/fluency/96/water-pump.png' },
-      { id: 'pl7', title: 'Overhead Tank Pipe Work', price: 699, image: 'https://img.icons8.com/fluency/96/water-tower.png' },
-      { id: 'pl8', title: 'Bathroom Fittings Installation', price: 399, image: 'https://img.icons8.com/fluency/96/shower.png' },
-      { id: 'pl9', title: 'Full Plumbing Inspection', price: 499, image: 'https://img.icons8.com/fluency/96/inspection.png' }
+      { id: 'pl1', title: 'Tap & Mixer Repair', price: 199, image: 'https://i.postimg.cc/jSnLqHF2/Gemini-Generated-Image-v6q2mfv6q2mfv6q2.png' },
+      { id: 'pl2', title: 'Basin & Sink Installation', price: 499, image: 'https://i.postimg.cc/xTwbzpH3/Gemini-Generated-Image-plfkrcplfkrcplfk.png' },
+      { id: 'pl3', title: 'Toilet Repair / Installation', price: 599, image: 'https://i.postimg.cc/FK8KM7ZP/Gemini-Generated-Image-kd6smxkd6smxkd6s.png' },
+      { id: 'pl4', title: 'Pipe Leakage Fix', price: 349, image: 'https://i.postimg.cc/TYC42mD6/Gemini-Generated-Image-ao0q82ao0q82ao0q.png' },
+      { id: 'pl5', title: 'Blockage Removal', price: 399, image: 'https://i.postimg.cc/7Y6NVR5C/Gemini-Generated-Image-oz6j8voz6j8voz6j.png' },
+      { id: 'pl6', title: 'Water Motor Installation', price: 999, image: 'https://i.postimg.cc/8C83xGv7/Gemini-Generated-Image-7ra0kk7ra0kk7ra0.png' },
+      { id: 'pl7', title: 'Overhead Tank Pipe Work', price: 699, image: 'https://i.postimg.cc/GtkJ80tp/Gemini-Generated-Image-tgktfetgktfetgkt.png' },
+      { id: 'pl8', title: 'Bathroom Fittings Installation', price: 399, image: 'https://i.postimg.cc/50568fBR/Gemini-Generated-Image-1lac7b1lac7b1lac.png' },
+      { id: 'pl9', title: 'Full Plumbing Inspection', price: 499, image: 'https://i.postimg.cc/qBSvghHV/Gemini-Generated-Image-x069nvx069nvx069.png' }
     ],
 
     Appliances: [
