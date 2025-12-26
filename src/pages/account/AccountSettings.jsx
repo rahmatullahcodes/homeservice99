@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useToast } from "../../context/ToastContext";
 import { useNavigate } from "react-router-dom";
+import "../../styles/account.css";
 
 export default function AccountSettings() {
 
@@ -58,86 +59,187 @@ export default function AccountSettings() {
   }
 
   return (
-    <div className="settings-wrapper">
+    <div className="dashboard-wrapper">
 
-      <h2>Account Settings</h2>
+      <h2 className="dashboard-title">Account Settings</h2>
+      <p className="dashboard-subtitle">Manage your account preferences and security</p>
 
       {/* TABS */}
-      <div className="settings-tabs">
-        <button onClick={()=>setTab("profile")} className={tab==="profile" ? "active" : ""}>Profile</button>
-        <button onClick={()=>setTab("address")} className={tab==="address" ? "active" : ""}>Address</button>
-        <button onClick={()=>setTab("password")} className={tab==="password" ? "active" : ""}>Password</button>
+      <div className="account-tabs">
+        <button className={`account-tab-button ${tab === "profile" ? "active" : ""}`} onClick={() => setTab("profile")}>👤 Profile</button>
+        <button className={`account-tab-button ${tab === "address" ? "active" : ""}`} onClick={() => setTab("address")}>📍 Address</button>
+        <button className={`account-tab-button ${tab === "password" ? "active" : ""}`} onClick={() => setTab("password")}>🔒 Password</button>
+        <button className={`account-tab-button ${tab === "danger" ? "active" : ""}`} onClick={() => setTab("danger")}>⚠️ Danger Zone</button>
       </div>
 
-      {/* PROFILE */}
+      {/* PROFILE TAB */}
       {tab === "profile" && (
-        <div className="settings-box">
-          <h3>Profile Info</h3>
-          <input value={name} onChange={e=>setName(e.target.value)} placeholder="Full Name" />
-          <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" />
-          <input value={phone} onChange={e=>setPhone(e.target.value)} placeholder="Phone" />
-          <button className="btn-primary" onClick={saveProfile}>Save</button>
+        <div className="account-card">
+          <h3 style={{ marginBottom: "20px" }}>Profile Information</h3>
+          
+          <div className="account-form-group">
+            <label htmlFor="name">Full Name</label>
+            <input 
+              id="name"
+              type="text"
+              value={name} 
+              onChange={e => setName(e.target.value)} 
+              placeholder="Your full name"
+              className="account-form-input"
+            />
+          </div>
+
+          <div className="account-form-group">
+            <label htmlFor="email">Email Address</label>
+            <input 
+              id="email"
+              type="email"
+              value={email} 
+              onChange={e => setEmail(e.target.value)} 
+              placeholder="your@email.com"
+              className="account-form-input"
+            />
+          </div>
+
+          <div className="account-form-group">
+            <label htmlFor="phone">Phone Number</label>
+            <input 
+              id="phone"
+              type="tel"
+              value={phone} 
+              onChange={e => setPhone(e.target.value)} 
+              placeholder="Your phone number"
+              className="account-form-input"
+            />
+          </div>
+
+          <button className="account-btn primary" onClick={saveProfile}>💾 Save Profile Changes</button>
         </div>
       )}
 
-      {/* ADDRESS */}
+      {/* ADDRESS TAB */}
       {tab === "address" && (
-        <div className="settings-box">
-          <h3>Saved Address</h3>
-          <textarea rows="3" value={address} onChange={e=>setAddress(e.target.value)} />
-          <button className="btn-primary" onClick={saveAddress}>Save</button>
+        <div className="account-card">
+          <h3 style={{ marginBottom: "20px" }}>Saved Address</h3>
+          
+          <div className="account-form-group">
+            <label htmlFor="address">Home Address</label>
+            <textarea 
+              id="address"
+              rows="4"
+              value={address} 
+              onChange={e => setAddress(e.target.value)}
+              placeholder="House no, street, city, state, pincode"
+              className="account-form-input"
+            />
+          </div>
+
+          <button className="account-btn primary" onClick={saveAddress}>💾 Save Address</button>
         </div>
       )}
 
-      {/* PASSWORD */}
+      {/* PASSWORD TAB */}
       {tab === "password" && (
-        <div className="settings-box">
-          <h3>Change Password</h3>
+        <div className="account-card">
+          <h3 style={{ marginBottom: "20px" }}>Change Password</h3>
 
-          {passMsg && <p className="settings-msg">{passMsg}</p>}
+          {passMsg && (
+            <div className={`account-alert ${passMsg.includes("✅") ? "success" : "danger"}`} style={{ marginBottom: "16px" }}>
+              {passMsg}
+            </div>
+          )}
 
-          <input type={show?"text":"password"} placeholder="Current password" value={current} onChange={e=>setCurrent(e.target.value)} />
-          <input type={show?"text":"password"} placeholder="New password" value={newPass} onChange={e=>setNewPass(e.target.value)} />
-          <input type={show?"text":"password"} placeholder="Confirm password" value={confirm} onChange={e=>setConfirm(e.target.value)} />
+          <div className="account-form-group">
+            <label htmlFor="current">Current Password</label>
+            <input 
+              id="current"
+              type={show ? "text" : "password"} 
+              placeholder="Enter current password"
+              value={current} 
+              onChange={e => setCurrent(e.target.value)}
+              className="account-form-input"
+            />
+          </div>
 
-          <label className="show-toggle">
-            <input type="checkbox" onChange={()=>setShow(!show)} /> Show Password
-          </label>
+          <div className="account-form-group">
+            <label htmlFor="new">New Password</label>
+            <input 
+              id="new"
+              type={show ? "text" : "password"} 
+              placeholder="Enter new password"
+              value={newPass} 
+              onChange={e => setNewPass(e.target.value)}
+              className="account-form-input"
+            />
+          </div>
 
-          <button className="btn-primary" onClick={updatePassword}>Update</button>
+          <div className="account-form-group">
+            <label htmlFor="confirm">Confirm Password</label>
+            <input 
+              id="confirm"
+              type={show ? "text" : "password"} 
+              placeholder="Confirm new password"
+              value={confirm} 
+              onChange={e => setConfirm(e.target.value)}
+              className="account-form-input"
+            />
+          </div>
+
+          <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
+            <input 
+              type="checkbox" 
+              id="show-pass"
+              onChange={() => setShow(!show)}
+              checked={show}
+            />
+            <label htmlFor="show-pass" style={{ margin: 0 }}>Show Password</label>
+          </div>
+
+          <button className="account-btn primary" onClick={updatePassword}>🔒 Update Password</button>
         </div>
       )}
-      {/* DELETE ACCOUNT */}
-      <section className="settings-box danger-zone">
-        <h3>Delete Account</h3>
 
-        <p className="danger-text">
-          This action is permanent. All data will be removed from this device.
-        </p>
+      {/* DANGER ZONE TAB */}
+      {tab === "danger" && (
+        <div className="account-card" style={{ borderColor: "var(--account-danger)", borderWidth: "2px" }}>
+          <h3 style={{ marginBottom: "16px", color: "var(--account-danger)" }}>⚠️ Danger Zone</h3>
 
-        <button
-          className="btn-danger"
-          onClick={() => {
-            const confirm1 = window.confirm("Are you sure you want to delete your account?");
-            if (!confirm1) return;
+          <div className="account-alert danger" style={{ marginBottom: "20px" }}>
+            This action is permanent and cannot be undone. All your account data, bookings, and settings will be deleted from this device.
+          </div>
 
-            const confirm2 = window.confirm("This cannot be undone. Confirm delete?");
-            if (!confirm2) return;
+          <p style={{ color: "#6b7280", marginBottom: "20px" }}>
+            Once you delete your account, there is no going back. Please be certain.
+          </p>
 
-            // CLEAR ALL USER DATA
-            localStorage.removeItem("auth");
-            localStorage.removeItem("name");
-            localStorage.removeItem("email");
-            localStorage.removeItem("phone");
-            localStorage.removeItem("address");
+          <button
+            className="account-btn danger"
+            onClick={() => {
+              const confirm1 = window.confirm("Are you sure you want to delete your account?");
+              if (!confirm1) return;
 
-            addToast("Account deleted successfully ❌", 'success');
-            navigate('/signup');
-          }}
-        >
-          Delete My Account
-        </button>
-      </section>
+              const confirm2 = window.confirm("This cannot be undone. All your data will be deleted. Confirm?");
+              if (!confirm2) return;
+
+              // CLEAR ALL USER DATA
+              localStorage.removeItem("auth");
+              localStorage.removeItem("name");
+              localStorage.removeItem("email");
+              localStorage.removeItem("phone");
+              localStorage.removeItem("address");
+              localStorage.removeItem("userProfile");
+              localStorage.removeItem("userAddresses");
+              localStorage.removeItem("walletBalance");
+              localStorage.removeItem("walletTransactions");
+
+              addToast("Account deleted successfully", 'success');
+              setTimeout(() => navigate('/signup'), 1500);
+            }}
+          >
+            🗑️ Permanently Delete Account
+          </button>
+        </div>
+      )}
 
     </div>
   );

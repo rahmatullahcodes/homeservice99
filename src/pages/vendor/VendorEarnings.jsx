@@ -1,117 +1,100 @@
 import { useState } from "react";
 
 export default function VendorEarnings() {
+  const [period, setPeriod] = useState("month");
 
-  const [filter, setFilter] = useState("month");
-  const [payoutRequested, setPayoutRequested] = useState(false);
+  const [paymentHistory] = useState([
+    { id: 1, customer: "Rahul Sharma", service: "AC Repair", amount: 699, date: "15 Aug 2025", status: "Completed" },
+    { id: 2, customer: "Priya Verma", service: "Home Cleaning", amount: 1299, date: "14 Aug 2025", status: "Completed" },
+    { id: 3, customer: "Amit Singh", service: "Plumbing", amount: 499, date: "13 Aug 2025", status: "Completed" },
+    { id: 4, customer: "Neha Patel", service: "Electrical", amount: 1999, date: "12 Aug 2025", status: "Pending" }
+  ]);
 
-  const PAYMENTS = [
-    { id: 1, date: "Today", customer: "Rahul", service: "AC Repair", amount: 699 },
-    { id: 2, date: "Yesterday", customer: "Priya", service: "Cleaning", amount: 1299 },
-    { id: 3, date: "15 Aug", customer: "Ankit", service: "Electrician", amount: 399 }
-  ];
-
-  function requestPayout() {
-    if (payoutRequested) return;
-    setPayoutRequested(true);
-    alert("Payout request submitted (demo)");
-  }
+  const stats = {
+    month: 8200,
+    lastMonth: 7400,
+    lifetime: 45600,
+    pending: 1200
+  };
 
   return (
-    <div className="vendor-earnings">
-
-      {/* PAGE HEADER */}
+    <div>
       <div className="vendor-page-head">
         <h2>Earnings</h2>
-        <p>Track income and payouts</p>
+        <p>Track your earnings and manage payouts</p>
       </div>
 
-      {/* FILTERS */}
-      <div className="vendor-filter">
-        {["today", "week", "month", "lifetime"].map(f => (
-          <button
-            key={f}
-            className={filter === f ? "active" : ""}
-            onClick={() => setFilter(f)}
-          >
-            {f.charAt(0).toUpperCase() + f.slice(1)}
+      <div style={{ display: "flex", gap: "12px", marginBottom: "24px", flexWrap: "wrap" }}>
+        {["today", "week", "month", "lifetime"].map(p => (
+          <button key={p} className={`vendor-btn ${period === p ? "primary" : "outline"} small`} onClick={() => setPeriod(p)}>
+            {p.charAt(0).toUpperCase() + p.slice(1)}
           </button>
         ))}
       </div>
 
-      {/* SUMMARY CARDS */}
       <div className="vendor-stats-grid">
-
-        <div className="vendor-stat-card green">
-          <span>This Month</span>
-          <h3>₹8,200</h3>
-        </div>
-
         <div className="vendor-stat-card blue">
+          <span>This Month</span>
+          <h3>₹{stats.month.toLocaleString()}</h3>
+        </div>
+        <div className="vendor-stat-card green">
           <span>Last Month</span>
-          <h3>₹7,400</h3>
+          <h3>₹{stats.lastMonth.toLocaleString()}</h3>
         </div>
-
-        <div className="vendor-stat-card purple">
-          <span>Lifetime</span>
-          <h3>₹52,100</h3>
-        </div>
-
         <div className="vendor-stat-card yellow">
+          <span>Lifetime Earnings</span>
+          <h3>₹{stats.lifetime.toLocaleString()}</h3>
+        </div>
+        <div className="vendor-stat-card orange">
           <span>Pending Payout</span>
-          <h3>₹1,200</h3>
+          <h3>₹{stats.pending.toLocaleString()}</h3>
         </div>
-
       </div>
 
-      {/* PAYOUT CARD */}
-      <div className="vendor-payout-card">
+      <div className="vendor-grid-2" style={{ marginBottom: "24px", gap: "16px" }}>
+        <div className="vendor-section">
+          <h3>Earnings Chart</h3>
+          <div style={{ marginTop: "16px", height: "200px", background: "#f3f4f6", borderRadius: "8px", display: "flex", alignItems: "center", justifyContent: "center", color: "#9ca3af" }}>
+            Chart coming soon
+          </div>
+        </div>
 
-        <div>
+        <div className="vendor-section">
           <h3>Next Payout</h3>
-          <p><strong>Amount:</strong> ₹1,200</p>
-          <p><strong>Expected:</strong> 20 Aug 2025</p>
+          <p style={{ margin: "12px 0", fontSize: "12px", color: "#6b7280" }}>Amount Ready</p>
+          <p style={{ margin: "0 0 16px 0", fontSize: "28px", fontWeight: "700", color: "#16a34a" }}>₹{stats.pending.toLocaleString()}</p>
+          <p style={{ margin: "0 0 16px 0", fontSize: "13px", color: "#6b7280" }}>Expected: Aug 25, 2025</p>
+          <button className="vendor-btn primary full">Request Payout</button>
         </div>
-
-        <button
-          className={`vendor-btn primary ${payoutRequested ? "disabled" : ""}`}
-          onClick={requestPayout}
-          disabled={payoutRequested}
-        >
-          {payoutRequested ? "Payout Requested" : "Request Payout"}
-        </button>
-
       </div>
 
-      {/* PAYMENT HISTORY */}
-      <div className="vendor-activity">
-
+      <div className="vendor-section">
         <h3>Payment History</h3>
-
-        {PAYMENTS.length === 0 && (
-          <div className="detail-box">
-            No earnings yet.
-          </div>
-        )}
-
-        {PAYMENTS.map(p => (
-          <div key={p.id} className="vendor-activity-item">
-
-            <div className="activity-left">
-              <strong>{p.customer}</strong>
-              <span>{p.service}</span>
-            </div>
-
-            <div className="activity-right">
-              <strong className="activity-amount">₹{p.amount}</strong>
-              <small className="activity-date">{p.date}</small>
-            </div>
-
-          </div>
-        ))}
-
+        <div style={{ overflowX: "auto", marginTop: "16px" }}>
+          <table className="vendor-table">
+            <thead>
+              <tr>
+                <th>Date</th>
+                <th>Customer</th>
+                <th>Service</th>
+                <th>Amount</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {paymentHistory.map(p => (
+                <tr key={p.id}>
+                  <td className="muted">{p.date}</td>
+                  <td>{p.customer}</td>
+                  <td className="muted">{p.service}</td>
+                  <td style={{ fontWeight: "600", color: "#16a34a" }}>₹{p.amount}</td>
+                  <td><span className={`vendor-badge ${p.status.toLowerCase()}`}>{p.status}</span></td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       </div>
-
     </div>
   );
 }

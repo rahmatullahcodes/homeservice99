@@ -6,62 +6,62 @@ export default function AdminDashboard() {
       <div className="admin-page-head">
         <h2>Dashboard</h2>
         <p className="admin-subtitle">
-          Platform overview & real-time insights
+          Real-time platform overview & key metrics
         </p>
       </div>
 
-      {/* KPI CARDS */}
+      {/* KPI CARDS - MAIN METRICS */}
       <div className="admin-kpi-grid">
         <div className="kpi-card">
           <span>Total Users</span>
-          <h3>142</h3>
-          <small className="positive">+12 this week</small>
+          <h3>2,847</h3>
+          <small className="positive">+142 this month</small>
         </div>
 
         <div className="kpi-card">
           <span>Total Vendors</span>
-          <h3>38</h3>
-          <small className="positive">+3 approved</small>
+          <h3>156</h3>
+          <small className="positive">+18 approved</small>
         </div>
 
         <div className="kpi-card">
           <span>Total Bookings</span>
-          <h3>512</h3>
-          <small className="neutral">Today: 14</small>
+          <h3>5,428</h3>
+          <small className="neutral">↗ 12% from last month</small>
         </div>
 
         <div className="kpi-card">
           <span>Total Revenue</span>
-          <h3>₹2,45,000</h3>
-          <small className="positive">+₹18,200 this month</small>
+          <h3>₹24,50,000</h3>
+          <small className="positive">+₹1,82,000 this month</small>
         </div>
       </div>
 
       {/* STATUS BREAKDOWN */}
       <div className="admin-section">
-        <h3>Booking Status</h3>
+        <h3>Booking Status Overview</h3>
 
         <div className="status-grid">
           <div className="status-card pending">
             <strong>Pending</strong>
-            <p>21</p>
+            <p>124</p>
           </div>
           <div className="status-card active">
             <strong>In Progress</strong>
-            <p>9</p>
+            <p>89</p>
           </div>
           <div className="status-card success">
             <strong>Completed</strong>
-            <p>460</p>
+            <p>4,892</p>
           </div>
           <div className="status-card danger">
             <strong>Cancelled</strong>
-            <p>22</p>
+            <p>323</p>
           </div>
         </div>
       </div>
 
-      {/* RECENT BOOKINGS */}
+      {/* RECENT BOOKINGS TABLE */}
       <div className="admin-section">
         <h3>Recent Bookings</h3>
 
@@ -74,37 +74,74 @@ export default function AdminDashboard() {
           </div>
 
           <div className="table-row">
-            <span>Rahul</span>
-            <span>AC Repair</span>
+            <span>Rahul Kumar</span>
+            <span>AC Repair & Service</span>
             <span className="tag success">Completed</span>
             <span>₹699</span>
           </div>
 
           <div className="table-row">
-            <span>Pooja</span>
-            <span>Cleaning</span>
+            <span>Pooja Singh</span>
+            <span>Home Deep Cleaning</span>
             <span className="tag pending">Pending</span>
             <span>₹1,999</span>
           </div>
 
           <div className="table-row">
-            <span>Ankit</span>
-            <span>Plumbing</span>
+            <span>Ankit Patel</span>
+            <span>Plumbing Installation</span>
             <span className="tag active">In Progress</span>
-            <span>₹299</span>
+            <span>₹2,299</span>
+          </div>
+
+          <div className="table-row">
+            <span>Nisha Sharma</span>
+            <span>Salon Services</span>
+            <span className="tag success">Completed</span>
+            <span>₹899</span>
+          </div>
+
+          <div className="table-row">
+            <span>Vikram Rao</span>
+            <span>Electrical Installation</span>
+            <span className="tag active">In Progress</span>
+            <span>₹3,499</span>
+          </div>
+        </div>
+      </div>
+
+      {/* QUICK STATS */}
+      <div className="admin-section">
+        <h3>Platform Health</h3>
+
+        <div className="status-grid">
+          <div className="status-card success">
+            <strong>System Uptime</strong>
+            <p>99.9%</p>
+          </div>
+          <div className="status-card active">
+            <strong>Avg Response</strong>
+            <p>245ms</p>
+          </div>
+          <div className="status-card pending">
+            <strong>Support Tickets</strong>
+            <p>34</p>
+          </div>
+          <div className="status-card active">
+            <strong>Active Users</strong>
+            <p>1,234</p>
           </div>
         </div>
       </div>
 
       {/* QUICK ACTIONS */}
-      <div className="admin-section">
+      <div className="admin-section mt-24">
         <h3>Quick Actions</h3>
-
         <div className="quick-actions">
-          <button className="btn-outline">Approve Vendors</button>
-          <button className="btn-outline">Create Coupon</button>
-          <button className="btn-outline">Send Notification</button>
-          <button className="btn-outline">View Reports</button>
+          <button className="btn-sm">+ Approve Vendor</button>
+          <button className="btn-sm">+ Create Coupon</button>
+          <button className="btn-sm">+ Send Notification</button>
+          <button className="btn-sm outline">View Reports</button>
         </div>
       </div>
 

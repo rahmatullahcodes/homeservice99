@@ -6,6 +6,11 @@ import { useToast } from "../context/ToastContext";
 export default function Home() {
   const [location, setLocation] = useState("india");
   const [detecting, setDetecting] = useState(false);
+  
+  // Enhanced modal state to support subcategories
+  const [modalOpen, setModalOpen] = useState(false);
+  const [modalCategory, setModalCategory] = useState(null);
+  const [selectedSubcategory, setSelectedSubcategory] = useState(null);
 
   const categories = [
     { title: "Home Cleaning", key: "Cleaning", img: "https://images.unsplash.com/photo-1581578731548-c64695cc6952" },
@@ -21,19 +26,43 @@ export default function Home() {
     { title: "More Services", key: "All", img: "https://images.unsplash.com/photo-1600585154340-be6161a56a0c" }
   ];
 
-  // emoji icons used for compact mobile tiles (keeps assets lightweight and consistent)
-  const ICONS = {
-    Cleaning: '🧹',
-    Electrician: '💡',
-    Plumber: '🚰',
-    Appliances: '❄️',
-    Beauty: '💄',
-    Men: '💈',
-    Painting: '🎨',
-    Carpentry: '🪚',
-    Maintenance: '🔧',
-    Pest: '🐜',
-    All: '⋯'
+  // Professional category icons (folder/category style)
+  const CATEGORY_ICONS = {
+    Cleaning: 'https://cdn-icons-png.flaticon.com/512/4097/4097458.png',
+    Electrician: 'https://cdn-icons-png.flaticon.com/512/929/929430.png',
+    Plumber: 'https://cdn-icons-png.flaticon.com/512/1995/1995501.png',
+    Appliances: 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png',
+    Beauty: 'https://cdn-icons-png.flaticon.com/512/3621/3621997.png',
+    Men: 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+    Painting: 'https://cdn-icons-png.flaticon.com/512/3191/3191288.png',
+    Carpentry: 'https://cdn-icons-png.flaticon.com/512/1995/1995548.png',
+    Maintenance: 'https://cdn-icons-png.flaticon.com/512/924/924514.png',
+    Pest: 'https://cdn-icons-png.flaticon.com/512/1995/1995543.png',
+    All: 'https://cdn-icons-png.flaticon.com/512/4436/4436481.png'
+  };
+
+  // Subcategory folder icons
+  const SUBCATEGORY_ICONS = {
+    'Home Cleaning': 'https://cdn-icons-png.flaticon.com/512/3050/3050159.png',
+    'Specific Cleaning': 'https://cdn-icons-png.flaticon.com/512/681/681494.png',
+    'AC Services': 'https://cdn-icons-png.flaticon.com/512/2921/2921222.png',
+    'Kitchen Appliances': 'https://cdn-icons-png.flaticon.com/512/1995/1995467.png',
+    'Hair Services': 'https://cdn-icons-png.flaticon.com/512/1995/1995542.png',
+    'Skin & Facial': 'https://cdn-icons-png.flaticon.com/512/3621/3621997.png',
+    'Special Services': 'https://cdn-icons-png.flaticon.com/512/1995/1995473.png',
+    'Grooming': 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+    'Styling & Care': 'https://cdn-icons-png.flaticon.com/512/3135/3135715.png',
+    'Wall Services': 'https://cdn-icons-png.flaticon.com/512/3191/3191288.png',
+    'Protective Services': 'https://cdn-icons-png.flaticon.com/512/3191/3191288.png',
+    'Furniture': 'https://cdn-icons-png.flaticon.com/512/1995/1995548.png',
+    'Doors & Windows': 'https://cdn-icons-png.flaticon.com/512/1995/1995548.png',
+    'Installation': 'https://cdn-icons-png.flaticon.com/512/924/924514.png',
+    'Handyman': 'https://cdn-icons-png.flaticon.com/512/924/924514.png',
+    'Pest Control': 'https://cdn-icons-png.flaticon.com/512/1995/1995543.png',
+    'Electrical Repairs': 'https://cdn-icons-png.flaticon.com/512/929/929430.png',
+    'Major Installations': 'https://cdn-icons-png.flaticon.com/512/929/929430.png',
+    'Plumbing Repairs': 'https://cdn-icons-png.flaticon.com/512/1995/1995501.png',
+    'Installation Services': 'https://cdn-icons-png.flaticon.com/512/1995/1995501.png'
   };
 
   // small sample services (used in modal quick-list)
@@ -157,14 +186,58 @@ export default function Home() {
     ]
   };
 
+  // Subcategories for better browsing experience
+  const SUBCATEGORIES = {
+    Appliances: {
+      'AC Services': ['ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6'],
+      'Kitchen Appliances': ['ap7', 'ap8', 'ap9', 'ap10', 'ap11', 'ap12', 'ap13']
+    },
+    Cleaning: {
+      'Home Cleaning': ['cl1', 'cl2', 'cl3', 'cl4', 'cl5', 'cl9', 'cl10'],
+      'Specific Cleaning': ['cl6', 'cl7', 'cl8']
+    },
+    Beauty: {
+      'Hair Services': ['b1', 'b2', 'b3'],
+      'Skin & Facial': ['b4', 'b5', 'b6'],
+      'Special Services': ['b7', 'b8', 'b9']
+    },
+    Men: {
+      'Grooming': ['m1', 'm2', 'm3'],
+      'Styling & Care': ['m4', 'm5', 'm6']
+    },
+    Painting: {
+      'Wall Services': ['pt1', 'pt2', 'pt3'],
+      'Protective Services': ['pt4', 'pt5', 'pt6', 'pt7']
+    },
+    Carpenter: {
+      'Furniture': ['cr1', 'cr4', 'cr6'],
+      'Doors & Windows': ['cr2', 'cr3', 'cr5']
+    },
+    Maintenance: {
+      'Installation': ['mt2', 'mt3', 'mt5'],
+      'Handyman': ['mt1', 'mt4']
+    },
+    Pest: {
+      'Pest Control': ['ps1', 'ps2', 'ps3', 'ps4', 'ps5', 'ps6']
+    },
+    Electrician: {
+      'Electrical Repairs': ['el1', 'el2', 'el3', 'el8'],
+      'Major Installations': ['el4', 'el5', 'el6', 'el7', 'el9']
+    },
+    Plumber: {
+      'Plumbing Repairs': ['pl1', 'pl4', 'pl5'],
+      'Installation Services': ['pl2', 'pl3', 'pl6', 'pl7', 'pl8', 'pl9']
+    }
+  };
+
   // offers data (used in Offers carousel)
   const OFFERS = [
-    { id: 1, title: 'Winter Home Care Special', subtitle: 'Get 20% off on all services', discount: '20%', cta: 'Claim Offer', img: 'https://images.unsplash.com/photo-1549187774-b4e9f043d2e3' },
-    { id: 2, title: 'Deep Sofa & Upholstery Cleaning', subtitle: 'Just ₹569 - Deep clean & sanitize', discount: 'Save ₹400', cta: 'Book Now', img: 'https://images.unsplash.com/photo-1560184897-6b2d3d8a2b88' },
-    { id: 3, title: 'Salon Services for Women', subtitle: 'Hair, makeup, spa - all under one app', discount: 'Starting ₹199', cta: 'Explore', img: 'https://images.unsplash.com/photo-1524504388940-b1c1722653e1' },
-    { id: 4, title: 'AC Maintenance & Service', subtitle: 'Avoid summer breakdowns - preventive care', discount: 'Full inspection ₹599', cta: 'Schedule', img: 'https://images.unsplash.com/photo-1547407969-5a0fa7a36f3d' },
-    { id: 5, title: 'Complete Kitchen Deep Clean', subtitle: 'Hygienic, sparkling, and organized', discount: 'Starting ₹899', cta: 'Book Now', img: 'https://images.unsplash.com/photo-1600585154340-be6161a56a0c' },
-    { id: 6, title: 'Home Painting Services', subtitle: 'Interior & exterior - professional quality', discount: 'Free quote', cta: 'Get Quote', img: 'https://images.unsplash.com/photo-1600607686527-6fb886090705' }
+    { id: 1, title: 'Winter Home Care Special', subtitle: 'Get 20% off on all services', discount: '20%', cta: 'Get Quote', img: 'https://i.postimg.cc/xdGnf4T5/1.jpg' },
+    { id: 2, title: 'Deep Sofa & Upholstery Cleaning', subtitle: 'Just ₹569 - Deep clean & sanitize', discount: 'Save ₹400', cta: 'Get Quote', img: 'https://i.postimg.cc/XqxCdmz4/Chat-GPT-Image-Dec-24-2025-03-28-53-PM.png' },
+    { id: 3, title: 'Salon Services for Women', subtitle: 'Hair, makeup, spa - all under one app', discount: 'Starting ₹199', cta: 'Get Quote', img: 'https://i.postimg.cc/CKRk9bhM/s1.webp' },
+    { id: 4, title: 'AC Maintenance & Service', subtitle: 'Avoid summer breakdowns - preventive care', discount: 'Full inspection ₹599', cta: 'Get Quote', img: 'https://i.postimg.cc/BnkfJCCH/ac-maintenance.jpg' },
+    { id: 5, title: 'Complete Kitchen Deep Clean', subtitle: 'Hygienic, sparkling, and organized', discount: 'Starting ₹899', cta: 'Get Quote', img: 'https://i.postimg.cc/C1tvWFTQ/professional-kitchen-cleaning-hometriangle-blog.jpg' },
+    { id: 6, title: 'Home Painting Services', subtitle: 'Interior & exterior - professional quality', discount: 'Free quote', cta: 'Get Quote', img: 'https://i.postimg.cc/PrvMBzPf/wall-painting-service.jpg' }
   ];
 
   async function getLocation() {
@@ -211,16 +284,23 @@ export default function Home() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
-  const [modalOpen, setModalOpen] = useState(false);
-  const [modalCategory, setModalCategory] = useState(null);
-
   function openCategoryModal(catKey) {
     setModalCategory(catKey);
+    setSelectedSubcategory(null);
     setModalOpen(true);
+  }
+
+  function selectSubcategory(subcat) {
+    setSelectedSubcategory(subcat);
+  }
+
+  function backToCategory() {
+    setSelectedSubcategory(null);
   }
 
   function viewAllCategory(catKey) {
     setModalOpen(false);
+    setSelectedSubcategory(null);
     navigate(`/services?category=${encodeURIComponent(catKey)}`);
   }
 
@@ -315,11 +395,11 @@ export default function Home() {
 
     <h1 className="hero-title">HomeService99: Trusted Home Services at Your Doorstep</h1>
 
-    <p className="hero-subtitle">
+    {/* <p className="hero-subtitle">
       Book verified professionals for cleaning, repairs, beauty, and maintenance in minutes. Transparent pricing, quality guaranteed, and payment after service completion.
-    </p>
+    </p> */}
 
-    <div className="search-card">
+    {/* <div className="search-card">
 
       <div className="search-location" onClick={getLocation} style={{ cursor: "pointer" }} aria-hidden="false">
         {detecting ? "Detecting location..." : `${location} · Change`}
@@ -330,7 +410,7 @@ export default function Home() {
       </div>
 
       <button type="button" className="btn-primary" onClick={() => navigate('/services')} aria-label="Find professionals">Find professionals</button>
-    </div>
+    </div> */}
 
     <div className="search-helpers">
       <div className="search-pill">Background-verified experts</div>
@@ -349,7 +429,9 @@ export default function Home() {
       <div className="category-grid" aria-hidden={false}>
         {categories.slice(0, 9).map((c) => (
           <button key={c.key} className="category-tile" onClick={() => openCategoryModal(c.key)} aria-label={c.title}>
-            <div className="category-icon" aria-hidden="true">{ICONS[c.key] || '🔧'}</div>
+            <div className="category-icon" aria-hidden="true">
+              <img src={CATEGORY_ICONS[c.key] || CATEGORY_ICONS['All']} alt={c.title} style={{width: '48px', height: '48px', objectFit: 'contain'}} />
+            </div>
             <span>{c.title}</span>
           </button>
         ))}
@@ -361,50 +443,149 @@ export default function Home() {
   <div>
     <div className="hero-mosaic">
       <div className="mosaic-item large">
-        <img src="https://images.unsplash.com/photo-1544717305-2782549b5136" alt="Salon" />
+        <img src="https://i.postimg.cc/JzC2BKTC/Gemini-Generated-Image-s06x51s06x51s06x.png" alt="Salon" />
       </div>
       <div className="mosaic-item">
-        <img src="https://images.unsplash.com/photo-1600180758890-1f7a5f3f7d3b" alt="Massage" />
+        <img src="https://i.postimg.cc/X7SGMyH5/body-massage-parlour-jpg.webp" alt="Massage" />
       </div>
       <div className="mosaic-item">
-        <img src="https://images.unsplash.com/photo-1591012911202-8862c1e9a0c6" alt="Repair" />
+        <img src="https://i.postimg.cc/C1rGHLS1/834431670584630.jpg" alt="Repair" />
       </div>
       <div className="mosaic-item wide">
-        <img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36" alt="AC service" />
+        <img src="https://i.postimg.cc/1XzWsj5g/service.webp" alt="AC service" />
       </div>
     </div>
   </div>
 </section>
 
-{/* CATEGORY QUICK-MODAL */}
+{/* CATEGORY QUICK-MODAL WITH SUBCATEGORIES */}
 {modalOpen && (
   <div className="modal-backdrop" role="dialog" aria-modal="true">
     <div className="modal modal-large">
+      {/* Modal Header */}
       <div className="modal-header">
-        <h3 style={{ margin: 0 }}>{modalCategory} Services <span style={{ fontSize: 13, color: '#6b7280', fontWeight: 500 }}> - Select a service</span></h3>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+          {selectedSubcategory && (
+            <button 
+              className="btn-icon" 
+              onClick={backToCategory}
+              aria-label="Back to categories"
+              style={{
+                background: 'none',
+                border: 'none',
+                fontSize: '20px',
+                cursor: 'pointer',
+                padding: '4px',
+                display: 'flex',
+                alignItems: 'center'
+              }}
+            >
+              ←
+            </button>
+          )}
+          <div>
+            <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '600' }}>
+              {selectedSubcategory ? selectedSubcategory : `${modalCategory} Services`}
+            </h3>
+            <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>
+              {selectedSubcategory ? 'Select a service' : 'Choose a category'}
+            </p>
+          </div>
+        </div>
         <button className="btn-outline" onClick={() => setModalOpen(false)} aria-label="Close modal">✕</button>
       </div>
 
-      <div className="modal-grid">
-        {(modalCategory === 'All' ? Object.values(SERVICES_BY_CATEGORY).flat() : (SERVICES_BY_CATEGORY[modalCategory] || SAMPLE_SERVICES)).map(s => (
-          <div key={s.id} className="service-tile">
-            <img src={s.image} alt={s.title} className="service-icon" />
-            <div className="service-tile-body">
-              <strong style={{ fontSize: 14 }}>{s.title}</strong>
-              <div style={{ fontSize: 13, color: '#6b7280' }}>Starting ₹{s.price}</div>
-            </div>
-            <div className="service-tile-actions">
-              <button className="btn-outline" onClick={() => viewAllCategory(modalCategory)}>View</button>
-              <button className="btn-primary" onClick={() => handleAddToCart(s)}>Add</button>
-            </div>
+      {/* Subcategory Selection View */}
+      {!selectedSubcategory && SUBCATEGORIES[modalCategory] ? (
+        <div className="modal-body">
+          <div className="subcategory-grid">
+            {Object.keys(SUBCATEGORIES[modalCategory]).map((subcat) => (
+              <button
+                key={subcat}
+                className="subcategory-tile"
+                onClick={() => selectSubcategory(subcat)}
+              >
+                <div className="subcategory-content">
+                  <span className="subcategory-icon">
+                    <img src={SUBCATEGORY_ICONS[subcat] || SUBCATEGORY_ICONS['Home Cleaning']} alt={subcat} style={{width: '32px', height: '32px', objectFit: 'contain'}} />
+                  </span>
+                  <span className="subcategory-name">{subcat}</span>
+                  <span className="subcategory-count">
+                    {SUBCATEGORIES[modalCategory][subcat]?.length || 0} services
+                  </span>
+                </div>
+                <span className="subcategory-arrow">→</span>
+              </button>
+            ))}
           </div>
-        ))}
-      </div>
 
-      <div className="modal-footer" style={{ marginTop: 16 }}>
-        <button className="btn-outline" onClick={() => { setModalOpen(false); navigate('/cart'); }}>View Cart</button>
-        <button className="btn-primary" onClick={() => checkoutFromModal()}>Checkout</button>
-      </div>
+          <div className="modal-footer" style={{ marginTop: '16px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
+            <button 
+              className="btn-outline" 
+              onClick={() => { setModalOpen(false); navigate('/cart'); }}
+            >
+              View Cart
+            </button>
+            <button className="btn-primary" onClick={() => checkoutFromModal()}>
+              Checkout
+            </button>
+          </div>
+        </div>
+      ) : (
+        /* Services Grid View */
+        <div className="modal-body">
+          <div className="modal-grid">
+            {(selectedSubcategory && SUBCATEGORIES[modalCategory]
+              ? SUBCATEGORIES[modalCategory][selectedSubcategory]?.map(id => 
+                  SERVICES_BY_CATEGORY[modalCategory]?.find(s => s.id === id)
+                )
+              : modalCategory === 'All' 
+                ? Object.values(SERVICES_BY_CATEGORY).flat() 
+                : SERVICES_BY_CATEGORY[modalCategory] || SAMPLE_SERVICES
+            ).map(s => (
+              <div key={s?.id} className="service-tile-card">
+                <div className="service-tile-image">
+                  <img src={s?.image} alt={s?.title} className="service-icon" />
+                </div>
+                <div className="service-tile-body">
+                  <strong style={{ fontSize: '14px', color: '#0f172a', lineHeight: '1.3' }}>
+                    {s?.title}
+                  </strong>
+                  <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                    From ₹{s?.price}
+                  </div>
+                </div>
+                <div className="service-tile-actions">
+                  <button 
+                    className="btn-outline-sm" 
+                    onClick={() => viewAllCategory(modalCategory)}
+                  >
+                    View
+                  </button>
+                  <button 
+                    className="btn-primary-sm" 
+                    onClick={() => handleAddToCart(s)}
+                  >
+                    Add
+                  </button>
+                </div>
+              </div>
+            ))}
+          </div>
+
+          <div className="modal-footer" style={{ marginTop: '16px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
+            <button 
+              className="btn-outline" 
+              onClick={() => { setModalOpen(false); navigate('/cart'); }}
+            >
+              View Cart
+            </button>
+            <button className="btn-primary" onClick={() => checkoutFromModal()}>
+              Checkout
+            </button>
+          </div>
+        </div>
+      )}
     </div>
   </div>
 )}
@@ -442,101 +623,7 @@ export default function Home() {
   </div>
 </section>
 
-{/* BROWSE BY CATEGORY */}
-<section className="container slide-up">
-  <h2 className="section-title">Browse by category</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>
-    Choose from a wide range of services
-  </p>
 
-  <div className="service-grid">
-    {categories.map((item, index) => (
-      <div key={index} className="service-card">
-        <img src={item.img} alt={item.title} />
-        <strong>{item.title}</strong>
-        <span className="service-price">View services</span>
-      </div>
-    ))}
-  </div>
-</section>
-
-{/* WHY CHOOSE US */}
-<section className="container slide-up">
-  <h2 className="section-title">Why 50,000+ Customers Trust HomeService99</h2>
-  <div className="service-grid">
-    {[
-      { icon: "✓", title: "Background-Verified Experts", desc: "All professionals thoroughly screened and trained" },
-      { icon: "₹", title: "Transparent Pricing", desc: "No hidden charges - what you see is what you pay" },
-      { icon: "⏱", title: "On-Time Service", desc: "Average 30-min response time, professional reliability" },
-      { icon: "🔒", title: "Safe & Secure", desc: "Secure payments, customer protection guarantee" },
-      { icon: "⭐", title: "Quality Guaranteed", desc: "4.8+ average rating from verified customer reviews" },
-      { icon: "📱", title: "Easy Booking", desc: "Book in seconds, track your service in real-time" }
-    ].map((item, idx) => (
-      <div key={idx} className="feature-card">
-        <div className="feature-icon">{item.icon}</div>
-        <strong>{item.title}</strong>
-        <p style={{ fontSize: "13px", color: "#6b7280" }}>{item.desc}</p>
-      </div>
-    ))}
-  </div>
-</section>
-
-
-
-{/* TESTIMONIALS */}
-<section className="container slide-up">
-  <h2 className="section-title">Loved by 50,000+ Satisfied Customers</h2>
-  <div className="testimonials-grid">
-    {[
-      {
-        name: "Priya Sharma",
-        city: "Mumbai",
-        service: "Home Cleaning",
-        rating: 5,
-        text: "Outstanding cleaning service! The team was professional and thorough. My home feels brand new. Highly recommended!",
-        avatar: "👩"
-      },
-      {
-        name: "Rajesh Patel",
-        city: "Bangalore",
-        service: "AC Service",
-        rating: 5,
-        text: "Technician arrived on time and fixed my AC efficiently. Transparent pricing, no hidden charges. Perfect experience!",
-        avatar: "👨"
-      },
-      {
-        name: "Ankit Singh",
-        city: "Delhi",
-        service: "Electrical Repair",
-        rating: 5,
-        text: "Very professional electrician. Completed the work safely and quickly. Payment after service was convenient. Will definitely hire again!",
-        avatar: "👨"
-      },
-      {
-        name: "Aadhya Nair",
-        city: "Hyderabad",
-        service: "Plumbing",
-        rating: 5,
-        text: "Quick response, professional work, and affordable pricing. The plumber explained everything clearly before starting. Excellent service!",
-        avatar: "👩"
-      }
-    ].map((review, idx) => (
-      <div key={idx} className="testimonial-card">
-        <div style={{ display: "flex", alignItems: "center", gap: "10px", marginBottom: "12px" }}>
-          <span style={{ fontSize: "36px" }}>{review.avatar}</span>
-          <div>
-            <strong style={{ display: "block", fontSize: "14px" }}>{review.name}</strong>
-            <small style={{ color: "#6b7280", fontSize: "12px" }}>{review.city} • {review.service}</small>
-          </div>
-        </div>
-        <div style={{ display: "flex", gap: "2px", marginBottom: "10px" }}>
-          {[...Array(review.rating)].map((_, i) => <span key={i}>⭐</span>)}
-        </div>
-        <p style={{ fontSize: "13px", color: "#374151", lineHeight: "1.5", fontStyle: "italic" }}>"{review.text}"</p>
-      </div>
-    ))}
-  </div>
-</section>
 
 {/* HOW IT WORKS */}
 <section className="container slide-up" style={{ marginTop: "60px" }}>
@@ -554,7 +641,7 @@ export default function Home() {
         <div className="how-step-circle">{item.step}</div>
         <div style={{ fontSize: "32px", marginBottom: "8px" }}>{item.icon}</div>
         <strong>{item.title}</strong>
-        <p style={{ fontSize: "13px", color: "#6b7280", textAlign: "center" }}>{item.desc}</p>
+        <p style={{ fontSize: "13px", color: "#000000ff", textAlign: "center" }}>{item.desc}</p>
       </div>
     ))}
   </div>
@@ -606,7 +693,7 @@ export default function Home() {
 <section className="container slide-up" style={{ marginBottom: "40px" }}>
   <div className="cta-banner">
     <h2 style={{ margin: "0 0 12px 0", fontSize: "24px" }}>Ready to Get Started?</h2>
-    <p style={{ margin: "0 0 20px 0", fontSize: "15px", color: "#6b7280" }}>Book your first service in seconds. No signup required for browsing.</p>
+    <p style={{ margin: "0 0 20px 0", fontSize: "15px", color: "#000000ff" }}>Book your first service in seconds. No signup required for browsing.</p>
     <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
       <button className="btn-primary" onClick={() => navigate('/services')}>Browse Services</button>
       <button className="btn-outline" onClick={() => navigate('/about')}>Learn More</button>

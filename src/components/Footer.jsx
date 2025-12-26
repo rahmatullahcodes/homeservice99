@@ -59,11 +59,11 @@ export default function Footer() {
           {/* Services */}
           <div className="footer-col">
             <div className="footer-col-title">Popular Services</div>
-            <Link to="/services?category=Cleaning" className="footer-link">Home Cleaning</Link>
+            {/* <Link to="/services?category=Cleaning" className="footer-link">Home Cleaning</Link>
             <Link to="/services?category=Appliances" className="footer-link">AC & Appliances</Link>
             <Link to="/services?category=Electrician" className="footer-link">Electrician</Link>
             <Link to="/services?category=Plumber" className="footer-link">Plumbing</Link>
-            <Link to="/services?category=Beauty" className="footer-link">Salon & Beauty</Link>
+            <Link to="/services?category=Beauty" className="footer-link">Salon & Beauty</Link> */}
           </div>
 
           {/* For Professionals */}

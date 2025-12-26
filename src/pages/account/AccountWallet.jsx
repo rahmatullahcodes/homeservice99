@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "../../context/ToastContext";
+import "../../styles/account.css";
 
 export default function AccountWallet() {
 
@@ -59,51 +60,107 @@ export default function AccountWallet() {
   }
 
   return (
-    <div className="wallet-wrapper">
+    <div className="dashboard-wrapper">
 
-      <h2 className="dashboard-title">Wallet</h2>
+      <h2 className="dashboard-title">My Wallet</h2>
+      <p className="dashboard-subtitle">Manage your wallet and view transaction history</p>
 
       {/* BALANCE CARD */}
-      <div className="wallet-balance-card">
-        <p>Current Balance</p>
-        <h1>₹{balance}</h1>
-      </div>
-
-      {/* ADD MONEY */}
-      <div className="wallet-add-box">
-        <input
-          placeholder="Enter amount"
-          value={amount}
-          onChange={e => setAmount(e.target.value)}
-        />
-        <div style={{ display: 'flex', gap: 8 }}>
-          <button className="btn-primary" onClick={addMoney}>
-            Add Money
-          </button>
-          <button className="btn-outline" onClick={usePaymentMethodToPay}>Use Payment Method</button>
+      <div className="dashboard-grid" style={{ marginBottom: "32px" }}>
+        <div className="dash-card green">
+          <div className="dash-icon">💰</div>
+          <div>
+            <p className="dash-label">Wallet Balance</p>
+            <h3>₹{balance.toLocaleString()}</h3>
+            <span className="dash-trend">Available balance</span>
+          </div>
+        </div>
+        <div className="dash-card blue">
+          <div className="dash-icon">📥</div>
+          <div>
+            <p className="dash-label">Total Credits</p>
+            <h3>₹{transactions.filter(t => t.type === "Credit").reduce((sum, t) => sum + t.amount, 0).toLocaleString()}</h3>
+            <span className="dash-trend">All time</span>
+          </div>
+        </div>
+        <div className="dash-card yellow">
+          <div className="dash-icon">📤</div>
+          <div>
+            <p className="dash-label">Total Spent</p>
+            <h3>₹{transactions.filter(t => t.type === "Debit").reduce((sum, t) => sum + t.amount, 0).toLocaleString()}</h3>
+            <span className="dash-trend">All time</span>
+          </div>
         </div>
       </div>
 
-      {/* TRANSACTIONS */}
-      <h3 style={{ marginTop: 14 }}>Recent Transactions</h3>
-
-      <div className="wallet-list">
-        {transactions.map(t => (
-          <div key={t.id} className="wallet-row">
-
-            <div>
-              <strong>{truncate(t.note)}</strong>
-              <p className="wallet-date">{t.date}</p>
-            </div>
-
-            <div
-              className={`wallet-amount ${t.type === "Credit" ? "credit" : "debit"}`}
-            >
-              {t.type === "Credit" ? "+" : "-"}₹{t.amount}
-            </div>
-
+      {/* ADD MONEY SECTION */}
+      <div className="account-card" style={{ marginBottom: "32px" }}>
+        <h3 style={{ marginBottom: "16px" }}>Add Money to Wallet</h3>
+        <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
+          <div style={{ flex: 1, minWidth: "200px" }}>
+            <input
+              type="number"
+              placeholder="Enter amount"
+              value={amount}
+              onChange={e => setAmount(e.target.value)}
+              className="account-form-input"
+            />
           </div>
+          <div style={{ display: "flex", gap: "8px" }}>
+            <button className="account-btn primary" onClick={addMoney}>
+              ➕ Add Money
+            </button>
+            <button className="account-btn secondary" onClick={usePaymentMethodToPay}>
+              💳 Use Payment Method
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* QUICK ADD BUTTONS */}
+      <div style={{ display: "flex", gap: "8px", marginBottom: "32px", flexWrap: "wrap" }}>
+        {[100, 250, 500, 1000].map(amt => (
+          <button 
+            key={amt}
+            className="account-btn secondary"
+            onClick={() => { setAmount(String(amt)); }}
+            style={{ fontSize: "12px", padding: "8px 12px" }}
+          >
+            ₹{amt}
+          </button>
         ))}
+      </div>
+
+      {/* TRANSACTIONS */}
+      <div className="account-card">
+        <h3 style={{ marginBottom: "16px" }}>Transaction History</h3>
+
+        {transactions.length === 0 ? (
+          <p style={{ textAlign: "center", color: "#6b7280", padding: "20px" }}>No transactions yet</p>
+        ) : (
+          <table className="account-table">
+            <thead>
+              <tr>
+                <th>Description</th>
+                <th>Type</th>
+                <th>Date</th>
+                <th>Amount</th>
+              </tr>
+            </thead>
+            <tbody>
+              {transactions.map(t => (
+                <tr key={t.id}>
+                  <td><strong>{t.note}</strong></td>
+                  <td><span className={`account-badge ${t.type === "Credit" ? "green" : "red"}`}>{t.type}</span></td>
+                  <td>{t.date}</td>
+                  <td style={{ fontWeight: 600, color: t.type === "Credit" ? "var(--account-success)" : "var(--account-danger)" }}>
+                    {t.type === "Credit" ? "+" : "-"}₹{t.amount.toLocaleString()}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
       </div>
 
     </div>

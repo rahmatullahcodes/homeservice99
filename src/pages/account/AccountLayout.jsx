@@ -1,5 +1,6 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
 import { useState, useEffect, useRef } from "react";
+import "../../styles/account.css";
 
 export default function AccountLayout() {
   const [theme, setTheme] = useState(() => localStorage.getItem('theme') || 'light');

@@ -154,12 +154,12 @@ export default function Cart() {
                 Proceed to Checkout
               </button>
 
-              <button
+              {/* <button
                 className="btn-outline continue-shopping"
                 onClick={() => navigate('/services')}
               >
                 Continue Shopping
-              </button>
+              </button> */}
             </div>
           </aside>
 
