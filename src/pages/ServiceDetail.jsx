@@ -1,238 +1,525 @@
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
-
-const SERVICES = [
-  {
-    id: "1",
-    title: "Full Home Deep Cleaning",
-    price: 1999,
-    duration: "4–5 hours",
-    warranty: "48-hour service guarantee",
-    description: "Complete deep cleaning for 1–3 BHK including kitchen, bathrooms and furniture.",
-    image: "https://images.unsplash.com/photo-1581578731548-c64695cc6952",
-    includes: [
-      "Kitchen degreasing",
-      "Bathroom sanitization",
-      "Floor scrubbing",
-      "Dusting & polishing",
-      "Garbage disposal"
-    ],
-    excludes: ["Wall painting", "Furniture dismantling"],
-    process: [
-      "Choose service",
-      "Professional arrives",
-      "Quality check",
-      "Payment after service"
-    ]
-  },
-  {
-    id: "2",
-    title: "AC Service & Repair",
-    price: 699,
-    duration: "60–90 minutes",
-    warranty: "30-day service warranty",
-    description: "AC cleaning, gas check and minor repairs at your doorstep.",
-    image: "https://images.unsplash.com/photo-1582719478250-c89cae4dc85b",
-    includes: [
-      "Wet servicing",
-      "Gas inspection",
-      "Filter cleaning",
-      "Cooling efficiency test"
-    ],
-    excludes: ["Spare parts", "Gas refill (if needed)"],
-    process: [
-      "Book service",
-      "Technician assigned",
-      "Service completion",
-      "Payment"
-    ]
-  },
-  {
-    id: "3",
-    title: "Electrician Visit",
-    price: 249,
-    duration: "30–60 minutes",
-    warranty: "15-day call-back warranty",
-    description: "Fix wiring issues, lights, fans and switches in one visit.",
-    image: "https://images.unsplash.com/photo-1582719478250-cc970d17f9d4",
-    includes: [
-      "Switch repair",
-      "Fan installation",
-      "Socket fixing",
-      "Basic wiring"
-    ],
-    excludes: ["New wiring setup", "High-voltage installations"],
-    process: [
-      "Raise request",
-      "Electrician arrives",
-      "Repair",
-      "Payment"
-    ]
-  },
-  {
-    id: "4",
-    title: "Plumbing Service",
-    price: 299,
-    duration: "45–90 minutes",
-    warranty: "30-day service assurance",
-    description: "Taps, leakages and pipe issues resolved quickly.",
-    image: "https://images.unsplash.com/photo-1589929460218-da4ba9f483b3",
-    includes: [
-      "Leak repairs",
-      "Tap installation",
-      "Drain blockage removal",
-      "Fitting checks"
-    ],
-    excludes: ["Major pipe replacement", "New bathroom setup"],
-    process: [
-      "Raise complaint",
-      "Plumber arrives",
-      "Inspection",
-      "Payment"
-    ]
-  }
-];
+import { useToast } from "../context/ToastContext";
+import { useState } from "react";
+import { SERVICES_DATA as ALL_SERVICES } from "./Services.jsx";
 
 export default function ServiceDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const { addToCart } = useCart();
+  const { addToast } = useToast();
+  const [quantity, setQuantity] = useState(1);
+  
+  // Get service from location state or find it in SERVICES_DATA
+  const stateService = location.state?.service;
+  
+  // Find service from the complete database
+  let service = null;
+  let currentCategory = null;
+  let currentSubcategory = null;
+  let relatedServices = [];
+  
+  if (stateService) {
+    service = stateService;
+    // Find the category and subcategory for related services
+    for (const [catKey, catData] of Object.entries(ALL_SERVICES)) {
+      for (const [subcatKey, services] of Object.entries(catData.subcategories)) {
+        const found = services.find(s => s.id === stateService.id);
+        if (found) {
+          currentCategory = catKey;
+          currentSubcategory = subcatKey;
+          // Get other services from same subcategory
+          relatedServices = services.filter(s => s.id !== stateService.id);
+          break;
+        }
+      }
+      if (currentCategory) break;
+    }
+  }
 
-  const service = SERVICES.find(s => s.id === id);
-  if (!service) return (
-    <div className="container" style={{ textAlign: 'center', padding: '60px 20px' }}>
-      <h2 style={{ marginBottom: 12 }}>Service not found</h2>
-      <p style={{ color: '#6b7280', marginBottom: 20 }}>The service you're looking for doesn't exist.</p>
-      <button className="btn-primary" onClick={() => navigate('/services')}>
-        Browse Services
-      </button>
-    </div>
-  );
+  if (!service) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', minHeight: '100vh' }}>
+        <h2 style={{ color: '#6b7280' }}>Service not found</h2>
+        <button
+          onClick={() => navigate('/services')}
+          style={{
+            marginTop: '20px',
+            padding: '10px 20px',
+            backgroundColor: '#2563eb',
+            color: 'white',
+            border: 'none',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontWeight: '600'
+          }}
+        >
+          Go Back to Services
+        </button>
+      </div>
+    );
+  }
+
+  const handleAddToCart = () => {
+    addToCart({
+      id: service.id,
+      title: service.title,
+      price: service.price,
+      image: service.image,
+      quantity: quantity
+    });
+    addToast(`${service.title} (Qty: ${quantity}) added to cart!`, 'success');
+  };
 
   return (
-    <div className="container">
+    <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb' }}>
+      {/* Header */}
+      <div style={{ backgroundColor: 'white', borderBottom: '1px solid #e5e7eb', padding: '16px 0' }}>
+        <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '0 20px' }}>
+          <button
+            onClick={() => navigate(-1)}
+            style={{
+              backgroundColor: 'transparent',
+              border: 'none',
+              color: '#2563eb',
+              fontSize: '16px',
+              fontWeight: '600',
+              cursor: 'pointer',
+              padding: '0'
+            }}
+          >
+            ← Back
+          </button>
+        </div>
+      </div>
 
-      {/* BREADCRUMB */}
-      <nav className="breadcrumb" style={{ fontSize: 13, color: '#6b7280', marginBottom: 16 }}>
-        <button onClick={() => navigate('/services')} style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer' }}>Services</button>
-        <span style={{ margin: '0 6px' }}>→</span>
-        <span>{service.title}</span>
-      </nav>
+      {/* Service Details */}
+      <div style={{ maxWidth: '1000px', margin: '0 auto', padding: '40px 20px' }}>
+        <div style={{
+          backgroundColor: 'white',
+          borderRadius: '12px',
+          overflow: 'hidden',
+          marginBottom: '40px',
+          boxShadow: '0 2px 12px rgba(0,0,0,0.08)'
+        }}>
+          {/* Service Image */}
+          <div style={{
+            width: '100%',
+            height: '300px',
+            backgroundColor: '#e5e7eb',
+            overflow: 'hidden'
+          }}>
+            <img
+              src={service.image}
+              alt={service.title}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+              onError={(e) => {
+                e.target.style.objectFit = 'contain';
+                e.target.style.backgroundColor = '#f3f4f6';
+              }}
+            />
+          </div>
 
-      {/* HERO SECTION - Responsive image gallery + sticky booking panel */}
-      <section className="service-detail fade-in">
-        
-        {/* Image Gallery (left/top) */}
-        <div className="detail-gallery">
-          <img src={service.image} alt={service.title} className="gallery-main" />
-          <div className="gallery-thumbnails">
-            <img src={service.image} alt={`${service.title} - thumbnail`} />
-            <img src={service.image} alt={`${service.title} - thumbnail 2`} />
-            <img src={service.image} alt={`${service.title} - thumbnail 3`} />
+          {/* Service Content */}
+          <div style={{ padding: '32px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 300px', gap: '40px' }}>
+              {/* Left Column - Details */}
+              <div>
+                {/* Title and Rating */}
+                <h1 style={{
+                  fontSize: '28px',
+                  fontWeight: '700',
+                  color: '#0f172a',
+                  margin: '0 0 16px 0'
+                }}>
+                  {service.title}
+                </h1>
+
+                {/* Rating and Reviews */}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '12px', marginBottom: '24px' }}>
+                  <span style={{ color: '#fbbf24', fontSize: '18px' }}>★</span>
+                  <span style={{ fontWeight: '700', color: '#0f172a', fontSize: '16px' }}>
+                    {service.rating}
+                  </span>
+                  <span style={{ color: '#6b7280', fontSize: '14px' }}>
+                    ({service.reviews} reviews)
+                  </span>
+                </div>
+
+                {/* Price and Duration */}
+                <div style={{ marginBottom: '24px', padding: '16px', backgroundColor: '#f0f9ff', borderRadius: '8px' }}>
+                  <p style={{ margin: '0 0 8px 0', color: '#6b7280', fontSize: '14px' }}>Price</p>
+                  <p style={{
+                    fontSize: '24px',
+                    fontWeight: '700',
+                    color: '#2563eb',
+                    margin: '0 0 12px 0'
+                  }}>
+                    From ₹{service.price}
+                  </p>
+                  <p style={{ margin: '0', color: '#6b7280', fontSize: '14px' }}>
+                    ⏱ Duration: {service.duration}
+                  </p>
+                </div>
+
+                {/* Features */}
+                <div style={{ marginBottom: '32px' }}>
+                  <h3 style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: '#0f172a',
+                    marginBottom: '16px'
+                  }}>
+                    What's included
+                  </h3>
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                    {service.features && service.features.map((feature, idx) => (
+                      <div
+                        key={idx}
+                        style={{
+                          display: 'flex',
+                          alignItems: 'flex-start',
+                          gap: '12px',
+                          fontSize: '14px',
+                          color: '#374151'
+                        }}
+                      >
+                        <span style={{ color: '#10b981', fontSize: '18px', marginTop: '2px' }}>✓</span>
+                        <span>{feature}</span>
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* About Service */}
+                <div>
+                  <h3 style={{
+                    fontSize: '18px',
+                    fontWeight: '700',
+                    color: '#0f172a',
+                    marginBottom: '12px'
+                  }}>
+                    About this service
+                  </h3>
+                  <p style={{
+                    color: '#374151',
+                    lineHeight: '1.6',
+                    fontSize: '14px',
+                    margin: '0'
+                  }}>
+                    {service.title} - Professional service with expert technicians, quality materials, and customer satisfaction guarantee. All work is insured and backed by our service quality promise.
+                  </p>
+                </div>
+              </div>
+
+              {/* Right Column - Booking Card */}
+              <div style={{
+                backgroundColor: '#f9fafb',
+                borderRadius: '8px',
+                padding: '24px',
+                height: 'fit-content',
+                border: '1px solid #e5e7eb',
+                position: 'sticky',
+                top: '20px'
+              }}>
+                {/* Quantity Selector */}
+                <p style={{
+                  fontSize: '12px',
+                  fontWeight: '600',
+                  color: '#6b7280',
+                  textTransform: 'uppercase',
+                  marginBottom: '12px'
+                }}>
+                  Quantity
+                </p>
+
+                <div style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  border: '1px solid #d1d5db',
+                  borderRadius: '6px',
+                  backgroundColor: 'white',
+                  marginBottom: '20px',
+                  width: 'fit-content'
+                }}>
+                  <button
+                    onClick={() => setQuantity(Math.max(1, quantity - 1))}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      fontSize: '18px',
+                      color: '#6b7280'
+                    }}
+                  >
+                    −
+                  </button>
+                  <span style={{ minWidth: '40px', textAlign: 'center', fontSize: '16px', fontWeight: '600' }}>
+                    {quantity}
+                  </span>
+                  <button
+                    onClick={() => setQuantity(quantity + 1)}
+                    style={{
+                      backgroundColor: 'transparent',
+                      border: 'none',
+                      padding: '8px 12px',
+                      cursor: 'pointer',
+                      fontSize: '18px',
+                      color: '#6b7280'
+                    }}
+                  >
+                    +
+                  </button>
+                </div>
+
+                {/* Total Price */}
+                <div style={{ marginBottom: '20px', paddingBottom: '20px', borderBottom: '1px solid #d1d5db' }}>
+                  <p style={{ fontSize: '12px', color: '#6b7280', margin: '0 0 8px 0' }}>Total price</p>
+                  <p style={{ fontSize: '24px', fontWeight: '700', color: '#2563eb', margin: '0' }}>
+                    ₹{service.price * quantity}
+                  </p>
+                  <p style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
+                    Excluding taxes
+                  </p>
+                </div>
+
+                {/* Add to Cart Button */}
+                <button
+                  onClick={handleAddToCart}
+                  style={{
+                    width: '100%',
+                    padding: '12px',
+                    backgroundColor: '#2563eb',
+                    color: 'white',
+                    border: 'none',
+                    borderRadius: '6px',
+                    fontSize: '16px',
+                    fontWeight: '700',
+                    cursor: 'pointer',
+                    marginBottom: '12px',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#1d4ed8'}
+                  onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#2563eb'}
+                >
+                  Add to Cart
+                </button>
+
+                {/* Benefits */}
+                <div style={{ borderTop: '1px solid #d1d5db', paddingTop: '20px' }}>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '12px',
+                    fontSize: '13px',
+                    color: '#374151'
+                  }}>
+                    <span style={{ fontSize: '18px' }}>✓</span>
+                    <span>Verified & vetted professionals</span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    marginBottom: '12px',
+                    fontSize: '13px',
+                    color: '#374151'
+                  }}>
+                    <span style={{ fontSize: '18px' }}>✓</span>
+                    <span>Matched to your needs</span>
+                  </div>
+                  <div style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    gap: '12px',
+                    fontSize: '13px',
+                    color: '#374151'
+                  }}>
+                    <span style={{ fontSize: '18px' }}>✓</span>
+                    <span>Customer support at every step</span>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
-        {/* Booking Panel (right/bottom) - Sticky on desktop */}
-        <aside className="detail-sidebar">
-          <div className="booking-card">
-            <h1>{service.title}</h1>
-            
-            <p className="service-desc">{service.description}</p>
+        {/* Related Services Section */}
+        {relatedServices.length > 0 && (
+          <div>
+            <h2 style={{
+              fontSize: '24px',
+              fontWeight: '700',
+              color: '#0f172a',
+              marginBottom: '24px'
+            }}>
+              Related Services
+            </h2>
 
-            {/* Meta info */}
-            <div className="detail-meta">
-              <div className="meta-item">
-                <span className="meta-icon">⏱</span>
-                <span>{service.duration}</span>
-              </div>
-              <div className="meta-item">
-                <span className="meta-icon">🛡</span>
-                <span>{service.warranty}</span>
-              </div>
-            </div>
+            <div style={{
+              display: 'grid',
+              gridTemplateColumns: 'repeat(auto-fill, minmax(280px, 1fr))',
+              gap: '20px'
+            }}>
+              {relatedServices.map(relService => (
+                <div
+                  key={relService.id}
+                  style={{
+                    backgroundColor: 'white',
+                    borderRadius: '12px',
+                    overflow: 'hidden',
+                    boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
+                    border: '1px solid #e5e7eb',
+                    transition: 'all 0.3s ease',
+                    cursor: 'pointer'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.boxShadow = '0 8px 20px rgba(0,0,0,0.12)';
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  {/* Image */}
+                  <div style={{
+                    width: '100%',
+                    height: '160px',
+                    backgroundColor: '#e5e7eb',
+                    overflow: 'hidden'
+                  }}>
+                    <img
+                      src={relService.image}
+                      alt={relService.title}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover'
+                      }}
+                      onError={(e) => {
+                        e.target.style.objectFit = 'contain';
+                        e.target.style.backgroundColor = '#f3f4f6';
+                      }}
+                    />
+                  </div>
 
-            {/* Price */}
-            <div className="price-section">
-              <span className="price-label">Starting from</span>
-              <h2 className="price-value">₹{service.price}</h2>
-            </div>
+                  {/* Content */}
+                  <div style={{ padding: '16px' }}>
+                    <h3 style={{
+                      fontSize: '15px',
+                      fontWeight: '600',
+                      color: '#0f172a',
+                      marginBottom: '8px'
+                    }}>
+                      {relService.title}
+                    </h3>
 
-            {/* CTA Buttons */}
-            <div className="booking-actions">
-              <button
-                type="button"
-                className="btn-primary"
-                onClick={() => {
-                  addToCart(service);
-                  navigate("/cart");
-                }}
-                aria-label={`Add ${service.title} to cart`}
-              >
-                Add to Cart
-              </button>
-              <button
-                type="button"
-                className="btn-outline"
-                onClick={() => navigate('/services')}
-              >
-                Continue Shopping
-              </button>
-            </div>
+                    {/* Rating */}
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px', marginBottom: '12px' }}>
+                      <span style={{ color: '#fbbf24', fontSize: '14px' }}>★</span>
+                      <span style={{ fontWeight: '600', color: '#0f172a', fontSize: '13px' }}>
+                        {relService.rating}
+                      </span>
+                      <span style={{ color: '#6b7280', fontSize: '12px' }}>
+                        ({relService.reviews})
+                      </span>
+                    </div>
 
-            {/* Trust badges */}
-            <div className="trust-badges">
-              <div className="badge">✓ Verified professionals</div>
-              <div className="badge">✓ Doorstep service</div>
-              <div className="badge">✓ Payment after service</div>
+                    {/* Price */}
+                    <p style={{
+                      color: '#2563eb',
+                      fontWeight: '700',
+                      fontSize: '16px',
+                      margin: '0 0 12px 0'
+                    }}>
+                      From ₹{relService.price}
+                    </p>
+
+                    {/* Duration */}
+                    <p style={{
+                      color: '#6b7280',
+                      fontSize: '12px',
+                      margin: '0 0 12px 0'
+                    }}>
+                      {relService.duration}
+                    </p>
+
+                    {/* Buttons */}
+                    <div style={{
+                      display: 'grid',
+                      gridTemplateColumns: '1fr 1fr',
+                      gap: '8px'
+                    }}>
+                      <button
+                        onClick={() => navigate(`/services/${relService.id}`, { state: { service: relService } })}
+                        style={{
+                          padding: '8px',
+                          backgroundColor: 'white',
+                          border: '1px solid #2563eb',
+                          color: '#2563eb',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          fontSize: '13px',
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#f0f9ff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = 'white';
+                        }}
+                      >
+                        View
+                      </button>
+                      <button
+                        onClick={() => {
+                          addToCart({
+                            id: relService.id,
+                            title: relService.title,
+                            price: relService.price,
+                            image: relService.image,
+                            quantity: 1
+                          });
+                          addToast(`${relService.title} added to cart!`, 'success');
+                        }}
+                        style={{
+                          padding: '8px',
+                          backgroundColor: '#2563eb',
+                          color: 'white',
+                          border: 'none',
+                          borderRadius: '6px',
+                          cursor: 'pointer',
+                          fontWeight: '600',
+                          fontSize: '13px',
+                          transition: 'all 0.3s ease'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.backgroundColor = '#1d4ed8';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.backgroundColor = '#2563eb';
+                        }}
+                      >
+                        Add
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              ))}
             </div>
           </div>
-        </aside>
-      </section>
-
-      {/* WHAT'S INCLUDED / EXCLUDED */}
-      <section className="detail-grid slide-up" style={{ marginTop: 40 }}>
-        <div className="detail-box">
-          <h3>✅ What's included</h3>
-          <ul className="detail-list">
-            {service.includes.map((i, k) => <li key={k}>{i}</li>)}
-          </ul>
-        </div>
-
-        <div className="detail-box">
-          <h3>❌ Not included</h3>
-          <ul className="detail-list">
-            {service.excludes.map((i, k) => <li key={k}>{i}</li>)}
-          </ul>
-        </div>
-      </section>
-
-      {/* HOW IT WORKS - Process steps */}
-      <section className="detail-process slide-up" style={{ marginTop: 40 }}>
-        <h2>How it works</h2>
-        <div className="detail-steps">
-          {service.process.map((step, i) => (
-            <div key={i} className="step">
-              <span className="step-number">{i + 1}</span>
-              <span className="step-text">{step}</span>
-            </div>
-          ))}
-        </div>
-      </section>
-
-      {/* CUSTOMER REVIEWS */}
-      <section className="review-section slide-up" style={{ marginTop: 40, marginBottom: 60 }}>
-        <h2>⭐ Customer Reviews ({[5, 4, 5].length})</h2>
-        <div className="review-grid">
-          {[5, 4, 5].map((r, i) => (
-            <div key={i} className="review-card detail-box">
-              <div className="review-stars">{"⭐".repeat(r)}</div>
-              <p className="review-text">Fast, clean and professional service. Highly recommend!</p>
-              <p className="review-author">— Customer {i + 1}</p>
-            </div>
-          ))}
-        </div>
-      </section>
-
+        )}
+      </div>
     </div>
   );
 }

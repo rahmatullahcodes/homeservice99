@@ -1,24 +1,35 @@
 /* ===== ROOT & LAYOUT ===== */
 :root {
-  --admin-bg: #f1f5f9;
+  --admin-bg: #f5f7fb;
   --admin-card: #ffffff;
-  --admin-border: #e2e8f0;
-  --admin-text: #1e293b;
-  --admin-muted: #64748b;
+  --admin-border: #e5e7eb;
+  --admin-text: #0f172a;
+  --admin-muted: #475569;
   --admin-primary: #2563eb;
+  --admin-primary-light: #1e40af;
   --admin-success: #16a34a;
   --admin-warning: #f59e0b;
   --admin-danger: #dc2626;
   --admin-info: #0ea5a4;
+  --admin-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.1);
+  --admin-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.1);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --admin-bg: #0f172a;
-    --admin-card: #1e293b;
+    --admin-bg: #0b1220;
+    --admin-card: #0f1724;
     --admin-border: #334155;
-    --admin-text: #e2e8f0;
-    --admin-muted: #94a3b8;
+    --admin-text: #e6eef8;
+    --admin-muted: #b0b9c6;
+    --admin-primary: #2563eb;
+    --admin-primary-light: #3b82f6;
+    --admin-success: #10b981;
+    --admin-warning: #f59e0b;
+    --admin-danger: #ef4444;
+    --admin-info: #2dd4bf;
+    --admin-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --admin-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
   }
 }
 

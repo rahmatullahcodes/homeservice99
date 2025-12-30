@@ -4,10 +4,11 @@
 
 :root {
   --account-primary: #2563eb;
+  --account-primary-light: #1e40af;
   --account-success: #16a34a;
   --account-warning: #f59e0b;
   --account-danger: #dc2626;
-  --account-info: #0ea5a0;
+  --account-info: #0ea5a4;
   --account-light: #f3f4f6;
   --account-dark: #1f2937;
   --account-text: #374151;
@@ -20,10 +21,18 @@
 /* Dark Mode */
 @media (prefers-color-scheme: dark) {
   :root {
-    --account-light: #1f2937;
-    --account-dark: #f3f4f6;
+    --account-primary: #2563eb;
+    --account-primary-light: #3b82f6;
+    --account-success: #10b981;
+    --account-danger: #ef4444;
+    --account-info: #2dd4bf;
+    --account-light: #1e293b;
+    --account-dark: #f1f5f9;
     --account-text: #d1d5db;
-    --account-border: #374151;
+    --account-border: #334155;
+    --account-shadow: 0 1px 3px rgba(0, 0, 0, 0.3);
+    --account-shadow-md: 0 4px 6px rgba(0, 0, 0, 0.3);
+    --account-shadow-lg: 0 10px 15px rgba(0, 0, 0, 0.3);
   }
 }
 

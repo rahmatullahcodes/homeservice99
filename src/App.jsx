@@ -2,6 +2,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Navbar from "./components/Navbar.jsx";
 import Footer from "./components/Footer.jsx";
+import ServiceCategory from "./components/ServiceCategory.jsx";
 
 /* MAIN PAGES */
 import Home from "./pages/Home.jsx";
@@ -20,6 +21,7 @@ import ServiceDetail from "./pages/ServiceDetail.jsx";
 import Disclaimer from "./pages/Disclaimer.jsx";
 import CancellationRefund from "./pages/CancellationRefund.jsx";
 import TermsConditions from "./pages/TermsConditions.jsx";
+import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
 
 /* USER ACCOUNT MODULE */
 import AccountLayout from "./pages/account/AccountLayout.jsx";
@@ -80,6 +82,7 @@ export default function App() {
           <Route path="/" element={<Home />} />
           <Route path="/services" element={<Services />} />
           <Route path="/services/:id" element={<ServiceDetail />} />
+          <Route path="/services/category/:category" element={<ServiceCategory />} />
           <Route path="/compare" element={<Compare />} />
           <Route path="/pricing" element={<Pricing />} />
           <Route path="/about" element={<About />} />
@@ -89,6 +92,7 @@ export default function App() {
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/cancellation-refund" element={<CancellationRefund />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
+          <Route path="/privacy-policy" element={<PrivacyPolicy />} />
 
           {/* USER AUTH */}
           <Route path="/login" element={<Login />} />

@@ -73,6 +73,18 @@ export default function Home() {
     { id: "4", title: "Plumbing Service", category: "Plumber", price: 299, image: "https://images.unsplash.com/photo-1589929460218-da4ba9f483b3" }
   ];
 
+  // Add function to get featured services with ratings
+  const getFeaturedServices = () => {
+    return [
+      { id: 'cl1', title: 'Full Home Deep Cleaning', category: 'Cleaning', price: 1999, image: 'https://i.postimg.cc/jdFmRtz7/Gemini-Generated-Image-kwxs91kwxs91kwxs.png', rating: 4.8, reviews: 2340, desc: 'Professional deep cleaning with eco-friendly products' },
+      { id: 'el2', title: 'Fan Installation / Repair', category: 'Electrician', price: 299, image: 'https://i.postimg.cc/v8NCs5FK/Gemini-Generated-Image-bx1oyjbx1oyjbx1o.png', rating: 4.7, reviews: 1856, desc: 'Expert fan installation and repair services' },
+      { id: 'pl1', title: 'Tap & Mixer Repair', category: 'Plumber', price: 199, image: 'https://i.postimg.cc/jSnLqHF2/Gemini-Generated-Image-v6q2mfv6q2mfv6q2.png', rating: 4.9, reviews: 3120, desc: 'Professional tap and mixer repair solutions' },
+      { id: 'el5', title: 'Inverter & UPS Installation', category: 'Electrician', price: 799, image: 'https://i.postimg.cc/sgmgKTqp/Gemini-Generated-Image-g6mtfog6mtfog6mt.png', rating: 4.6, reviews: 1540, desc: 'Expert inverter and UPS installation service' },
+      { id: 'ap1', title: 'AC Service', category: 'Appliances', price: 699, image: 'https://i.postimg.cc/jj64X0Dg/Gemini-Generated-Image-fe28zlfe28zlfe28.png', rating: 4.8, reviews: 4230, desc: 'Professional AC service and maintenance' },
+      { id: 'el3', title: 'Light / Chandelier Installation', category: 'Electrician', price: 399, image: 'https://i.postimg.cc/1t2xJFyG/Gemini-Generated-Image-4krxr54krxr54krx.png', rating: 4.7, reviews: 1204, desc: 'Professional lighting installation and setup' }
+    ];
+  };
+
   const SERVICES_BY_CATEGORY = {
     Cleaning: [
       { id: 'cl1', title: 'Full Home Deep Cleaning', price: 1999, image: 'https://i.postimg.cc/jdFmRtz7/Gemini-Generated-Image-kwxs91kwxs91kwxs.png' },
@@ -112,68 +124,68 @@ export default function Home() {
     ],
 
     Appliances: [
-      { id: 'ap1', title: 'AC Service', price: 699, image: 'https://img.icons8.com/fluency/96/air-conditioner.png' },
-      { id: 'ap2', title: 'AC Installation', price: 999, image: 'https://img.icons8.com/fluency/96/air-conditioner.png' },
-      { id: 'ap3', title: 'AC Uninstallation', price: 399, image: 'https://img.icons8.com/fluency/96/air-conditioner.png' },
-      { id: 'ap4', title: 'AC Gas Refill', price: 899, image: 'https://img.icons8.com/fluency/96/gas.png' },
-      { id: 'ap5', title: 'AC General Service', price: 599, image: 'https://img.icons8.com/fluency/96/gear.png' },
-      { id: 'ap6', title: 'AC Repair (Split / Window)', price: 799, image: 'https://img.icons8.com/fluency/96/repair.png' },
+      { id: 'ap1', title: 'AC Service', price: 699, image: 'https://i.postimg.cc/BbYpZKLj/Gemini-Generated-Image-mwb21dmwb21dmwb2.png' },
+      { id: 'ap2', title: 'AC Installation', price: 999, image: 'https://i.postimg.cc/JhgW0Pvt/Gemini-Generated-Image-p02kysp02kysp02k.png' },
+      { id: 'ap3', title: 'AC Uninstallation', price: 399, image: 'https://i.postimg.cc/DZqYh6K6/Gemini-Generated-Image-eui3pbeui3pbeui3.png' },
+      { id: 'ap4', title: 'AC Gas Refill', price: 899, image: 'https://i.postimg.cc/C5c7M6r4/Gemini-Generated-Image-2emk6i2emk6i2emk.png' },
+      { id: 'ap5', title: 'AC General Service', price: 599, image: 'https://i.postimg.cc/8zRFhrNG/Gemini-Generated-Image-8ubmnm8ubmnm8ubm.png' },
+      { id: 'ap6', title: 'AC Repair (Split / Window)', price: 799, image: 'https://i.postimg.cc/y8MMzkZZ/Gemini-Generated-Image-ogntwrogntwrognt.png' },
 
-      { id: 'ap7', title: 'Refrigerator Repair', price: 699, image: 'https://img.icons8.com/fluency/96/fridge.png' },
-      { id: 'ap8', title: 'Washing Machine Repair', price: 599, image: 'https://img.icons8.com/fluency/96/washing-machine.png' },
-      { id: 'ap9', title: 'Microwave Repair', price: 399, image: 'https://img.icons8.com/fluency/96/microwave.png' },
-      { id: 'ap10', title: 'Geyser Repair', price: 499, image: 'https://img.icons8.com/fluency/96/geyser.png' },
-      { id: 'ap11', title: 'Chimney Repair', price: 499, image: 'https://img.icons8.com/fluency/96/chimney.png' },
-      { id: 'ap12', title: 'RO / Water Purifier Service', price: 599, image: 'https://img.icons8.com/fluency/96/water-purifier.png' },
-      { id: 'ap13', title: 'Dishwasher Repair', price: 699, image: 'https://img.icons8.com/fluency/96/dishwasher.png' }
+      { id: 'ap7', title: 'Refrigerator Repair', price: 699, image: 'https://i.postimg.cc/h4YMYNmZ/Gemini-Generated-Image-zc03jvzc03jvzc03.png' },
+      { id: 'ap8', title: 'Washing Machine Repair', price: 599, image: 'https://i.postimg.cc/5Nw7FnHP/Gemini-Generated-Image-pwfxwrpwfxwrpwfx.png' },
+      { id: 'ap9', title: 'Microwave Repair', price: 399, image: 'https://i.postimg.cc/RZpc3HTg/Gemini-Generated-Image-bw98hnbw98hnbw98.png' },
+      { id: 'ap10', title: 'Geyser Repair', price: 499, image: 'https://i.postimg.cc/nhXXPw4c/Gemini-Generated-Image-jguuiojguuiojguu.png' },
+      { id: 'ap11', title: 'Chimney Repair', price: 499, image: 'https://i.postimg.cc/MZsKJmKZ/Gemini-Generated-Image-z2suzkz2suzkz2su.png' },
+      { id: 'ap12', title: 'RO / Water Purifier Service', price: 599, image: 'https://i.postimg.cc/RVHrp7Wd/Gemini-Generated-Image-fgjsuafgjsuafgjs.png' },
+      { id: 'ap13', title: 'Dishwasher Repair', price: 699, image: 'https://i.postimg.cc/cJ6PYfGf/Gemini-Generated-Image-p2pw2xp2pw2xp2pw.png' }
     ],
 
     Beauty: [
-      { id: 'b1', title: 'Haircut & Styling', price: 399, image: 'https://i.postimg.cc/vT5Q8hGg/salon-icon.png' },
-      { id: 'b2', title: 'Hair Spa', price: 599, image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png' },
-      { id: 'b3', title: 'Hair Color', price: 899, image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png' },
-      { id: 'b4', title: 'Facial & Cleanup', price: 499, image: 'https://i.postimg.cc/0y7C2h1L/spa-icon.png' },
-      { id: 'b5', title: 'Waxing (Full / Half)', price: 399, image: 'https://i.postimg.cc/TY2j2fhS/makeup-icon.png' },
-      { id: 'b6', title: 'Manicure & Pedicure', price: 499, image: 'https://i.postimg.cc/TY2j2fhS/makeup-icon.png' },
-      { id: 'b7', title: 'Threading', price: 199, image: 'https://i.postimg.cc/TY2j2fhS/makeup-icon.png' },
-      { id: 'b8', title: 'Bridal Makeup', price: 2499, image: 'https://i.postimg.cc/TY2j2fhS/makeup-icon.png' },
-      { id: 'b9', title: 'Party Makeup', price: 1499, image: 'https://i.postimg.cc/TY2j2fhS/makeup-icon.png' }
+      { id: 'b1', title: 'Haircut & Styling', price: 399, image: 'https://i.postimg.cc/B6B5nww9/Gemini-Generated-Image-y61e4xy61e4xy61e.png' },
+      { id: 'b2', title: 'Hair Spa', price: 599, image: 'https://i.postimg.cc/sxRVwT3b/Gemini-Generated-Image-m5hd68m5hd68m5hd.png' },
+      { id: 'b3', title: 'Hair Color', price: 899, image: 'https://i.postimg.cc/mg15gBYV/Gemini-Generated-Image-bx9n4cbx9n4cbx9n.png' },
+      { id: 'b4', title: 'Facial & Cleanup', price: 499, image: 'https://i.postimg.cc/mZq32MmD/Gemini-Generated-Image-466riz466riz466r.png' },
+      { id: 'b5', title: 'Waxing (Full / Half)', price: 399, image: 'https://i.postimg.cc/wMKhFYyg/Gemini-Generated-Image-h2dm8ah2dm8ah2dm.png' },
+      { id: 'b6', title: 'Manicure & Pedicure', price: 499, image: 'https://i.postimg.cc/MprfdJNL/Gemini-Generated-Image-1piqz81piqz81piq.png' },
+      { id: 'b7', title: 'Threading', price: 199, image: 'https://i.postimg.cc/NjTvP1zh/Gemini-Generated-Image-simtt2simtt2simt.png' },
+      { id: 'b8', title: 'Bridal Makeup', price: 2499, image: 'https://i.postimg.cc/rmRHKc2m/Gemini-Generated-Image-o0ipqo0ipqo0ipqo.png' },
+      { id: 'b9', title: 'Party Makeup', price: 1499, image: 'https://i.postimg.cc/C1Cjv6j1/Gemini-Generated-Image-5lb1yo5lb1yo5lb1.png' }
     ],
 
     Men: [
-      { id: 'm1', title: 'Haircut', price: 299, image: 'https://img.icons8.com/fluency/96/haircut.png' },
-      { id: 'm2', title: 'Beard Trim & Styling', price: 249, image: 'https://img.icons8.com/fluency/96/beard.png' },
-      { id: 'm3', title: 'Shave', price: 199, image: 'https://img.icons8.com/fluency/96/shave.png' },
-      { id: 'm4', title: 'Facial', price: 299, image: 'https://img.icons8.com/fluency/96/face-cream.png' },
-      { id: 'm5', title: 'Hair Color', price: 399, image: 'https://img.icons8.com/fluency/96/hair-color.png' },
-      { id: 'm6', title: 'Head Massage', price: 349, image: 'https://img.icons8.com/fluency/96/massage.png' }
+      { id: 'm1', title: 'Haircut', price: 299, image: 'https://i.postimg.cc/qq2QfXWW/Gemini-Generated-Image-77uwxf77uwxf77uw.png' },
+      { id: 'm2', title: 'Beard Trim & Styling', price: 249, image: 'https://i.postimg.cc/zvnBnVRn/Gemini-Generated-Image-byb8h5byb8h5byb8.png' },
+      { id: 'm3', title: 'Shave', price: 199, image: 'https://i.postimg.cc/CKBwGz3Z/Gemini-Generated-Image-fewy55fewy55fewy.png' },
+      { id: 'm4', title: 'Facial', price: 299, image: 'https://i.postimg.cc/V6vnBBYX/Gemini-Generated-Image-bby5j7bby5j7bby5.png' },
+      { id: 'm5', title: 'Hair Color', price: 399, image: 'https://i.postimg.cc/RV5G9yS2/Gemini-Generated-Image-cv8pb8cv8pb8cv8p.png' },
+      { id: 'm6', title: 'Head Massage', price: 349, image: 'https://i.postimg.cc/T32V3Xz3/Gemini-Generated-Image-ir7hmiir7hmiir7h.png' }
     ],
 
     Painting: [
-      { id: 'pt1', title: 'Interior Painting', price: 1999, image: 'https://img.icons8.com/fluency/96/paint-palette.png' },
-      { id: 'pt2', title: 'Exterior Painting', price: 2999, image: 'https://img.icons8.com/fluency/96/paint-roller.png' },
-      { id: 'pt3', title: 'Wall Texture & Designer Paint', price: 3499, image: 'https://img.icons8.com/fluency/96/wall.png' },
-      { id: 'pt4', title: 'Waterproofing', price: 2499, image: 'https://img.icons8.com/fluency/96/waterproofing.png' },
-      { id: 'pt5', title: 'Crack Filling & Putty Work', price: 999, image: 'https://img.icons8.com/fluency/96/putty-knife.png' },
-      { id: 'pt6', title: 'Wallpaper Installation', price: 699, image: 'https://img.icons8.com/fluency/96/wallpaper.png' },
-      { id: 'pt7', title: 'Wall Polishing', price: 899, image: 'https://img.icons8.com/fluency/96/polish.png' }
+      { id: 'pt1', title: 'Interior Painting', price: 1999, image: 'https://i.postimg.cc/SN1scFXp/Gemini-Generated-Image-xdk6h5xdk6h5xdk6.png' },
+      { id: 'pt2', title: 'Exterior Painting', price: 2999, image: 'https://i.postimg.cc/Gh4rwBpZ/Gemini-Generated-Image-fq24isfq24isfq24.png' },
+      { id: 'pt3', title: 'Wall Texture & Designer Paint', price: 3499, image: 'https://i.postimg.cc/y6gB2gWs/Gemini-Generated-Image-348sp2348sp2348s.png' },
+      { id: 'pt4', title: 'Waterproofing', price: 2499, image: 'https://i.postimg.cc/hGf3hmkj/Gemini-Generated-Image-8ye6zi8ye6zi8ye6.png' },
+      { id: 'pt5', title: 'Crack Filling & Putty Work', price: 999, image: 'https://i.postimg.cc/WzC4L0cb/Gemini-Generated-Image-c5boobc5boobc5bo.png' },
+      { id: 'pt6', title: 'Wallpaper Installation', price: 699, image: 'https://i.postimg.cc/PqSTn1mn/Gemini-Generated-Image-xaxn7ixaxn7ixaxn.png' },
+      { id: 'pt7', title: 'Wall Polishing', price: 899, image: 'https://i.postimg.cc/PqGJ6gmX/Gemini-Generated-Image-tjfhkitjfhkitjfh.png' }
     ],
 
     Carpentry: [
-      { id: 'cr1', title: 'Furniture Assembly', price: 499, image: 'https://img.icons8.com/fluency/96/assembly.png' },
-      { id: 'cr2', title: 'Door & Window Repair', price: 399, image: 'https://img.icons8.com/fluency/96/door.png' },
-      { id: 'cr3', title: 'Modular Kitchen Repair', price: 999, image: 'https://img.icons8.com/fluency/96/kitchen.png' },
-      { id: 'cr4', title: 'Bed / Wardrobe Repair', price: 599, image: 'https://img.icons8.com/fluency/96/bed.png' },
-      { id: 'cr5', title: 'Lock & Hinge Installation', price: 199, image: 'https://img.icons8.com/fluency/96/lock.png' },
-      { id: 'cr6', title: 'Custom Furniture Work', price: 2499, image: 'https://img.icons8.com/fluency/96/custom-furniture.png' }
+      { id: 'cr1', title: 'Furniture Assembly', price: 499, image: 'https://i.postimg.cc/3WMzMF9k/Gemini-Generated-Image-60z1n360z1n360z1.png' },
+      { id: 'cr2', title: 'Door & Window Repair', price: 399, image: 'https://i.postimg.cc/wjxY909Y/Gemini-Generated-Image-s1nosps1nosps1no.png' },
+      { id: 'cr3', title: 'Modular Kitchen Repair', price: 999, image: 'https://i.postimg.cc/pr0YzW5K/Gemini-Generated-Image-ncblynncblynncbl.png' },
+      { id: 'cr4', title: 'Bed / Wardrobe Repair', price: 599, image: 'https://i.postimg.cc/Rh8JvNnb/Gemini-Generated-Image-rtsfr3rtsfr3rtsf.png' },
+      { id: 'cr5', title: 'Lock & Hinge Installation', price: 199, image: 'https://i.postimg.cc/k51bT1X0/Gemini-Generated-Image-6w6nwz6w6nwz6w6n.png' },
+      { id: 'cr6', title: 'Custom Furniture Work', price: 2499, image: 'https://i.postimg.cc/MGRCD4Dk/Gemini-Generated-Image-yuw9biyuw9biyuw9.png' }
     ],
 
     Maintenance: [
-      { id: 'mt1', title: 'Handyman Services', price: 399, image: 'https://img.icons8.com/fluency/96/handyman.png' },
-      { id: 'mt2', title: 'Curtain Rod Installation', price: 199, image: 'https://img.icons8.com/fluency/96/curtain.png' },
-      { id: 'mt3', title: 'TV Wall Mount Installation', price: 499, image: 'https://img.icons8.com/fluency/96/installation.png' },
-      { id: 'mt4', title: 'Drilling & Hanging Work', price: 249, image: 'https://img.icons8.com/fluency/96/drill.png' },
-      { id: 'mt5', title: 'Bathroom Accessories Installation', price: 299, image: 'https://img.icons8.com/fluency/96/accessories.png' }
+      { id: 'mt1', title: 'Handyman Services', price: 399, image: 'https://i.postimg.cc/sgCq2Kzk/Gemini-Generated-Image-a6fcnza6fcnza6fc.png' },
+      { id: 'mt2', title: 'Curtain Rod Installation', price: 199, image: 'https://i.postimg.cc/fLSfmnjG/Gemini-Generated-Image-mo8uxzmo8uxzmo8u.png' },
+      { id: 'mt3', title: 'TV Wall Mount Installation', price: 499, image: 'https://i.postimg.cc/ydTYfWTw/Gemini-Generated-Image-xpwfqgxpwfqgxpwf.png' },
+      { id: 'mt4', title: 'Drilling & Hanging Work', price: 249, image: 'https://i.postimg.cc/HLxqGndV/Gemini-Generated-Image-wam2twam2twam2tw.png' },
+      { id: 'mt5', title: 'Bathroom Accessories Installation', price: 299, image: 'https://i.postimg.cc/pdJHv4ns/Gemini-Generated-Image-5m67065m67065m67.png' }
     ],
 
     Pest: [
@@ -590,6 +602,90 @@ export default function Home() {
   </div>
 )}
 
+{/* FEATURED SERVICES CARDS */}
+<section className="container slide-up" style={{ marginTop: "60px" }}>
+  <h2 className="section-title">Popular Services</h2>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Highly-rated services from verified professionals</p>
+  
+  <div className="services-grid">
+    {getFeaturedServices().map((service) => (
+      <div key={service.id} className="service-card">
+        {/* Service Image */}
+        <div className="service-card-image">
+          <img src={service.image} alt={service.title} />
+        </div>
+        
+        {/* Service Body */}
+        <div className="service-card-body">
+          {/* Title */}
+          <h3 className="service-card-title">{service.title}</h3>
+          
+          {/* Category Badge */}
+          <span className="service-category-badge">{service.category}</span>
+          
+          {/* Rating */}
+          <div className="service-rating">
+            <span className="stars">⭐ {service.rating}</span>
+            <span className="review-count">({service.reviews} reviews)</span>
+          </div>
+          
+          {/* Description */}
+          <p className="service-description">{service.desc}</p>
+          
+          {/* Price */}
+          <div className="service-price">
+            <span>Starting from</span>
+            <strong>₹{service.price}</strong>
+          </div>
+          
+          {/* Action Button */}
+          <button 
+            className="btn-service-card"
+            onClick={() => {
+              navigate(`/services?category=${encodeURIComponent(service.category)}`);
+            }}
+          >
+            Book Now
+          </button>
+        </div>
+      </div>
+    ))}
+  </div>
+</section>
+
+{/* OFFERS & DISCOUNTS */}
+<section className="container slide-up offers-section">
+  <h2 className="section-title">Get Quote</h2>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
+
+  <div className="offers-wrap">
+    <button className="offers-nav left" aria-label="Scroll left" onClick={() => { offersRef.current?.scrollBy({ left: -320, behavior: 'smooth' }); }}>&#8249;</button>
+
+    <div className="offers-scroll" role="list" ref={offersRef}>
+      {OFFERS.map((offer) => (
+        <div className="offer-card" key={offer.id} role="listitem">
+          <img src={offer.img} alt={offer.title} />
+          <div className="offer-body">
+            <strong>{offer.title}</strong>
+            <p className="offer-sub">{offer.subtitle}</p>
+            <div style={{ marginTop: 8 }}>
+              <button className="btn-outline">{offer.cta}</button>
+            </div>
+          </div>
+        </div>
+      ))}
+    </div>
+
+    <button className="offers-nav right" aria-label="Scroll right" onClick={() => { offersRef.current?.scrollBy({ left: 320, behavior: 'smooth' }); }}>&#8250;</button>
+
+    <div className="offers-indicators" aria-hidden={OFFERS.length <= 1}>
+      {OFFERS.map((o, i) => (
+        <button key={o.id} className={`dot ${i === offerIndex ? 'active' : ''}`} onClick={() => scrollToOffer(i)} aria-label={`Go to offer ${i + 1}`}></button>
+      ))}
+    </div>
+  </div>
+</section>
+
 {/* OFFERS & DISCOUNTS */}
 <section className="container slide-up offers-section">
   <h2 className="section-title">Offers & discounts</h2>
@@ -623,8 +719,6 @@ export default function Home() {
   </div>
 </section>
 
-
-
 {/* HOW IT WORKS */}
 <section className="container slide-up" style={{ marginTop: "60px" }}>
   <h2 className="section-title">How HomeService99 Works</h2>
@@ -646,6 +740,8 @@ export default function Home() {
     ))}
   </div>
 </section>
+
+
 
 {/* FAQ SECTION */}
 <section className="container slide-up" style={{ marginTop: "60px", marginBottom: "60px" }}>
