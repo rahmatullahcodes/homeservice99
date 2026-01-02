@@ -303,7 +303,8 @@ export default function Home() {
   }
 
   function selectSubcategory(subcat) {
-    setSelectedSubcategory(subcat);
+    setModalOpen(false);
+    navigate(`/services?category=${encodeURIComponent(modalCategory)}&subcategory=${encodeURIComponent(subcat)}`);
   }
 
   function backToCategory() {
@@ -507,97 +508,53 @@ export default function Home() {
         <button className="btn-outline" onClick={() => setModalOpen(false)} aria-label="Close modal">✕</button>
       </div>
 
-      {/* Subcategory Selection View */}
-      {!selectedSubcategory && SUBCATEGORIES[modalCategory] ? (
-        <div className="modal-body">
-          <div className="subcategory-grid">
-            {Object.keys(SUBCATEGORIES[modalCategory]).map((subcat) => (
-              <button
-                key={subcat}
-                className="subcategory-tile"
-                onClick={() => selectSubcategory(subcat)}
-              >
-                <div className="subcategory-content">
-                  <span className="subcategory-icon">
-                    <img src={SUBCATEGORY_ICONS[subcat] || SUBCATEGORY_ICONS['Home Cleaning']} alt={subcat} style={{width: '32px', height: '32px', objectFit: 'contain'}} />
-                  </span>
-                  <span className="subcategory-name">{subcat}</span>
-                  <span className="subcategory-count">
-                    {SUBCATEGORIES[modalCategory][subcat]?.length || 0} services
-                  </span>
-                </div>
-                <span className="subcategory-arrow">→</span>
-              </button>
-            ))}
-          </div>
-
-          <div className="modal-footer" style={{ marginTop: '16px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
-            <button 
-              className="btn-outline" 
-              onClick={() => { setModalOpen(false); navigate('/cart'); }}
-            >
-              View Cart
-            </button>
-            <button className="btn-primary" onClick={() => checkoutFromModal()}>
-              Checkout
-            </button>
-          </div>
-        </div>
-      ) : (
-        /* Services Grid View */
-        <div className="modal-body">
-          <div className="modal-grid">
-            {(selectedSubcategory && SUBCATEGORIES[modalCategory]
-              ? SUBCATEGORIES[modalCategory][selectedSubcategory]?.map(id => 
-                  SERVICES_BY_CATEGORY[modalCategory]?.find(s => s.id === id)
-                )
-              : modalCategory === 'All' 
-                ? Object.values(SERVICES_BY_CATEGORY).flat() 
-                : SERVICES_BY_CATEGORY[modalCategory] || SAMPLE_SERVICES
-            ).map(s => (
-              <div key={s?.id} className="service-tile-card">
-                <div className="service-tile-image">
-                  <img src={s?.image} alt={s?.title} className="service-icon" />
-                </div>
-                <div className="service-tile-body">
-                  <strong style={{ fontSize: '14px', color: '#0f172a', lineHeight: '1.3' }}>
-                    {s?.title}
-                  </strong>
-                  <div style={{ fontSize: '12px', color: '#6b7280', marginTop: '4px' }}>
-                    From ₹{s?.price}
+      {/* Service Cards Grid View - Category Wise */}
+      <div className="modal-body">
+        {Object.keys(SUBCATEGORIES[modalCategory] || {}).map((subcategoryName) => (
+          <div key={subcategoryName} style={{ marginBottom: '24px' }}>
+            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
+              {subcategoryName}
+            </h4>
+            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+              {SUBCATEGORIES[modalCategory][subcategoryName]?.map((serviceId) => {
+                const service = SERVICES_BY_CATEGORY[modalCategory]?.find(s => s.id === serviceId);
+                return service ? (
+                  <div
+                    key={service.id}
+                    onClick={() => {
+                      setModalOpen(false);
+                      navigate(`/services?category=${encodeURIComponent(modalCategory)}`);
+                    }}
+                    style={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: '6px',
+                      cursor: 'pointer',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'scale(1.05)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'scale(1)';
+                    }}
+                  >
+                    <img 
+                      src={service.image} 
+                      alt={service.title} 
+                      style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '8px' }} 
+                      onError={(e) => { e.target.src = 'https://via.placeholder.com/100x90?text=Service'; }} 
+                    />
+                    <p style={{ margin: '0', fontSize: '11px', fontWeight: '600', color: '#0f172a', textAlign: 'center', lineHeight: '1.3' }}>
+                      {service.title}
+                    </p>
                   </div>
-                </div>
-                <div className="service-tile-actions">
-                  <button 
-                    className="btn-outline-sm" 
-                    onClick={() => viewAllCategory(modalCategory)}
-                  >
-                    View
-                  </button>
-                  <button 
-                    className="btn-primary-sm" 
-                    onClick={() => handleAddToCart(s)}
-                  >
-                    Add
-                  </button>
-                </div>
-              </div>
-            ))}
+                ) : null;
+              })}
+            </div>
           </div>
-
-          <div className="modal-footer" style={{ marginTop: '16px', borderTop: '1px solid #e5e7eb', paddingTop: '16px' }}>
-            <button 
-              className="btn-outline" 
-              onClick={() => { setModalOpen(false); navigate('/cart'); }}
-            >
-              View Cart
-            </button>
-            <button className="btn-primary" onClick={() => checkoutFromModal()}>
-              Checkout
-            </button>
-          </div>
-        </div>
-      )}
+        ))}
+      </div>
     </div>
   </div>
 )}
