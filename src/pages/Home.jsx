@@ -221,7 +221,7 @@ export default function Home() {
       'Wall Services': ['pt1', 'pt2', 'pt3'],
       'Protective Services': ['pt4', 'pt5', 'pt6', 'pt7']
     },
-    Carpenter: {
+    Carpentry: {
       'Furniture': ['cr1', 'cr4', 'cr6'],
       'Doors & Windows': ['cr2', 'cr3', 'cr5']
     },
@@ -404,7 +404,7 @@ export default function Home() {
 <section className="container hero fade-in">
   <div>
 
-    <span className="hero-badge">⭐ 50,000+ Happy Customers in {location}</span>
+    {/* <span className="hero-badge">⭐ 50,000+ Happy Customers in {location}</span> */}
 
     <h1 className="hero-title">HomeService99: Trusted Home Services at Your Doorstep</h1>
 
@@ -425,16 +425,7 @@ export default function Home() {
       <button type="button" className="btn-primary" onClick={() => navigate('/services')} aria-label="Find professionals">Find professionals</button>
     </div> */}
 
-    <div className="search-helpers">
-      <div className="search-pill">Background-verified experts</div>
-      <div className="search-pill">Pay securely after service</div>
-    </div>
-
-    <div className="hero-metrics">
-      <span>50k+ bookings completed</span>
-      <span>4.8 average rating</span>
-      <span>30 min avg. response</span>
-    </div>
+    
 
     <div className="category-card">
       <h3 className="category-card-title">What are you looking for?</h3>
@@ -450,7 +441,16 @@ export default function Home() {
         ))}
       </div>
     </div>
+<div className="search-helpers">
+      <div className="search-pill">Background-verified experts</div>
+      <div className="search-pill">Pay securely after service</div>
+    </div>
 
+    <div className="hero-metrics">
+      <span>50k+ bookings completed</span>
+      <span>4.8 average rating</span>
+      <span>30 min avg. response</span>
+    </div>
   </div>
 
   <div>

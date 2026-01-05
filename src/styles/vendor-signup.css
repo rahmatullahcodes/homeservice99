@@ -1,0 +1,472 @@
+/* ============================================
+   VENDOR SIGNUP PAGE - PROFESSIONAL RECRUITMENT DESIGN
+   ============================================ */
+
+.vendor-signup-container {
+  min-height: 100vh;
+  background: #f8f9fb;
+  display: flex;
+  flex-direction: column;
+}
+
+/* HEADER */
+.vendor-header {
+  background: #fff;
+  border-bottom: 1px solid #e5e7eb;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+}
+
+.vendor-header-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 12px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24px;
+}
+
+.vendor-logo {
+  width: 44px;
+  height: 44px;
+  border-radius: 10px;
+  background: linear-gradient(135deg, #2563eb, #0ea5a4);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  font-size: 1.1rem;
+  flex-shrink: 0;
+}
+
+.vendor-nav {
+  display: flex;
+  align-items: center;
+  gap: 32px;
+  flex: 1;
+}
+
+.vendor-nav a {
+  color: #1e293b;
+  text-decoration: none;
+  font-weight: 500;
+  font-size: 1rem;
+  transition: color 0.2s ease;
+}
+
+.vendor-nav a:hover {
+  color: #2563eb;
+}
+
+.location-selector {
+  background: #f3f4f6;
+  padding: 8px 16px;
+  border-radius: 8px;
+  font-weight: 500;
+  font-size: 0.95rem;
+  color: #1e293b;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.location-selector:hover {
+  background: #e5e7eb;
+}
+
+/* HERO SECTION */
+.vendor-hero {
+  background: linear-gradient(135deg, #f8f9fb 0%, #e5f0ff 100%);
+  padding: 60px 24px;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.vendor-hero-content {
+  max-width: 1400px;
+  width: 100%;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 48px;
+  align-items: center;
+}
+
+.vendor-hero-text {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
+.vendor-hero-title {
+  font-size: 3.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1.1;
+  margin: 0;
+}
+
+.vendor-hero-subtitle {
+  font-size: 1.25rem;
+  color: #6b7280;
+  margin: 0;
+  line-height: 1.6;
+}
+
+.vendor-hero-image {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.hero-image-placeholder {
+  width: 100%;
+  display: flex;
+  gap: 20px;
+  justify-content: center;
+  align-items: flex-end;
+}
+
+.professional-icon {
+  font-size: 120px;
+  animation: floatUp 3s ease-in-out infinite;
+}
+
+.professional-icon:nth-child(2) {
+  animation-delay: 0.5s;
+}
+
+@keyframes floatUp {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-10px); }
+}
+
+/* WHATSAPP CTA BANNER */
+.vendor-whatsapp-banner {
+  background: linear-gradient(135deg, #7c3aed 0%, #a855f7 100%);
+  padding: 48px 24px;
+  box-shadow: 0 8px 32px rgba(124, 58, 237, 0.2);
+}
+
+.banner-content {
+  max-width: 1400px;
+  margin: 0 auto;
+  text-align: center;
+}
+
+.vendor-whatsapp-banner h2 {
+  color: #fff;
+  font-size: 1.75rem;
+  font-weight: 700;
+  margin: 0 0 28px 0;
+  line-height: 1.4;
+}
+
+.whatsapp-input-group {
+  display: flex;
+  gap: 12px;
+  max-width: 600px;
+  margin: 0 auto;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.whatsapp-input {
+  flex: 1;
+  min-width: 280px;
+  padding: 14px 18px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  font-size: 1rem;
+  font-weight: 500;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-input::placeholder {
+  color: rgba(255, 255, 255, 0.7);
+}
+
+.whatsapp-input:focus {
+  border-color: rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.2);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.1);
+}
+
+.btn-whatsapp {
+  padding: 14px 32px;
+  background: #fbbf24;
+  color: #1e293b;
+  border: none;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 4px 16px rgba(251, 191, 36, 0.3);
+  white-space: nowrap;
+}
+
+.btn-whatsapp:hover {
+  background: #f59e0b;
+  transform: translateY(-2px);
+  box-shadow: 0 8px 24px rgba(251, 191, 36, 0.4);
+}
+
+.btn-whatsapp:active {
+  transform: translateY(0);
+}
+
+.form-error {
+  color: #fee2e2;
+  background: rgba(239, 68, 68, 0.2);
+  padding: 12px 16px;
+  border-radius: 8px;
+  font-size: 0.95rem;
+  font-weight: 500;
+  margin: 0;
+}
+
+/* INFO SECTION */
+.vendor-info-section {
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 80px 24px;
+  width: 100%;
+  text-align: center;
+}
+
+.vendor-section-title {
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: #0f172a;
+  margin: 0 0 16px 0;
+}
+
+.vendor-section-description {
+  font-size: 1.15rem;
+  color: #6b7280;
+  margin: 0 0 48px 0;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  line-height: 1.6;
+}
+
+/* BENEFITS GRID */
+.vendor-benefits {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 24px;
+  margin-top: 48px;
+}
+
+.benefit-card {
+  background: #fff;
+  padding: 32px 24px;
+  border-radius: 16px;
+  border: 1.5px solid #e5e7eb;
+  transition: all 0.3s ease;
+  text-align: center;
+}
+
+.benefit-card:hover {
+  border-color: #2563eb;
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
+  transform: translateY(-4px);
+}
+
+.benefit-icon {
+  font-size: 3rem;
+  margin-bottom: 16px;
+  display: block;
+}
+
+.benefit-card h3 {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin: 0 0 12px 0;
+}
+
+.benefit-card p {
+  color: #6b7280;
+  font-size: 0.95rem;
+  margin: 0;
+  line-height: 1.6;
+}
+
+/* FOOTER NOTE */
+.vendor-footer-note {
+  background: #fff;
+  border-top: 1px solid #e5e7eb;
+  padding: 32px 24px;
+  text-align: center;
+}
+
+.vendor-footer-note p {
+  color: #6b7280;
+  font-size: 0.9rem;
+  margin: 8px 0;
+}
+
+.vendor-login-link {
+  font-weight: 600;
+  color: #1e293b;
+}
+
+.vendor-login-link a {
+  color: #2563eb;
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+.vendor-login-link a:hover {
+  color: #1e40af;
+  text-decoration: underline;
+}
+
+/* RESPONSIVE DESIGN */
+@media (max-width: 1024px) {
+  .vendor-hero-content {
+    grid-template-columns: 1fr;
+    gap: 32px;
+  }
+
+  .vendor-hero-title {
+    font-size: 2.5rem;
+  }
+
+  .professional-icon {
+    font-size: 80px;
+  }
+
+  .vendor-nav {
+    gap: 16px;
+    font-size: 0.9rem;
+  }
+
+  .vendor-hero {
+    padding: 40px 24px;
+  }
+
+  .vendor-info-section {
+    padding: 60px 24px;
+  }
+
+  .vendor-section-title {
+    font-size: 2rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .vendor-header-content {
+    padding: 12px 16px;
+    flex-wrap: wrap;
+  }
+
+  .vendor-nav {
+    width: 100%;
+    gap: 12px;
+    font-size: 0.85rem;
+  }
+
+  .vendor-hero-title {
+    font-size: 2rem;
+  }
+
+  .vendor-hero-subtitle {
+    font-size: 1rem;
+  }
+
+  .vendor-whatsapp-banner h2 {
+    font-size: 1.3rem;
+  }
+
+  .whatsapp-input-group {
+    flex-direction: column;
+  }
+
+  .whatsapp-input,
+  .btn-whatsapp {
+    width: 100%;
+  }
+
+  .vendor-benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .vendor-section-title {
+    font-size: 1.5rem;
+  }
+
+  .vendor-info-section {
+    padding: 40px 16px;
+  }
+}
+
+@media (max-width: 480px) {
+  .vendor-header-content {
+    gap: 8px;
+  }
+
+  .vendor-nav {
+    font-size: 0.75rem;
+    gap: 8px;
+  }
+
+  .vendor-hero {
+    padding: 24px 16px;
+  }
+
+  .vendor-hero-title {
+    font-size: 1.5rem;
+  }
+
+  .vendor-hero-subtitle {
+    font-size: 0.9rem;
+  }
+
+  .professional-icon {
+    font-size: 60px;
+  }
+
+  .vendor-whatsapp-banner {
+    padding: 32px 16px;
+  }
+
+  .vendor-whatsapp-banner h2 {
+    font-size: 1.1rem;
+  }
+
+  .whatsapp-input {
+    min-width: 100%;
+  }
+
+  .btn-whatsapp {
+    padding: 12px 24px;
+    font-size: 1rem;
+  }
+
+  .vendor-section-title {
+    font-size: 1.25rem;
+  }
+
+  .vendor-section-description {
+    font-size: 0.95rem;
+  }
+
+  .benefit-icon {
+    font-size: 2.5rem;
+  }
+
+  .benefit-card h3 {
+    font-size: 1.1rem;
+  }
+}

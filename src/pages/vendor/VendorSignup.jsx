@@ -1,92 +1,122 @@
 import { useState } from "react";
 import { useNavigate, Link } from "react-router-dom";
+import "../../styles/vendor-signup.css";
 
 export default function VendorSignup() {
 
   const navigate = useNavigate();
+  const [phone, setPhone] = useState("");
 
-  const [form, setForm] = useState({
-    name: "",
-    email: "",
-    phone: "",
-    city: "",
-    service: "",
-    password: ""
-  });
-
-  const [error, setError] = useState("");
-
-  function handleChange(e) {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  }
-
-  function register() {
-
-    const { name, email, phone, city, service, password } = form;
-
-    // BASIC VALIDATION
-    if (!name || !email || !phone || !city || !service || !password) {
-      setError("All fields are required");
-      return;
-    }
-
-    if (!email.includes("@")) {
-      setError("Invalid email address");
-      return;
-    }
-
-    if (password.length < 6) {
-      setError("Password must be at least 6 characters");
-      return;
-    }
-
-    // SAVE DEMO DATA (frontend only)
-    localStorage.setItem("vendorData", JSON.stringify(form));
-    localStorage.setItem("vendor", "true");
-    localStorage.setItem("auth", "true"); // ✅ IMPORTANT
-    localStorage.setItem("vendorProfileCompleted", "false");
-
-    navigate("/vendor");
+  function handleWhatsAppRedirect() {
+    // Redirect to company's WhatsApp number
+    const companyWhatsApp = "918969361100"; // HomeService99 WhatsApp number
+    const message = encodeURIComponent("Hi! I'm interested in joining HomeService99 as a service professional. Please share more details about the partnership program.");
+    
+    // Open WhatsApp with company number
+    window.open(`https://wa.me/${companyWhatsApp}?text=${message}`, "_blank");
   }
 
   return (
-    <div className="container">
-      <div className="form-card">
-
-        <h2>Become a Partner</h2>
-
-        {error && <p className="form-error">{error}</p>}
-
-        <input name="name" placeholder="Full Name / Business Name" onChange={handleChange} />
-        <input name="email" placeholder="Email address" onChange={handleChange} />
-        <input name="phone" placeholder="Phone number" onChange={handleChange} />
-        <input name="city" placeholder="City" onChange={handleChange} />
-
-        <select name="service" onChange={handleChange}>
-          <option value="">Select service category</option>
-          <option>AC Repair</option>
-          <option>Cleaning</option>
-          <option>Plumbing</option>
-          <option>Electrician</option>
-          <option>Beauty</option>
-        </select>
-
-        <input
-          type="password"
-          name="password"
-          placeholder="Create password"
-          onChange={handleChange}
-        />
-
-        <button className="btn-primary full" onClick={register}>
-          Register as Partner
-        </button>
-
-        <div className="form-note">
-          Already a partner? <Link to="/vendor-login">Login</Link>
+    <div className="vendor-signup-container">
+      {/* HEADER */}
+      {/* <header className="vendor-header">
+        <div className="vendor-header-content">
+          <div className="vendor-logo">HS</div>
+          <nav className="vendor-nav">
+            <a href="/">Book a service</a>
+            <a href="/about">About us</a>
+            <div className="location-selector">
+              🇮🇳 Delhi NCR <span>▼</span>
+            </div>
+          </nav>
         </div>
+      </header> */}
 
-      </div>
+      {/* HERO SECTION */}
+      <section className="vendor-hero">
+        <div className="vendor-hero-content">
+          <div className="vendor-hero-text">
+            <h1 className="vendor-hero-title">
+              Earn More. Earn Respect.<br/>Safety Ensured.
+            </h1>
+            <p className="vendor-hero-subtitle">
+              Join 50,000+ service professionals* across India, KSA, Singapore, UAE
+            </p>
+          </div>
+          
+          <div className="vendor-hero-image">
+            <div className="hero-image-placeholder">
+              <div className="professional-icon">👨‍🔧</div>
+              <div className="professional-icon">👩‍💼</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* WHATSAPP CTA BANNER */}
+      <section className="vendor-whatsapp-banner">
+        <div className="banner-content">
+          <h2>Share your WhatsApp number and we'll reach out via our WhatsApp Business Account.</h2>
+          
+          <div className="whatsapp-input-group">
+            <input
+              type="tel"
+              placeholder="Enter your WhatsApp number"
+              value={phone}
+              onChange={(e) => setPhone(e.target.value)}
+              className="whatsapp-input"
+            />
+            <button 
+              onClick={handleWhatsAppRedirect}
+              className="btn-whatsapp"
+            >
+              ✓ Continue
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* INFO SECTION */}
+      <section className="vendor-info-section">
+        <h2 className="vendor-section-title">Join HomeService99 to change your life</h2>
+        <p className="vendor-section-description">
+          HomeService99 is an app-based marketplace that empowers professionals like you to earn more, build trust, and ensure your safety.
+        </p>
+
+        <div className="vendor-benefits">
+          <div className="benefit-card">
+            <div className="benefit-icon">💰</div>
+            <h3>Earn More</h3>
+            <p>Get consistent bookings and grow your income</p>
+          </div>
+
+          <div className="benefit-card">
+            <div className="benefit-icon">🛡️</div>
+            <h3>Safety Ensured</h3>
+            <p>Verified customers and secure payment system</p>
+          </div>
+
+          <div className="benefit-card">
+            <div className="benefit-icon">⭐</div>
+            <h3>Build Respect</h3>
+            <p>Professional profile and customer reviews</p>
+          </div>
+
+          <div className="benefit-card">
+            <div className="benefit-icon">📱</div>
+            <h3>Easy to Use</h3>
+            <p>Simple app interface for managing bookings</p>
+          </div>
+        </div>
+      </section>
+
+      {/* FOOTER NOTE */}
+      <section className="vendor-footer-note">
+        <p>*Based on active service professionals on HomeService99 platform</p>
+        <p className="vendor-login-link">
+          Already a partner? <Link to="/vendor-login">Login here</Link>
+        </p>
+      </section>
     </div>
   );
 }
