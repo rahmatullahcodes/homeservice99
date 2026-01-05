@@ -9,7 +9,7 @@ export default function VendorSignup() {
 
   function handleWhatsAppRedirect() {
     // Redirect to company's WhatsApp number
-    const companyWhatsApp = "918969361100"; // HomeService99 WhatsApp number
+    const companyWhatsApp = "916386158518"; // HomeService99 WhatsApp number
     const message = encodeURIComponent("Hi! I'm interested in joining HomeService99 as a service professional. Please share more details about the partnership program.");
     
     // Open WhatsApp with company number

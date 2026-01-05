@@ -181,7 +181,7 @@ a {
 .container {
   max-width: 1120px;
   margin: 0 auto;
-  padding: 32px 24px;
+  padding: 24px 20px;
 }
 
 /* HERO SECTION */
@@ -7935,5 +7935,106 @@ input[type="text"], input[type="email"], input[type="password"], textarea, input
   .btn-service-card {
     padding: 8px 10px;
     font-size: 12px;
+  }
+}
+
+/* Hide scrollbar for carousel sections */
+.offers-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.promo-slider::-webkit-scrollbar {
+  display: none;
+}
+
+.services-slider::-webkit-scrollbar {
+  display: none;
+}
+
+/* Carousel Responsive Design */
+@media (max-width: 1024px) {
+  .container {
+    padding: 20px 16px;
+  }
+  
+  .offers-scroll > div {
+    flex: 0 0 calc(33.333% - 12px) !important;
+    min-width: 200px !important;
+  }
+  
+  .promo-slider > div {
+    flex: 0 0 calc(50% - 12px) !important;
+    min-width: 280px !important;
+  }
+  
+  .services-slider > div {
+    flex: 0 0 calc(33.333% - 12px) !important;
+    min-width: 220px !important;
+  }
+}
+  }
+}
+
+@media (max-width: 768px) {
+  .offers-scroll > div {
+    flex: 0 0 calc(50% - 12px) !important;
+    min-width: 180px !important;
+  }
+@media (max-width: 768px) {
+  .container {
+    padding: 16px 12px;
+  }
+  
+  .offers-scroll > div {
+    flex: 0 0 calc(50% - 12px) !important;
+    min-width: 180px !important;
+  }
+  
+  .offers-scroll > div img {
+    height: 200px !important;
+  }
+  
+  .promo-slider > div {
+    flex: 0 0 calc(75% - 12px) !important;
+    min-width: 260px !important;
+    height: 180px !important;
+  }
+  
+  .services-slider > div {
+    flex: 0 0 calc(50% - 12px) !important;
+    min-width: 200px !important;
+  }
+}
+
+@media (max-width: 480px) {
+  .container {
+    padding: 12px 10px;
+  }
+  
+  .offers-scroll > div {
+    flex: 0 0 calc(85% - 12px) !important;
+    min-width: 160px !important;
+  }
+  
+  .offers-scroll > div img {
+    height: 160px !important;
+  }
+  
+  .promo-slider > div {
+    flex: 0 0 calc(90% - 12px) !important;
+    min-width: 240px !important;
+    height: 160px !important;
+  }
+  
+  .services-slider > div {
+    flex: 0 0 calc(85% - 12px) !important;
+    min-width: 180px !important;
+  }
+  
+  .carousel-arrow {
+    position: static !important;
+    margin: 0 4px !important;
+    width: 36px !important;
+    height: 36px !important;
   }
 }

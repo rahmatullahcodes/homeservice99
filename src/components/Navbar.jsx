@@ -36,12 +36,14 @@ export default function Navbar() {
       </div>
 
       {/* CENTER: LOCATION + SEARCH */}
-      <form className="uc-search" onSubmit={handleSearch}>
-        <div className="location-box">
-          📍
+      <div className="uc-center">
+        {/* Location Box */}
+        <div className="location-dropdown">
+          <span className="location-icon">📍</span>
           <select
             value={location}
             onChange={(e) => setLocation(e.target.value)}
+            className="location-select"
           >
             <option>Sector 82, Noida</option>
             <option>Sector 90, Noida</option>
@@ -50,13 +52,16 @@ export default function Navbar() {
           </select>
         </div>
 
-        <input
-          type="text"
-          placeholder="Search for 'AC repair', 'Salon', 'Cleaning'..."
-          value={query}
-          onChange={(e) => setQuery(e.target.value)}
-        />
-      </form>
+        {/* Search Box */}
+        <form className="uc-search" onSubmit={handleSearch}>
+          <input
+            type="text"
+            placeholder="Search for 'AC repair', 'Salon', 'Cleaning'..."
+            value={query}
+            onChange={(e) => setQuery(e.target.value)}
+          />
+        </form>
+      </div>
 
       {/* RIGHT: ACTIONS */}
       <div className="uc-actions">

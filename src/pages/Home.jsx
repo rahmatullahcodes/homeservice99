@@ -334,18 +334,73 @@ export default function Home() {
     }
   }
 
-  // Refs & autoplay state for offers carousel
+  // Refs & autoplay state for Get Quote carousel
+  const getQuoteRef = useRef(null);
+  const currentGetQuoteRef = useRef(0);
+  const isPausedGetQuoteRef = useRef(false);
+  const [getQuoteIndex, setGetQuoteIndex] = useState(0);
+
+  // Refs & autoplay state for Offers carousel
   const offersRef = useRef(null);
   const currentOfferRef = useRef(0);
-  const isPausedRef = useRef(false);
+  const isPausedOffersRef = useRef(false);
   const [offerIndex, setOfferIndex] = useState(0);
 
+  // Auto-scroll for Get Quote carousel
+  useEffect(() => {
+    const wrap = getQuoteRef.current;
+    if (!wrap) return;
+
+    const onEnter = () => (isPausedGetQuoteRef.current = true);
+    const onLeave = () => (isPausedGetQuoteRef.current = false);
+
+    const onScroll = () => {
+      const left = wrap.scrollLeft;
+      let nearest = 0;
+      let min = Infinity;
+      Array.from(wrap.children).forEach((c, idx) => {
+        const delta = Math.abs(c.offsetLeft - left);
+        if (delta < min) { min = delta; nearest = idx; }
+      });
+      currentGetQuoteRef.current = nearest;
+      setGetQuoteIndex(nearest);
+    };
+
+    wrap.addEventListener('mouseenter', onEnter);
+    wrap.addEventListener('mouseleave', onLeave);
+    wrap.addEventListener('scroll', onScroll, { passive: true });
+
+    const interval = setInterval(() => {
+      if (isPausedGetQuoteRef.current) return;
+      const count = wrap.children.length || 1;
+      const next = (currentGetQuoteRef.current + 1) % count;
+      const child = wrap.children[next];
+      if (child) {
+        wrap.scrollTo({ left: child.offsetLeft - 6, behavior: 'smooth' });
+        currentGetQuoteRef.current = next;
+        setGetQuoteIndex(next);
+      }
+    }, 3500);
+
+    document.addEventListener('visibilitychange', () => {
+      isPausedGetQuoteRef.current = document.hidden;
+    });
+
+    return () => {
+      clearInterval(interval);
+      wrap.removeEventListener('mouseenter', onEnter);
+      wrap.removeEventListener('mouseleave', onLeave);
+      wrap.removeEventListener('scroll', onScroll);
+    };
+  }, []);
+
+  // Auto-scroll for Offers carousel
   useEffect(() => {
     const wrap = offersRef.current;
     if (!wrap) return;
 
-    const onEnter = () => (isPausedRef.current = true);
-    const onLeave = () => (isPausedRef.current = false);
+    const onEnter = () => (isPausedOffersRef.current = true);
+    const onLeave = () => (isPausedOffersRef.current = false);
 
     const onScroll = () => {
       const left = wrap.scrollLeft;
@@ -364,7 +419,7 @@ export default function Home() {
     wrap.addEventListener('scroll', onScroll, { passive: true });
 
     const interval = setInterval(() => {
-      if (isPausedRef.current) return;
+      if (isPausedOffersRef.current) return;
       const count = wrap.children.length || 1;
       const next = (currentOfferRef.current + 1) % count;
       const child = wrap.children[next];
@@ -376,7 +431,7 @@ export default function Home() {
     }, 3500);
 
     document.addEventListener('visibilitychange', () => {
-      isPausedRef.current = document.hidden;
+      isPausedOffersRef.current = document.hidden;
     });
 
     return () => {
@@ -386,16 +441,6 @@ export default function Home() {
       wrap.removeEventListener('scroll', onScroll);
     };
   }, []);
-
-  function scrollToOffer(i) {
-    const wrap = offersRef.current;
-    if (!wrap) return;
-    const child = wrap.children[i];
-    if (!child) return;
-    wrap.scrollTo({ left: child.offsetLeft - 6, behavior: 'smooth' });
-    currentOfferRef.current = i;
-    setOfferIndex(i);
-  }
 
   return (
     <div>
@@ -559,125 +604,1858 @@ export default function Home() {
   </div>
 )}
 
-{/* FEATURED SERVICES CARDS */}
-<section className="container slide-up" style={{ marginTop: "60px" }}>
+{/* PROMOTIONAL SLIDER SECTION */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => {
+        const promoScroll = document.querySelector('.promo-slider');
+        if (promoScroll) promoScroll.scrollBy({ left: -340, behavior: 'smooth' });
+      }}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="promo-slider"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { 
+            id: 1, 
+            title: 'Full House Cleaning Starts', 
+            price: '₹2599', 
+            img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=280&fit=crop',
+            category: 'Cleaning'
+          },
+          { 
+            id: 2, 
+            title: 'Plumbings Starts at just', 
+            price: '₹250', 
+            img: 'https://i.postimg.cc/0Nn801Bt/Local-Plumber-Broomall-WM-Henderson-Photo.jpg?w=400&h=280&fit=crop',
+            category: 'Plumber'
+          },
+          { 
+            id: 3, 
+            title: 'Carpentry Starts at just', 
+            price: '₹250', 
+            img: 'https://i.postimg.cc/nVCd48RB/679c741cfd2f81997c15fb20-Featured-image.jpg?w=400&h=280&fit=crop',
+            category: 'Carpentry'
+          },
+          { 
+            id: 4, 
+            title: 'AC Service Starts at just', 
+            price: '₹699', 
+            img: 'https://i.postimg.cc/jj64X0Dg/Gemini-Generated-Image-fe28zlfe28zlfe28.png?w=400&h=280&fit=crop',
+            category: 'Appliances'
+          },
+          { 
+            id: 5, 
+            title: 'Electrician Starts at just', 
+            price: '₹299', 
+            img: 'https://i.postimg.cc/v8NCs5FK/Gemini-Generated-Image-bx1oyjbx1oyjbx1o.png?w=400&h=280&fit=crop',
+            category: 'Electrician'
+          }
+        ].map((promo) => (
+          <div 
+            key={promo.id}
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '300px',
+              scrollSnapAlign: 'start',
+              display: 'grid',
+              gridTemplateColumns: '150px 1fr',
+              height: '200px',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+              e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.15)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
+            }}
+            onClick={() => navigate(`/services?category=${encodeURIComponent(promo.category)}`)}
+          >
+            {/* Left Side - Blue Background with Text */}
+            <div style={{
+              background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
+              color: 'white',
+              padding: '20px',
+              display: 'flex',
+              flexDirection: 'column',
+              justifyContent: 'space-between'
+            }}>
+              <div>
+                <h3 style={{
+                  margin: '0 0 8px 0',
+                  fontSize: '16px',
+                  fontWeight: '700',
+                  lineHeight: '1.3'
+                }}>
+                  {promo.title}
+                </h3>
+                <p style={{
+                  margin: '0',
+                  fontSize: '18px',
+                  fontWeight: '700',
+                  color: '#fbbf24'
+                }}>
+                  {promo.price}
+                </p>
+              </div>
+              <button style={{
+                background: '#fff',
+                color: '#2563eb',
+                border: 'none',
+                padding: '8px 16px',
+                borderRadius: '6px',
+                fontSize: '12px',
+                fontWeight: '600',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease'
+              }}
+              onMouseEnter={(e) => {
+                e.target.style.background = '#f0f4f8';
+                e.target.style.transform = 'scale(1.05)';
+              }}
+              onMouseLeave={(e) => {
+                e.target.style.background = '#fff';
+                e.target.style.transform = 'scale(1)';
+              }}>
+                Book Now
+              </button>
+            </div>
+
+            {/* Right Side - Image */}
+            <img 
+              src={promo.img} 
+              alt={promo.title}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/300x200?text=' + promo.title;
+              }}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => {
+        const promoScroll = document.querySelector('.promo-slider');
+        if (promoScroll) promoScroll.scrollBy({ left: 340, behavior: 'smooth' });
+      }}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
+
+{/* FEATURED SERVICES CARDS - SLIDER */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
   <h2 className="section-title">Popular Services</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Highly-rated services from verified professionals</p>
-  
-  <div className="services-grid">
-    {getFeaturedServices().map((service) => (
-      <div key={service.id} className="service-card">
-        {/* Service Image */}
-        <div className="service-card-image">
-          <img src={service.image} alt={service.title} />
-        </div>
-        
-        {/* Service Body */}
-        <div className="service-card-body">
-          {/* Title */}
-          <h3 className="service-card-title">{service.title}</h3>
-          
-          {/* Category Badge */}
-          <span className="service-category-badge">{service.category}</span>
-          
-          {/* Rating */}
-          <div className="service-rating">
-            <span className="stars">⭐ {service.rating}</span>
-            <span className="review-count">({service.reviews} reviews)</span>
-          </div>
-          
-          {/* Description */}
-          <p className="service-description">{service.desc}</p>
-          
-          {/* Price */}
-          <div className="service-price">
-            <span>Starting from</span>
-            <strong>₹{service.price}</strong>
-          </div>
-          
-          {/* Action Button */}
-          <button 
-            className="btn-service-card"
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => {
+        const servicesScroll = document.querySelector('.services-slider');
+        if (servicesScroll) servicesScroll.scrollBy({ left: -280, behavior: 'smooth' });
+      }}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="services-slider"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {getFeaturedServices().map((service) => (
+          <div 
+            key={service.id}
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '240px',
+              scrollSnapAlign: 'start',
+              display: 'flex',
+              flexDirection: 'column',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}
             onClick={() => {
               navigate(`/services?category=${encodeURIComponent(service.category)}`);
             }}
           >
-            Book Now
-          </button>
-        </div>
+            {/* Service Image */}
+            <div style={{
+              width: '100%',
+              height: '160px',
+              borderRadius: '12px 12px 0 0',
+              overflow: 'hidden',
+              background: '#f1f5f9'
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '100%',
+                  objectFit: 'cover'
+                }}
+                onError={(e) => {
+                  e.target.src = 'https://via.placeholder.com/240x160?text=' + service.category;
+                }}
+              />
+            </div>
+            
+            {/* Service Body */}
+            <div style={{
+              padding: '12px',
+              background: '#fff',
+              borderRadius: '0 0 12px 12px',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+              flex: 1,
+              display: 'flex',
+              flexDirection: 'column'
+            }}>
+              {/* Title */}
+              <h3 style={{
+                margin: '0 0 6px 0',
+                fontSize: '13px',
+                fontWeight: '600',
+                color: '#0f172a',
+                lineHeight: '1.3'
+              }}>
+                {service.title}
+              </h3>
+              
+              {/* Category Badge */}
+              <span style={{
+                display: 'inline-block',
+                background: '#e0e7ff',
+                color: '#2563eb',
+                padding: '3px 8px',
+                borderRadius: '4px',
+                fontSize: '11px',
+                fontWeight: '500',
+                marginBottom: '6px',
+                width: 'fit-content'
+              }}>
+                {service.category}
+              </span>
+              
+              {/* Rating */}
+              <div style={{ marginBottom: '6px' }}>
+                <span style={{
+                  fontSize: '11px',
+                  color: '#0f172a',
+                  fontWeight: '500'
+                }}>
+                  ⭐ {service.rating}
+                </span>
+                <span style={{
+                  fontSize: '10px',
+                  color: '#6b7280',
+                  marginLeft: '4px'
+                }}>
+                  ({service.reviews})
+                </span>
+              </div>
+              
+              {/* Price */}
+              <div style={{
+                marginTop: 'auto',
+                paddingTop: '6px',
+                borderTop: '1px solid #e5e7eb'
+              }}>
+                <div style={{
+                  fontSize: '12px',
+                  color: '#6b7280',
+                  marginBottom: '4px'
+                }}>
+                  From
+                </div>
+                <strong style={{
+                  fontSize: '16px',
+                  color: '#2563eb'
+                }}>
+                  ₹{service.price}
+                </strong>
+              </div>
+            </div>
+          </div>
+        ))}
       </div>
-    ))}
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => {
+        const servicesScroll = document.querySelector('.services-slider');
+        if (servicesScroll) servicesScroll.scrollBy({ left: 280, behavior: 'smooth' });
+      }}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
   </div>
 </section>
 
-{/* OFFERS & DISCOUNTS */}
-<section className="container slide-up offers-section">
+{/* GET QUOTE - PROFESSIONAL SLIDER */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
   <h2 className="section-title">Get Quote</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grab limited-time deals and curated packages</p>
 
-  <div className="offers-wrap">
-    <button className="offers-nav left" aria-label="Scroll left" onClick={() => { offersRef.current?.scrollBy({ left: -320, behavior: 'smooth' }); }}>&#8249;</button>
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => getQuoteRef.current?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
 
-    <div className="offers-scroll" role="list" ref={offersRef}>
-      {OFFERS.map((offer) => (
-        <div className="offer-card" key={offer.id} role="listitem">
-          <img src={offer.img} alt={offer.title} />
-          <div className="offer-body">
-            <strong>{offer.title}</strong>
-            <p className="offer-sub">{offer.subtitle}</p>
-            <div style={{ marginTop: 8 }}>
-              <button className="btn-outline">{offer.cta}</button>
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="offers-scroll" 
+        role="list" 
+        ref={getQuoteRef}
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {OFFERS.map((offer) => (
+          <div 
+            key={offer.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start'
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={offer.img} 
+                alt={offer.title}
+                style={{
+                  width: '100%',
+                  height: '240px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a',
+                textAlign: 'center',
+                lineHeight: '1.4'
+              }}>
+                {offer.title}
+              </p>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
 
-    <button className="offers-nav right" aria-label="Scroll right" onClick={() => { offersRef.current?.scrollBy({ left: 320, behavior: 'smooth' }); }}>&#8250;</button>
-
-    <div className="offers-indicators" aria-hidden={OFFERS.length <= 1}>
-      {OFFERS.map((o, i) => (
-        <button key={o.id} className={`dot ${i === offerIndex ? 'active' : ''}`} onClick={() => scrollToOffer(i)} aria-label={`Go to offer ${i + 1}`}></button>
-      ))}
-    </div>
+    <button 
+      className="carousel-arrow"
+      onClick={() => getQuoteRef.current?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
   </div>
 </section>
 
-{/* OFFERS & DISCOUNTS */}
-<section className="container slide-up offers-section">
+{/* OFFERS & DISCOUNTS - PROFESSIONAL SLIDER */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
   <h2 className="section-title">Offers & discounts</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grab limited-time deals and curated packages</p>
 
-  <div className="offers-wrap">
-    <button className="offers-nav left" aria-label="Scroll left" onClick={() => { offersRef.current?.scrollBy({ left: -320, behavior: 'smooth' }); }}>&#8249;</button>
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => offersRef.current?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
 
-    <div className="offers-scroll" role="list" ref={offersRef}>
-      {OFFERS.map((offer) => (
-        <div className="offer-card" key={offer.id} role="listitem">
-          <img src={offer.img} alt={offer.title} />
-          <div className="offer-body">
-            <strong>{offer.title}</strong>
-            <p className="offer-sub">{offer.subtitle}</p>
-            <div style={{ marginTop: 8 }}>
-              <button className="btn-outline">{offer.cta}</button>
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="offers-scroll" 
+        role="list"
+        ref={offersRef}
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {OFFERS.map((offer) => (
+          <div 
+            key={offer.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start'
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '12px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={offer.img} 
+                alt={offer.title}
+                style={{
+                  width: '100%',
+                  height: '240px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a',
+                textAlign: 'center',
+                lineHeight: '1.4'
+              }}>
+                {offer.title}
+              </p>
             </div>
           </div>
-        </div>
-      ))}
+        ))}
+      </div>
     </div>
 
-    <button className="offers-nav right" aria-label="Scroll right" onClick={() => { offersRef.current?.scrollBy({ left: 320, behavior: 'smooth' }); }}>&#8250;</button>
+    <button 
+      className="carousel-arrow"
+      onClick={() => offersRef.current?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
 
-    <div className="offers-indicators" aria-hidden={OFFERS.length <= 1}>
-      {OFFERS.map((o, i) => (
-        <button key={o.id} className={`dot ${i === offerIndex ? 'active' : ''}`} onClick={() => scrollToOffer(i)} aria-label={`Go to offer ${i + 1}`}></button>
-      ))}
+{/* SALON FOR MEN - GROOMING ESSENTIALS */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <h2 className="section-title">Salon for men</h2>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grooming essentials</p>
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.salon-men-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="salon-men-scroll" 
+        role="list"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { id: 'm1', title: 'Haircut', rating: 4.8, reviews: 470, price: 299, image: 'https://i.postimg.cc/3zV5YhgM/Gemini-Generated-Image-b8-k9t2b8-k9t2b8-k9.png' },
+          { id: 'm2', title: 'Beard trim & styling', rating: 4.87, reviews: 139, price: 249, image: 'https://i.postimg.cc/1z6CK0GQ/Gemini-Generated-Image-6zf86d6zf86d6zf8.png' },
+          { id: 'm3', title: 'Haircut for kids', rating: 4.85, reviews: 105, price: 299, image: 'https://i.postimg.cc/8cL8bnNY/Gemini-Generated-Image-3w-qx9g3w-qx9g3w-q.png' },
+          { id: 'm4', title: 'Clean shave', rating: 4.86, reviews: 68, price: 249, image: 'https://i.postimg.cc/NfCM2H5M/Gemini-Generated-Image-h5i0nkh5i0nkh5i0.png' },
+          { id: 'm5', title: 'Head, neck & shoulder massage', rating: 4.83, reviews: 50, price: 349, image: 'https://i.postimg.cc/MpLfVvgH/Gemini-Generated-Image-wqzlzqwqzlzqwqzl.png' }
+        ].map((service) => (
+          <div 
+            key={service.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start'
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '220px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a'
+              }}>
+                {service.title}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
+              </div>
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '700',
+                color: '#0f172a'
+              }}>
+                ₹{service.price}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
     </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.salon-men-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
+
+{/* MASSAGE FOR MEN */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <h2 className="section-title">Massage for Men</h2>
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.massage-men-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="massage-men-scroll" 
+        role="list"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { id: 'mm1', title: 'Foot massage', rating: 4.87, reviews: 39, price: 549, image: 'https://i.postimg.cc/kX2fYrg8/Gemini-Generated-Image-7d-2ckt7d-2ckt7d-2c.png' },
+          { id: 'mm2', title: 'Head, neck & shoulder massage', rating: 4.87, reviews: 41, price: 649, image: 'https://i.postimg.cc/MZPkYcBh/Gemini-Generated-Image-d9j4hqd9j4hqd9j4.png' },
+          { id: 'mm3', title: 'Leg pain relief massage for men', rating: 4.87, reviews: 12, price: 849, image: 'https://i.postimg.cc/RVZVfDQG/Gemini-Generated-Image-cqkv93cqkv93cqkv.png' },
+          { id: 'mm4', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 2, price: 1449, image: 'https://i.postimg.cc/T1hNKvWM/Gemini-Generated-Image-0f-nsfj0f-nsfj0f-n.png' },
+          { id: 'mm5', title: 'Quick Comfort Therapy', rating: 4.83, reviews: 11, price: 999, image: 'https://i.postimg.cc/xThpXxJz/Gemini-Generated-Image-fpbzj2fpbzj2fpbz.png', badge: '17% OFF' }
+        ].map((service) => (
+          <div 
+            key={service.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start',
+              position: 'relative'
+            }}
+          >
+            {service.badge && (
+              <div style={{
+                position: 'absolute',
+                top: '8px',
+                right: '8px',
+                background: '#059669',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '11px',
+                fontWeight: '700',
+                zIndex: 5
+              }}>
+                {service.badge}
+              </div>
+            )}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '220px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a'
+              }}>
+                {service.title}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
+              </div>
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '700',
+                color: '#0f172a'
+              }}>
+                ₹{service.price}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.massage-men-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
+
+{/* HOME REPAIR & INSTALLATION */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <h2 className="section-title">Home repair & installation</h2>
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.repair-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="repair-scroll" 
+        role="list"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { id: 'r1', title: 'Decor installation', rating: 4.83, reviews: 83, price: 79, image: 'https://i.postimg.cc/htXVXvsk/Gemini-Generated-Image-g3-kvk1g3-kvk1g3-k.png' },
+          { id: 'r2', title: 'Plumber consultation', rating: 4.73, reviews: 92, price: 49, image: 'https://i.postimg.cc/MTByvK9Z/Gemini-Generated-Image-wyq3g5wyq3g5wyq3.png' },
+          { id: 'r3', title: 'Electrician consultation', rating: 4.74, reviews: 76, price: 49, image: 'https://i.postimg.cc/kgtLxDXq/Gemini-Generated-Image-4c-x0pt4c-x0pt4c-x.png' },
+          { id: 'r4', title: 'Switchboard repair & replacement', rating: 4.82, reviews: 46, price: 99, image: 'https://i.postimg.cc/Wz2KLZYK/Gemini-Generated-Image-qkwzyxqkwzyxqkwz.png' },
+          { id: 'r5', title: 'Cupboard repair', rating: 4.77, reviews: 48, price: 89, image: 'https://i.postimg.cc/9FfRv0M8/Gemini-Generated-Image-j5-ej19j5-ej19j5-e.png' }
+        ].map((service) => (
+          <div 
+            key={service.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start'
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '220px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a'
+              }}>
+                {service.title}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
+              </div>
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '700',
+                color: '#0f172a'
+              }}>
+                ₹{service.price}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.repair-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
+
+{/* APPLIANCE SERVICE & REPAIR */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <h2 className="section-title">Appliance Service & Repair</h2>
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.appliance-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="appliance-scroll" 
+        role="list"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { id: 'a1', title: 'Geyser check-up', rating: 4.73, reviews: 99, price: 249, image: 'https://i.postimg.cc/dtLcnvY4/Gemini-Generated-Image-5j-u1mz5j-u1mz5j-u.png' },
+          { id: 'a2', title: 'Automatic top load machine check-up', rating: 4.77, reviews: 346, price: 199, image: 'https://i.postimg.cc/wxPvTD9V/Gemini-Generated-Image-1m-rvqv1m-rvqv1m-r.png' },
+          { id: 'a3', title: 'TV check-up', rating: 4.77, reviews: 158, price: 249, image: 'https://i.postimg.cc/L6bzvjbb/Gemini-Generated-Image-yv-kq8pyv-kq8pyv-k.png' },
+          { id: 'a4', title: 'Geyser service', rating: 4.76, reviews: 74, price: 599, image: 'https://i.postimg.cc/Y0X1rZfm/Gemini-Generated-Image-w8-wso3w8-wso3w8-w.png' },
+          { id: 'a5', title: 'Geyser installation', rating: 4.78, reviews: 46, price: 499, image: 'https://i.postimg.cc/7Lw6pRYx/Gemini-Generated-Image-rczq7hrczq7hrczq.png' }
+        ].map((service) => (
+          <div 
+            key={service.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start'
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '220px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a'
+              }}>
+                {service.title}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
+              </div>
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '700',
+                color: '#0f172a'
+              }}>
+                ₹{service.price}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.appliance-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
+
+{/* CLEANING ESSENTIALS */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <h2 className="section-title">Cleaning Essentials</h2>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Monthly cleaning essential services</p>
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.cleaning-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="cleaning-scroll" 
+        role="list"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { id: 'c1', title: 'Intense bathroom cleaning', rating: 4.79, reviews: '4M', price: 399, original: 499, image: 'https://i.postimg.cc/vgQFt3Y3/Gemini-Generated-Image-74-yyt774-yyt774-y.png' },
+          { id: 'c2', title: 'Intense cleaning (2 bathrooms)', rating: 4.79, reviews: '4M', price: 798, original: 998, image: 'https://i.postimg.cc/HFQRLS3k/Gemini-Generated-Image-tctmp0tctmp0tctm.png' },
+          { id: 'c3', title: 'Chimney cleaning', rating: 4.83, reviews: '157K', price: 399, image: 'https://i.postimg.cc/W4Hbr7YM/Gemini-Generated-Image-1p-c8bj1p-c8bj1p-c.png' },
+          { id: 'c4', title: 'Fridge cleaning', rating: 4.83, reviews: '125K', price: 399, image: 'https://i.postimg.cc/Hnsq9PWL/Gemini-Generated-Image-jvb7z8jvb7z8jvb7.png' },
+          { id: 'c5', title: 'Cockroach control (with utensil removal)', rating: 4.79, reviews: '137K', price: 1098, image: 'https://i.postimg.cc/rmr1VkxP/Gemini-Generated-Image-fw-o3yfw-o3yfw-o.png' }
+        ].map((service) => (
+          <div 
+            key={service.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start'
+            }}
+          >
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '220px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a'
+              }}>
+                {service.title}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+                <span style={{ color: '#6b7280' }}>({service.reviews})</span>
+              </div>
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '700',
+                color: '#0f172a'
+              }}>
+                ₹{service.price} {service.original && <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px' }}>₹{service.original}</span>}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.cleaning-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
+
+{/* SPA FOR WOMEN */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <h2 className="section-title">Spa for Women</h2>
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.spa-women-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="spa-women-scroll" 
+        role="list"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { id: 'sp1', title: 'Warm Swedish stress relief massage', rating: 4.83, reviews: 6, price: 1349, image: 'https://i.postimg.cc/28QVGG8v/Gemini-Generated-Image-hwhf5whwhf5whwhf.png', badge: 'Hot bed' },
+          { id: 'sp2', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 6, price: 1499, image: 'https://i.postimg.cc/tRVKqtqp/Gemini-Generated-Image-kh-py8xkh-py8xkh-p.png', badge: 'Hot bed' },
+          { id: 'sp3', title: '4 sessions (Mon-Sat only): Swedish massage', rating: 4.82, reviews: 231, price: 1299, image: 'https://i.postimg.cc/fkNmg5G6/Gemini-Generated-Image-5m-rkpg5m-rkpg5m-r.png' },
+          { id: 'sp4', title: '4 sessions (Mon-Sat only): Deep tissue massage', rating: 4.82, reviews: 157, price: 1449, image: 'https://i.postimg.cc/9fTgf67Y/Gemini-Generated-Image-19f0pb19f0pb19f0.png', badge: 'Hot bed' },
+          { id: 'sp5', title: 'Leg pain relief massage for women', rating: 4.85, reviews: 12, price: 849, image: 'https://i.postimg.cc/yd5jL5YX/Gemini-Generated-Image-eyr71ceyr71ceyr7.png' }
+        ].map((service) => (
+          <div 
+            key={service.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start',
+              position: 'relative'
+            }}
+          >
+            {service.badge && (
+              <div style={{
+                position: 'absolute',
+                top: '8px',
+                left: '8px',
+                background: '#92400e',
+                color: 'white',
+                padding: '6px 10px',
+                borderRadius: '6px',
+                fontSize: '11px',
+                fontWeight: '700',
+                zIndex: 5
+              }}>
+                {service.badge}
+              </div>
+            )}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '220px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a'
+              }}>
+                {service.title}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
+              </div>
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '700',
+                color: '#0f172a'
+              }}>
+                ₹{service.price}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.spa-women-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
+  </div>
+</section>
+
+{/* SALON FOR WOMEN */}
+<section className="container slide-up" style={{ marginTop: "40px" }}>
+  <h2 className="section-title">Salon for Women</h2>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Pamper yourself at home</p>
+
+  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.salon-women-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
+      aria-label="Scroll left"
+      style={{
+        position: 'absolute',
+        left: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ‹
+    </button>
+
+    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+      <div 
+        className="salon-women-scroll" 
+        role="list"
+        style={{ 
+          display: 'flex',
+          gap: '16px',
+          overflowX: 'auto',
+          scrollBehavior: 'smooth',
+          WebkitOverflowScrolling: 'touch',
+          scrollSnapType: 'x mandatory',
+          scrollbarWidth: 'none',
+          msOverflowStyle: 'none'
+        }}
+      >
+        {[
+          { id: 'sw1', title: 'Roll-on waxing (Full arms, legs & underarms)', rating: 4.88, reviews: 66, price: 899, image: 'https://i.postimg.cc/VLMq6K0d/Gemini-Generated-Image-3j-g5k03j-g5k03j-g.png' },
+          { id: 'sw2', title: 'Spatula waxing (Full arms, legs & underarms)', rating: 4.86, reviews: 47, price: 699, image: 'https://i.postimg.cc/sxDnLFqP/Gemini-Generated-Image-gtp1tz3gtp1tz3gtp.png' },
+          { id: 'sw3', title: 'Crystal rose pedicure', rating: 4.83, reviews: 134, price: 759, image: 'https://i.postimg.cc/Y2HSHF0s/Gemini-Generated-Image-3-7zl9-f3-7zl9-f3-7z.png' },
+          { id: 'sw4', title: 'Mani-pedi delight', rating: 4.82, reviews: 191, price: 1359, original: 1458, image: 'https://i.postimg.cc/j5qjr3nZ/Gemini-Generated-Image-kvukhfkvukhfkvuk.png', badge: '7% OFF' }
+        ].map((service) => (
+          <div 
+            key={service.id} 
+            role="listitem"
+            style={{
+              flex: '0 0 calc(25% - 12px)',
+              minWidth: '220px',
+              scrollSnapAlign: 'start',
+              position: 'relative'
+            }}
+          >
+            {service.badge && (
+              <div style={{
+                position: 'absolute',
+                top: '8px',
+                right: '8px',
+                background: '#059669',
+                color: 'white',
+                padding: '4px 8px',
+                borderRadius: '4px',
+                fontSize: '11px',
+                fontWeight: '700',
+                zIndex: 5
+              }}>
+                {service.badge}
+              </div>
+            )}
+            <div style={{
+              display: 'flex',
+              flexDirection: 'column',
+              gap: '8px',
+              cursor: 'pointer',
+              transition: 'all 0.3s ease'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.transform = 'translateY(-8px)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.transform = 'translateY(0)';
+            }}>
+              <img 
+                src={service.image} 
+                alt={service.title}
+                style={{
+                  width: '100%',
+                  height: '220px',
+                  objectFit: 'cover',
+                  borderRadius: '12px',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+                }}
+              />
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '600',
+                color: '#0f172a'
+              }}>
+                {service.title}
+              </p>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
+              </div>
+              <p style={{
+                margin: '0',
+                fontSize: '14px',
+                fontWeight: '700',
+                color: '#0f172a'
+              }}>
+                ₹{service.price} {service.original && <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px' }}>₹{service.original}</span>}
+              </p>
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+
+    <button 
+      className="carousel-arrow"
+      onClick={() => document.querySelector('.salon-women-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
+      aria-label="Scroll right"
+      style={{
+        position: 'absolute',
+        right: '-50px',
+        zIndex: 10,
+        width: '40px',
+        height: '40px',
+        borderRadius: '50%',
+        border: '2px solid #e5e7eb',
+        background: 'white',
+        cursor: 'pointer',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        fontSize: '20px',
+        color: '#0f172a',
+        transition: 'all 0.3s ease'
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = '#f3f4f6';
+        e.target.style.borderColor = '#d1d5db';
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = 'white';
+        e.target.style.borderColor = '#e5e7eb';
+      }}
+    >
+      ›
+    </button>
   </div>
 </section>
 
 {/* HOW IT WORKS */}
-<section className="container slide-up" style={{ marginTop: "60px" }}>
+<section className="container slide-up" style={{ marginTop: "40px" }}>
   <h2 className="section-title">How HomeService99 Works</h2>
   <div className="how-it-works-grid">
     {[
@@ -701,7 +2479,7 @@ export default function Home() {
 
 
 {/* FAQ SECTION */}
-<section className="container slide-up" style={{ marginTop: "60px", marginBottom: "60px" }}>
+<section className="container slide-up" style={{ marginTop: "40px", marginBottom: "40px" }}>
   <h2 className="section-title">Frequently Asked Questions</h2>
   <div className="faq-container">
     {[
