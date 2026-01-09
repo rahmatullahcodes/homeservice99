@@ -76,12 +76,12 @@ export default function Home() {
   // Add function to get featured services with ratings
   const getFeaturedServices = () => {
     return [
-      { id: 'cl1', title: 'Full Home Deep Cleaning', category: 'Cleaning', price: 1999, image: 'https://i.postimg.cc/jdFmRtz7/Gemini-Generated-Image-kwxs91kwxs91kwxs.png', rating: 4.8, reviews: 2340, desc: 'Professional deep cleaning with eco-friendly products' },
-      { id: 'el2', title: 'Fan Installation / Repair', category: 'Electrician', price: 299, image: 'https://i.postimg.cc/v8NCs5FK/Gemini-Generated-Image-bx1oyjbx1oyjbx1o.png', rating: 4.7, reviews: 1856, desc: 'Expert fan installation and repair services' },
-      { id: 'pl1', title: 'Tap & Mixer Repair', category: 'Plumber', price: 199, image: 'https://i.postimg.cc/jSnLqHF2/Gemini-Generated-Image-v6q2mfv6q2mfv6q2.png', rating: 4.9, reviews: 3120, desc: 'Professional tap and mixer repair solutions' },
-      { id: 'el5', title: 'Inverter & UPS Installation', category: 'Electrician', price: 799, image: 'https://i.postimg.cc/sgmgKTqp/Gemini-Generated-Image-g6mtfog6mtfog6mt.png', rating: 4.6, reviews: 1540, desc: 'Expert inverter and UPS installation service' },
-      { id: 'ap1', title: 'AC Service', category: 'Appliances', price: 699, image: 'https://i.postimg.cc/jj64X0Dg/Gemini-Generated-Image-fe28zlfe28zlfe28.png', rating: 4.8, reviews: 4230, desc: 'Professional AC service and maintenance' },
-      { id: 'el3', title: 'Light / Chandelier Installation', category: 'Electrician', price: 399, image: 'https://i.postimg.cc/1t2xJFyG/Gemini-Generated-Image-4krxr54krxr54krx.png', rating: 4.7, reviews: 1204, desc: 'Professional lighting installation and setup' }
+      { id: 'cl1', title: 'Full Home Deep Cleaning', category: 'Cleaning', price: 1999, image: 'src/assets/images/Full Home Deep Cleaning.png', rating: 4.8, reviews: 2340, desc: 'Professional deep cleaning with eco-friendly products' },
+      { id: 'el2', title: 'Fan Installation / Repair ', category: 'Electrician', price: 299, image: 'src/assets/images/Fan Installation  Repair.png', rating: 4.7, reviews: 1856, desc: 'Expert fan installation and repair services' },
+      { id: 'pl1', title: 'Tap & Mixer Repair', category: 'Plumber', price: 199, image: 'src/assets/images/Tap & Mixer Repair.png', rating: 4.9, reviews: 3120, desc: 'Professional tap and mixer repair solutions' },
+      { id: 'el5', title: 'Inverter & UPS Installation', category: 'Electrician', price: 799, image: 'src/assets/images/Inverter & UPS Installation.png', rating: 4.6, reviews: 1540, desc: 'Expert inverter and UPS installation service' },
+      { id: 'ap1', title: 'AC Service', category: 'Appliances', price: 699, image: 'src/assets/images/AC Service.png', rating: 4.8, reviews: 4230, desc: 'Professional AC service and maintenance' },
+      { id: 'el3', title: 'Light / Chandelier Installation', category: 'Electrician', price: 399, image: 'src/assets/images/Light  Chandelier Installation.png', rating: 4.7, reviews: 1204, desc: 'Professional lighting installation and setup' }
     ];
   };
 
@@ -124,77 +124,73 @@ export default function Home() {
     ],
 
     Appliances: [
-      { id: 'ap1', title: 'AC Service', price: 699, image: 'https://i.postimg.cc/BbYpZKLj/Gemini-Generated-Image-mwb21dmwb21dmwb2.png' },
-      { id: 'ap2', title: 'AC Installation', price: 999, image: 'https://i.postimg.cc/JhgW0Pvt/Gemini-Generated-Image-p02kysp02kysp02k.png' },
-      { id: 'ap3', title: 'AC Uninstallation', price: 399, image: 'https://i.postimg.cc/DZqYh6K6/Gemini-Generated-Image-eui3pbeui3pbeui3.png' },
-      { id: 'ap4', title: 'AC Gas Refill', price: 899, image: 'https://i.postimg.cc/C5c7M6r4/Gemini-Generated-Image-2emk6i2emk6i2emk.png' },
-      { id: 'ap5', title: 'AC General Service', price: 599, image: 'https://i.postimg.cc/8zRFhrNG/Gemini-Generated-Image-8ubmnm8ubmnm8ubm.png' },
-      { id: 'ap6', title: 'AC Repair (Split / Window)', price: 799, image: 'https://i.postimg.cc/y8MMzkZZ/Gemini-Generated-Image-ogntwrogntwrognt.png' },
+      { id: 'ap1', title: 'AC Service', price: 699, image: 'https://img.icons8.com/fluency/96/air-conditioner.png' },
+      { id: 'ap2', title: 'AC Installation', price: 999, image: 'https://img.icons8.com/fluency/96/air-conditioner.png' },
+      { id: 'ap3', title: 'AC Uninstallation', price: 399, image: 'https://img.icons8.com/fluency/96/air-conditioner.png' },
+      { id: 'ap4', title: 'AC Gas Refill', price: 899, image: 'https://img.icons8.com/fluency/96/gas.png' },
+      { id: 'ap5', title: 'AC General Service', price: 599, image: 'https://img.icons8.com/fluency/96/gear.png' },
+      { id: 'ap6', title: 'AC Repair (Split / Window)', price: 799, image: 'https://img.icons8.com/fluency/96/repair.png' },
 
-      { id: 'ap7', title: 'Refrigerator Repair', price: 699, image: 'https://i.postimg.cc/h4YMYNmZ/Gemini-Generated-Image-zc03jvzc03jvzc03.png' },
-      { id: 'ap8', title: 'Washing Machine Repair', price: 599, image: 'https://i.postimg.cc/5Nw7FnHP/Gemini-Generated-Image-pwfxwrpwfxwrpwfx.png' },
-      { id: 'ap9', title: 'Microwave Repair', price: 399, image: 'https://i.postimg.cc/RZpc3HTg/Gemini-Generated-Image-bw98hnbw98hnbw98.png' },
-      { id: 'ap10', title: 'Geyser Repair', price: 499, image: 'https://i.postimg.cc/nhXXPw4c/Gemini-Generated-Image-jguuiojguuiojguu.png' },
-      { id: 'ap11', title: 'Chimney Repair', price: 499, image: 'https://i.postimg.cc/MZsKJmKZ/Gemini-Generated-Image-z2suzkz2suzkz2su.png' },
-      { id: 'ap12', title: 'RO / Water Purifier Service', price: 599, image: 'https://i.postimg.cc/RVHrp7Wd/Gemini-Generated-Image-fgjsuafgjsuafgjs.png' },
-      { id: 'ap13', title: 'Dishwasher Repair', price: 699, image: 'https://i.postimg.cc/cJ6PYfGf/Gemini-Generated-Image-p2pw2xp2pw2xp2pw.png' }
+      { id: 'ap7', title: 'Refrigerator Repair', price: 699, image: 'https://img.icons8.com/fluency/96/fridge.png' },
+      { id: 'ap8', title: 'Washing Machine Repair', price: 599, image: 'https://img.icons8.com/fluency/96/washing-machine.png' },
+      { id: 'ap9', title: 'Microwave Repair', price: 399, image: 'https://img.icons8.com/fluency/96/microwave.png' },
+      { id: 'ap10', title: 'Geyser Repair', price: 499, image: 'https://img.icons8.com/fluency/96/geyser.png' },
+      { id: 'ap11', title: 'Chimney Repair', price: 499, image: 'https://img.icons8.com/fluency/96/chimney.png' },
+      { id: 'ap12', title: 'RO / Water Purifier Service', price: 599, image: 'https://img.icons8.com/fluency/96/water-purifier.png' },
+      { id: 'ap13', title: 'Dishwasher Repair', price: 699, image: 'https://img.icons8.com/fluency/96/dishwasher.png' }
     ],
 
     Beauty: [
-      { id: 'b1', title: 'Haircut & Styling', price: 399, image: 'https://i.postimg.cc/B6B5nww9/Gemini-Generated-Image-y61e4xy61e4xy61e.png' },
-      { id: 'b2', title: 'Hair Spa', price: 599, image: 'https://i.postimg.cc/sxRVwT3b/Gemini-Generated-Image-m5hd68m5hd68m5hd.png' },
-      { id: 'b3', title: 'Hair Color', price: 899, image: 'https://i.postimg.cc/mg15gBYV/Gemini-Generated-Image-bx9n4cbx9n4cbx9n.png' },
-      { id: 'b4', title: 'Facial & Cleanup', price: 499, image: 'https://i.postimg.cc/mZq32MmD/Gemini-Generated-Image-466riz466riz466r.png' },
-      { id: 'b5', title: 'Waxing (Full / Half)', price: 399, image: 'https://i.postimg.cc/wMKhFYyg/Gemini-Generated-Image-h2dm8ah2dm8ah2dm.png' },
-      { id: 'b6', title: 'Manicure & Pedicure', price: 499, image: 'https://i.postimg.cc/MprfdJNL/Gemini-Generated-Image-1piqz81piqz81piq.png' },
-      { id: 'b7', title: 'Threading', price: 199, image: 'https://i.postimg.cc/NjTvP1zh/Gemini-Generated-Image-simtt2simtt2simt.png' },
-      { id: 'b8', title: 'Bridal Makeup', price: 2499, image: 'https://i.postimg.cc/rmRHKc2m/Gemini-Generated-Image-o0ipqo0ipqo0ipqo.png' },
-      { id: 'b9', title: 'Party Makeup', price: 1499, image: 'https://i.postimg.cc/C1Cjv6j1/Gemini-Generated-Image-5lb1yo5lb1yo5lb1.png' }
+      { id: 'b1', title: 'Haircut & Styling', price: 399, image: 'https://i.postimg.cc/vT5Q8hGg/salon-icon.png' },
+      { id: 'b2', title: 'Hair Spa', price: 599, image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png' },
+      { id: 'b3', title: 'Hair Color', price: 899, image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png' },
+      { id: 'b4', title: 'Facial & Cleanup', price: 499, image: 'https://i.postimg.cc/0y7C2h1L/spa-icon.png' },
+      { id: 'b5', title: 'Waxing (Full/Half)', price: 399, image: 'https://i.postimg.cc/TY2j2fhS/makeup-icon.png' },
+      { id: 'b6', title: 'Manicure & Pedicure', price: 499, image: 'https://i.postimg.cc/TY2j2fhS/makeup-icon.png' }
     ],
 
     Men: [
-      { id: 'm1', title: 'Haircut', price: 299, image: 'https://i.postimg.cc/qq2QfXWW/Gemini-Generated-Image-77uwxf77uwxf77uw.png' },
-      { id: 'm2', title: 'Beard Trim & Styling', price: 249, image: 'https://i.postimg.cc/zvnBnVRn/Gemini-Generated-Image-byb8h5byb8h5byb8.png' },
-      { id: 'm3', title: 'Shave', price: 199, image: 'https://i.postimg.cc/CKBwGz3Z/Gemini-Generated-Image-fewy55fewy55fewy.png' },
-      { id: 'm4', title: 'Facial', price: 299, image: 'https://i.postimg.cc/V6vnBBYX/Gemini-Generated-Image-bby5j7bby5j7bby5.png' },
-      { id: 'm5', title: 'Hair Color', price: 399, image: 'https://i.postimg.cc/RV5G9yS2/Gemini-Generated-Image-cv8pb8cv8pb8cv8p.png' },
-      { id: 'm6', title: 'Head Massage', price: 349, image: 'https://i.postimg.cc/T32V3Xz3/Gemini-Generated-Image-ir7hmiir7hmiir7h.png' }
+      { id: 'm1', title: 'Haircut', price: 299, image: 'https://img.icons8.com/fluency/96/haircut.png' },
+      { id: 'm2', title: 'Beard Trim & Styling', price: 249, image: 'https://img.icons8.com/fluency/96/beard.png' },
+      { id: 'm3', title: 'Shave', price: 199, image: 'https://img.icons8.com/fluency/96/shave.png' },
+      { id: 'm4', title: 'Facial', price: 299, image: 'https://img.icons8.com/fluency/96/face-cream.png' },
+      { id: 'm5', title: 'Hair Color', price: 399, image: 'https://img.icons8.com/fluency/96/hair-color.png' },
+      { id: 'm6', title: 'Head Massage', price: 349, image: 'https://img.icons8.com/fluency/96/massage.png' }
     ],
 
     Painting: [
-      { id: 'pt1', title: 'Interior Painting', price: 1999, image: 'https://i.postimg.cc/SN1scFXp/Gemini-Generated-Image-xdk6h5xdk6h5xdk6.png' },
-      { id: 'pt2', title: 'Exterior Painting', price: 2999, image: 'https://i.postimg.cc/Gh4rwBpZ/Gemini-Generated-Image-fq24isfq24isfq24.png' },
-      { id: 'pt3', title: 'Wall Texture & Designer Paint', price: 3499, image: 'https://i.postimg.cc/y6gB2gWs/Gemini-Generated-Image-348sp2348sp2348s.png' },
-      { id: 'pt4', title: 'Waterproofing', price: 2499, image: 'https://i.postimg.cc/hGf3hmkj/Gemini-Generated-Image-8ye6zi8ye6zi8ye6.png' },
-      { id: 'pt5', title: 'Crack Filling & Putty Work', price: 999, image: 'https://i.postimg.cc/WzC4L0cb/Gemini-Generated-Image-c5boobc5boobc5bo.png' },
-      { id: 'pt6', title: 'Wallpaper Installation', price: 699, image: 'https://i.postimg.cc/PqSTn1mn/Gemini-Generated-Image-xaxn7ixaxn7ixaxn.png' },
-      { id: 'pt7', title: 'Wall Polishing', price: 899, image: 'https://i.postimg.cc/PqGJ6gmX/Gemini-Generated-Image-tjfhkitjfhkitjfh.png' }
+      { id: 'pt1', title: 'Interior Painting', price: 1999, image: 'https://img.icons8.com/fluency/96/paint-palette.png' },
+      { id: 'pt2', title: 'Exterior Painting', price: 2999, image: 'https://img.icons8.com/fluency/96/paint-roller.png' },
+      { id: 'pt3', title: 'Wall Texture & Designer Paint', price: 3499, image: 'https://img.icons8.com/fluency/96/wall.png' },
+      { id: 'pt4', title: 'Waterproofing', price: 2499, image: 'https://img.icons8.com/fluency/96/waterproofing.png' },
+      { id: 'pt5', title: 'Crack Filling & Putty Work', price: 999, image: 'https://img.icons8.com/fluency/96/putty-knife.png' },
+      { id: 'pt6', title: 'Wallpaper Installation', price: 699, image: 'https://img.icons8.com/fluency/96/wallpaper.png' }
     ],
 
     Carpentry: [
-      { id: 'cr1', title: 'Furniture Assembly', price: 499, image: 'https://i.postimg.cc/3WMzMF9k/Gemini-Generated-Image-60z1n360z1n360z1.png' },
-      { id: 'cr2', title: 'Door & Window Repair', price: 399, image: 'https://i.postimg.cc/wjxY909Y/Gemini-Generated-Image-s1nosps1nosps1no.png' },
-      { id: 'cr3', title: 'Modular Kitchen Repair', price: 999, image: 'https://i.postimg.cc/pr0YzW5K/Gemini-Generated-Image-ncblynncblynncbl.png' },
-      { id: 'cr4', title: 'Bed / Wardrobe Repair', price: 599, image: 'https://i.postimg.cc/Rh8JvNnb/Gemini-Generated-Image-rtsfr3rtsfr3rtsf.png' },
-      { id: 'cr5', title: 'Lock & Hinge Installation', price: 199, image: 'https://i.postimg.cc/k51bT1X0/Gemini-Generated-Image-6w6nwz6w6nwz6w6n.png' },
-      { id: 'cr6', title: 'Custom Furniture Work', price: 2499, image: 'https://i.postimg.cc/MGRCD4Dk/Gemini-Generated-Image-yuw9biyuw9biyuw9.png' }
+      { id: 'cr1', title: 'Furniture Assembly', price: 499, image: 'https://img.icons8.com/fluency/96/assembly.png' },
+      { id: 'cr2', title: 'Door & Window Repair', price: 399, image: 'https://img.icons8.com/fluency/96/door.png' },
+      { id: 'cr3', title: 'Modular Kitchen Repair', price: 999, image: 'https://img.icons8.com/fluency/96/kitchen.png' },
+      { id: 'cr4', title: 'Bed / Wardrobe Repair', price: 599, image: 'https://img.icons8.com/fluency/96/bed.png' },
+      { id: 'cr5', title: 'Lock & Hinge Installation', price: 199, image: 'https://img.icons8.com/fluency/96/lock.png' },
+      { id: 'cr6', title: 'Custom Furniture Work', price: 2499, image: 'https://img.icons8.com/fluency/96/custom-furniture.png' }
     ],
 
     Maintenance: [
-      { id: 'mt1', title: 'Handyman Services', price: 399, image: 'https://i.postimg.cc/sgCq2Kzk/Gemini-Generated-Image-a6fcnza6fcnza6fc.png' },
-      { id: 'mt2', title: 'Curtain Rod Installation', price: 199, image: 'https://i.postimg.cc/fLSfmnjG/Gemini-Generated-Image-mo8uxzmo8uxzmo8u.png' },
-      { id: 'mt3', title: 'TV Wall Mount Installation', price: 499, image: 'https://i.postimg.cc/ydTYfWTw/Gemini-Generated-Image-xpwfqgxpwfqgxpwf.png' },
-      { id: 'mt4', title: 'Drilling & Hanging Work', price: 249, image: 'https://i.postimg.cc/HLxqGndV/Gemini-Generated-Image-wam2twam2twam2tw.png' },
-      { id: 'mt5', title: 'Bathroom Accessories Installation', price: 299, image: 'https://i.postimg.cc/pdJHv4ns/Gemini-Generated-Image-5m67065m67065m67.png' }
+      { id: 'mt1', title: 'Handyman Services', price: 399, image: 'https://img.icons8.com/fluency/96/handyman.png' },
+      { id: 'mt2', title: 'Curtain Rod Installation', price: 199, image: 'https://img.icons8.com/fluency/96/curtain.png' },
+      { id: 'mt3', title: 'TV Wall Mount Installation', price: 499, image: 'https://img.icons8.com/fluency/96/installation.png' },
+      { id: 'mt4', title: 'Drilling & Hanging Work', price: 249, image: 'https://img.icons8.com/fluency/96/drill.png' },
+      { id: 'mt5', title: 'Bathroom Accessories Installation', price: 299, image: 'https://img.icons8.com/fluency/96/accessories.png' }
     ],
 
     Pest: [
-      { id: 'ps1', title: 'Cockroach Control', price: 499, image: 'https://img.icons8.com/fluency/96/bug.png' },
-      { id: 'ps2', title: 'Termite Control', price: 999, image: 'https://img.icons8.com/fluency/96/termite.png' },
-      { id: 'ps3', title: 'Bed Bug Treatment', price: 899, image: 'https://img.icons8.com/fluency/96/bed-bug.png' },
-      { id: 'ps4', title: 'Mosquito Control', price: 399, image: 'https://img.icons8.com/fluency/96/mosquito.png' },
-      { id: 'ps5', title: 'Rodent Control', price: 699, image: 'https://img.icons8.com/fluency/96/rat.png' },
-      { id: 'ps6', title: 'General Pest Control', price: 599, image: 'https://img.icons8.com/fluency/96/pest-control.png' }
+      { id: 'ps1', title: 'General Pest Control', price: 699, image: 'https://img.icons8.com/fluency/96/pest-control.png' },
+      { id: 'ps2', title: 'Rodent Treatment', price: 499, image: 'https://img.icons8.com/fluency/96/rat.png' },
+      { id: 'ps3', title: 'Mosquito Fogging', price: 599, image: 'https://img.icons8.com/fluency/96/mosquito.png' },
+      { id: 'ps4', title: 'Termite Treatment', price: 999, image: 'https://img.icons8.com/fluency/96/termite.png' },
+      { id: 'ps5', title: 'Bed Bug Treatment', price: 799, image: 'https://img.icons8.com/fluency/96/bed-bug.png' },
+      { id: 'ps6', title: 'Wood Borers Treatment', price: 599, image: 'https://img.icons8.com/fluency/96/wood.png' }
     ]
   };
 
@@ -210,8 +206,7 @@ export default function Home() {
     },
     Beauty: {
       'Hair Services': ['b1', 'b2', 'b3'],
-      'Skin & Facial': ['b4', 'b5', 'b6'],
-      'Special Services': ['b7', 'b8', 'b9']
+      'Skin & Facial': ['b4', 'b5', 'b6']
     },
     Men: {
       'Grooming': ['m1', 'm2', 'm3'],
@@ -219,7 +214,7 @@ export default function Home() {
     },
     Painting: {
       'Wall Services': ['pt1', 'pt2', 'pt3'],
-      'Protective Services': ['pt4', 'pt5', 'pt6', 'pt7']
+      'Protective Services': ['pt4', 'pt5', 'pt6']
     },
     Carpentry: {
       'Furniture': ['cr1', 'cr4', 'cr6'],
@@ -230,7 +225,8 @@ export default function Home() {
       'Handyman': ['mt1', 'mt4']
     },
     Pest: {
-      'Pest Control': ['ps1', 'ps2', 'ps3', 'ps4', 'ps5', 'ps6']
+      'General Pest Control': ['ps1', 'ps2', 'ps3'],
+      'Specialized Services': ['ps4', 'ps5', 'ps6']
     },
     Electrician: {
       'Electrical Repairs': ['el1', 'el2', 'el3', 'el8'],
@@ -660,49 +656,37 @@ export default function Home() {
         {[
           { 
             id: 1, 
-            title: 'Full House Cleaning Starts', 
-            price: '₹2599', 
-            img: 'https://images.unsplash.com/photo-1581578731548-c64695cc6952?w=400&h=280&fit=crop',
-            category: 'Cleaning'
+            img: 'src/assets/images/Ac_service.jpg',
+            category: 'Appliances'
           },
           { 
             id: 2, 
-            title: 'Plumbings Starts at just', 
-            price: '₹250', 
-            img: 'https://i.postimg.cc/0Nn801Bt/Local-Plumber-Broomall-WM-Henderson-Photo.jpg?w=400&h=280&fit=crop',
+            img: 'src/assets/images/plumber.jpg',
             category: 'Plumber'
           },
           { 
             id: 3, 
-            title: 'Carpentry Starts at just', 
-            price: '₹250', 
-            img: 'https://i.postimg.cc/nVCd48RB/679c741cfd2f81997c15fb20-Featured-image.jpg?w=400&h=280&fit=crop',
+            img: 'src/assets/images/carpenter.jpg',
             category: 'Carpentry'
           },
           { 
             id: 4, 
-            title: 'AC Service Starts at just', 
-            price: '₹699', 
-            img: 'https://i.postimg.cc/jj64X0Dg/Gemini-Generated-Image-fe28zlfe28zlfe28.png?w=400&h=280&fit=crop',
-            category: 'Appliances'
+            img: 'src/assets/images/painter.jpg',
+            category: 'Painting'
           },
           { 
             id: 5, 
-            title: 'Electrician Starts at just', 
-            price: '₹299', 
-            img: 'https://i.postimg.cc/v8NCs5FK/Gemini-Generated-Image-bx1oyjbx1oyjbx1o.png?w=400&h=280&fit=crop',
-            category: 'Electrician'
+            img: 'src/assets/images/pestcontrol.jpg',
+            category: 'Pest Control'
           }
         ].map((promo) => (
           <div 
             key={promo.id}
             style={{
               flex: '0 0 calc(25% - 12px)',
-              minWidth: '300px',
+              minWidth: '320px',
               scrollSnapAlign: 'start',
-              display: 'grid',
-              gridTemplateColumns: '150px 1fr',
-              height: '200px',
+              height: '220px',
               borderRadius: '16px',
               overflow: 'hidden',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
@@ -719,67 +703,17 @@ export default function Home() {
             }}
             onClick={() => navigate(`/services?category=${encodeURIComponent(promo.category)}`)}
           >
-            {/* Left Side - Blue Background with Text */}
-            <div style={{
-              background: 'linear-gradient(135deg, #2563eb 0%, #1e40af 100%)',
-              color: 'white',
-              padding: '20px',
-              display: 'flex',
-              flexDirection: 'column',
-              justifyContent: 'space-between'
-            }}>
-              <div>
-                <h3 style={{
-                  margin: '0 0 8px 0',
-                  fontSize: '16px',
-                  fontWeight: '700',
-                  lineHeight: '1.3'
-                }}>
-                  {promo.title}
-                </h3>
-                <p style={{
-                  margin: '0',
-                  fontSize: '18px',
-                  fontWeight: '700',
-                  color: '#fbbf24'
-                }}>
-                  {promo.price}
-                </p>
-              </div>
-              <button style={{
-                background: '#fff',
-                color: '#2563eb',
-                border: 'none',
-                padding: '8px 16px',
-                borderRadius: '6px',
-                fontSize: '12px',
-                fontWeight: '600',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease'
-              }}
-              onMouseEnter={(e) => {
-                e.target.style.background = '#f0f4f8';
-                e.target.style.transform = 'scale(1.05)';
-              }}
-              onMouseLeave={(e) => {
-                e.target.style.background = '#fff';
-                e.target.style.transform = 'scale(1)';
-              }}>
-                Book Now
-              </button>
-            </div>
-
-            {/* Right Side - Image */}
+            {/* Image Only */}
             <img 
               src={promo.img} 
-              alt={promo.title}
+              alt={`Promo ${promo.id}`}
               style={{
                 width: '100%',
                 height: '100%',
                 objectFit: 'cover'
               }}
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/300x200?text=' + promo.title;
+                e.target.src = 'https://via.placeholder.com/320x220?text=Service+Image';
               }}
             />
           </div>
@@ -826,7 +760,7 @@ export default function Home() {
 </section>
 
 {/* FEATURED SERVICES CARDS - SLIDER */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Popular Services</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Highly-rated services from verified professionals</p>
 
@@ -1044,7 +978,7 @@ export default function Home() {
 </section>
 
 {/* GET QUOTE - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Get Quote</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grab limited-time deals and curated packages</p>
 
@@ -1184,7 +1118,7 @@ export default function Home() {
 </section>
 
 {/* OFFERS & DISCOUNTS - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Offers & discounts</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grab limited-time deals and curated packages</p>
 
@@ -1324,7 +1258,7 @@ export default function Home() {
 </section>
 
 {/* SALON FOR MEN - GROOMING ESSENTIALS */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Salon for men</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grooming essentials</p>
 
@@ -1378,11 +1312,11 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'm1', title: 'Haircut', rating: 4.8, reviews: 470, price: 299, image: 'https://i.postimg.cc/3zV5YhgM/Gemini-Generated-Image-b8-k9t2b8-k9t2b8-k9.png' },
-          { id: 'm2', title: 'Beard trim & styling', rating: 4.87, reviews: 139, price: 249, image: 'https://i.postimg.cc/1z6CK0GQ/Gemini-Generated-Image-6zf86d6zf86d6zf8.png' },
-          { id: 'm3', title: 'Haircut for kids', rating: 4.85, reviews: 105, price: 299, image: 'https://i.postimg.cc/8cL8bnNY/Gemini-Generated-Image-3w-qx9g3w-qx9g3w-q.png' },
-          { id: 'm4', title: 'Clean shave', rating: 4.86, reviews: 68, price: 249, image: 'https://i.postimg.cc/NfCM2H5M/Gemini-Generated-Image-h5i0nkh5i0nkh5i0.png' },
-          { id: 'm5', title: 'Head, neck & shoulder massage', rating: 4.83, reviews: 50, price: 349, image: 'https://i.postimg.cc/MpLfVvgH/Gemini-Generated-Image-wqzlzqwqzlzqwqzl.png' }
+          { id: 'm1', title: 'Haircut', rating: 4.8, reviews: 470, price: 299, image: 'src/assets/images/Haircut.png' },
+          { id: 'm2', title: 'Beard trim & styling', rating: 4.87, reviews: 139, price: 249, image: 'src/assets/images/Beard Trim & Styling.png' },
+          { id: 'm3', title: 'Haircut for kids', rating: 4.85, reviews: 105, price: 299, image: 'src/assets/images/Haircut for kids.png' },
+          { id: 'm4', title: 'Clean shave', rating: 4.86, reviews: 68, price: 249, image: 'src/assets/images/Shave.png' },
+          { id: 'm5', title: 'Head, neck & shoulder massage', rating: 4.83, reviews: 50, price: 349, image: 'src/assets/images/Head Massage.png' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -1392,6 +1326,7 @@ export default function Home() {
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
+            onClick={() => navigate(`/services?category=Men`)}
           >
             <div style={{
               display: 'flex',
@@ -1479,7 +1414,7 @@ export default function Home() {
 </section>
 
 {/* MASSAGE FOR MEN */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Massage for Men</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1532,11 +1467,11 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'mm1', title: 'Foot massage', rating: 4.87, reviews: 39, price: 549, image: 'https://i.postimg.cc/kX2fYrg8/Gemini-Generated-Image-7d-2ckt7d-2ckt7d-2c.png' },
-          { id: 'mm2', title: 'Head, neck & shoulder massage', rating: 4.87, reviews: 41, price: 649, image: 'https://i.postimg.cc/MZPkYcBh/Gemini-Generated-Image-d9j4hqd9j4hqd9j4.png' },
-          { id: 'mm3', title: 'Leg pain relief massage for men', rating: 4.87, reviews: 12, price: 849, image: 'https://i.postimg.cc/RVZVfDQG/Gemini-Generated-Image-cqkv93cqkv93cqkv.png' },
-          { id: 'mm4', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 2, price: 1449, image: 'https://i.postimg.cc/T1hNKvWM/Gemini-Generated-Image-0f-nsfj0f-nsfj0f-n.png' },
-          { id: 'mm5', title: 'Quick Comfort Therapy', rating: 4.83, reviews: 11, price: 999, image: 'https://i.postimg.cc/xThpXxJz/Gemini-Generated-Image-fpbzj2fpbzj2fpbz.png', badge: '17% OFF' }
+          { id: 'mm1', title: 'Foot massage', rating: 4.87, reviews: 39, price: 549, image: 'src/assets/images/Foot massage.png' },
+          { id: 'mm2', title: 'Head, neck & shoulder massage', rating: 4.87, reviews: 41, price: 649, image: 'src/assets/images/Head, neck & shoulder massage.png' },
+          { id: 'mm3', title: 'Leg pain relief massage for men', rating: 4.87, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for men.png' },
+          { id: 'mm4', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 2, price: 1449, image: 'src/assets/images/Warm deep tissue pain relief massage.png' },
+          { id: 'mm5', title: 'Quick Comfort Therapy', rating: 4.83, reviews: 11, price: 999, image: 'src/assets/images/Quick Comfort Therapy.png', badge: '17% OFF' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -1547,6 +1482,7 @@ export default function Home() {
               scrollSnapAlign: 'start',
               position: 'relative'
             }}
+            onClick={() => navigate(`/services?category=Men`)}
           >
             {service.badge && (
               <div style={{
@@ -1650,7 +1586,7 @@ export default function Home() {
 </section>
 
 {/* HOME REPAIR & INSTALLATION */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Home repair & installation</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1703,11 +1639,11 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'r1', title: 'Decor installation', rating: 4.83, reviews: 83, price: 79, image: 'https://i.postimg.cc/htXVXvsk/Gemini-Generated-Image-g3-kvk1g3-kvk1g3-k.png' },
-          { id: 'r2', title: 'Plumber consultation', rating: 4.73, reviews: 92, price: 49, image: 'https://i.postimg.cc/MTByvK9Z/Gemini-Generated-Image-wyq3g5wyq3g5wyq3.png' },
-          { id: 'r3', title: 'Electrician consultation', rating: 4.74, reviews: 76, price: 49, image: 'https://i.postimg.cc/kgtLxDXq/Gemini-Generated-Image-4c-x0pt4c-x0pt4c-x.png' },
-          { id: 'r4', title: 'Switchboard repair & replacement', rating: 4.82, reviews: 46, price: 99, image: 'https://i.postimg.cc/Wz2KLZYK/Gemini-Generated-Image-qkwzyxqkwzyxqkwz.png' },
-          { id: 'r5', title: 'Cupboard repair', rating: 4.77, reviews: 48, price: 89, image: 'https://i.postimg.cc/9FfRv0M8/Gemini-Generated-Image-j5-ej19j5-ej19j5-e.png' }
+          { id: 'r1', title: 'Decor installation', rating: 4.83, reviews: 83, price: 79, image: 'src/assets/images/Decor installation.png' },
+          { id: 'r2', title: 'Plumber consultation', rating: 4.73, reviews: 92, price: 49, image: 'src/assets/images/Plumber consultation.png' },
+          { id: 'r3', title: 'Electrician consultation', rating: 4.74, reviews: 76, price: 49, image: 'src/assets/images/Electrician consultation.png' },
+          { id: 'r4', title: 'Switchboard repair & replacement', rating: 4.82, reviews: 46, price: 99, image: 'src/assets/images/Switchboard repair & replacement.png' },
+          { id: 'r5', title: 'Cupboard repair', rating: 4.77, reviews: 48, price: 89, image: 'src/assets/images/Cupboard repair.png' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -1717,6 +1653,7 @@ export default function Home() {
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
+            onClick={() => navigate(`/services?category=Maintenance`)}
           >
             <div style={{
               display: 'flex',
@@ -1804,7 +1741,7 @@ export default function Home() {
 </section>
 
 {/* APPLIANCE SERVICE & REPAIR */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Appliance Service & Repair</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -1857,11 +1794,11 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'a1', title: 'Geyser check-up', rating: 4.73, reviews: 99, price: 249, image: 'https://i.postimg.cc/dtLcnvY4/Gemini-Generated-Image-5j-u1mz5j-u1mz5j-u.png' },
-          { id: 'a2', title: 'Automatic top load machine check-up', rating: 4.77, reviews: 346, price: 199, image: 'https://i.postimg.cc/wxPvTD9V/Gemini-Generated-Image-1m-rvqv1m-rvqv1m-r.png' },
-          { id: 'a3', title: 'TV check-up', rating: 4.77, reviews: 158, price: 249, image: 'https://i.postimg.cc/L6bzvjbb/Gemini-Generated-Image-yv-kq8pyv-kq8pyv-k.png' },
-          { id: 'a4', title: 'Geyser service', rating: 4.76, reviews: 74, price: 599, image: 'https://i.postimg.cc/Y0X1rZfm/Gemini-Generated-Image-w8-wso3w8-wso3w8-w.png' },
-          { id: 'a5', title: 'Geyser installation', rating: 4.78, reviews: 46, price: 499, image: 'https://i.postimg.cc/7Lw6pRYx/Gemini-Generated-Image-rczq7hrczq7hrczq.png' }
+          { id: 'a1', title: 'Geyser check-up', rating: 4.73, reviews: 99, price: 249, image: 'src/assets/images/Geyser check-up.png' },
+          { id: 'a2', title: 'Automatic top load machine check-up', rating: 4.77, reviews: 346, price: 199, image: 'src/assets/images/Automatic top load machine check-up.png' },
+          { id: 'a3', title: 'TV check-up', rating: 4.77, reviews: 158, price: 249, image: 'src/assets/images/TV check-up.png' },
+          { id: 'a4', title: 'Geyser service', rating: 4.76, reviews: 74, price: 599, image: 'src/assets/images/Geyser service.png' },
+          { id: 'a5', title: 'Geyser installation', rating: 4.78, reviews: 46, price: 499, image: 'src/assets/images/Geyser installation.png' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -1871,6 +1808,7 @@ export default function Home() {
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
+            onClick={() => navigate(`/services?category=Appliances`)}
           >
             <div style={{
               display: 'flex',
@@ -1958,7 +1896,7 @@ export default function Home() {
 </section>
 
 {/* CLEANING ESSENTIALS */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Cleaning Essentials</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Monthly cleaning essential services</p>
 
@@ -2012,11 +1950,11 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'c1', title: 'Intense bathroom cleaning', rating: 4.79, reviews: '4M', price: 399, original: 499, image: 'https://i.postimg.cc/vgQFt3Y3/Gemini-Generated-Image-74-yyt774-yyt774-y.png' },
-          { id: 'c2', title: 'Intense cleaning (2 bathrooms)', rating: 4.79, reviews: '4M', price: 798, original: 998, image: 'https://i.postimg.cc/HFQRLS3k/Gemini-Generated-Image-tctmp0tctmp0tctm.png' },
-          { id: 'c3', title: 'Chimney cleaning', rating: 4.83, reviews: '157K', price: 399, image: 'https://i.postimg.cc/W4Hbr7YM/Gemini-Generated-Image-1p-c8bj1p-c8bj1p-c.png' },
-          { id: 'c4', title: 'Fridge cleaning', rating: 4.83, reviews: '125K', price: 399, image: 'https://i.postimg.cc/Hnsq9PWL/Gemini-Generated-Image-jvb7z8jvb7z8jvb7.png' },
-          { id: 'c5', title: 'Cockroach control (with utensil removal)', rating: 4.79, reviews: '137K', price: 1098, image: 'https://i.postimg.cc/rmr1VkxP/Gemini-Generated-Image-fw-o3yfw-o3yfw-o.png' }
+          { id: 'c1', title: 'Intense bathroom cleaning', rating: 4.79, reviews: '4M', price: 399, original: 499, image: 'src/assets/images/Intense bathroom cleaning.png' },
+          { id: 'c2', title: 'Intense cleaning (2 bathrooms)', rating: 4.79, reviews: '4M', price: 798, original: 998, image: 'src/assets/images/Intense cleaning (2 bathrooms).png' },
+          { id: 'c3', title: 'Chimney cleaning', rating: 4.83, reviews: '157K', price: 399, image: 'src/assets/images/Chimney cleaning.png' },
+          { id: 'c4', title: 'Fridge cleaning', rating: 4.83, reviews: '125K', price: 399, image: 'src/assets/images/Fridge cleaning.png.png' },
+          { id: 'c5', title: 'Cockroach control (with utensil removal)', rating: 4.79, reviews: '137K', price: 1098, image: 'src/assets/images/Cockroach control (with utensil removal).png' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -2026,6 +1964,7 @@ export default function Home() {
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
+            onClick={() => navigate(`/services?category=Cleaning`)}
           >
             <div style={{
               display: 'flex',
@@ -2113,7 +2052,7 @@ export default function Home() {
 </section>
 
 {/* SPA FOR WOMEN */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Spa for Women</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
@@ -2166,11 +2105,11 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'sp1', title: 'Warm Swedish stress relief massage', rating: 4.83, reviews: 6, price: 1349, image: 'https://i.postimg.cc/28QVGG8v/Gemini-Generated-Image-hwhf5whwhf5whwhf.png', badge: 'Hot bed' },
-          { id: 'sp2', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 6, price: 1499, image: 'https://i.postimg.cc/tRVKqtqp/Gemini-Generated-Image-kh-py8xkh-py8xkh-p.png', badge: 'Hot bed' },
-          { id: 'sp3', title: '4 sessions (Mon-Sat only): Swedish massage', rating: 4.82, reviews: 231, price: 1299, image: 'https://i.postimg.cc/fkNmg5G6/Gemini-Generated-Image-5m-rkpg5m-rkpg5m-r.png' },
-          { id: 'sp4', title: '4 sessions (Mon-Sat only): Deep tissue massage', rating: 4.82, reviews: 157, price: 1449, image: 'https://i.postimg.cc/9fTgf67Y/Gemini-Generated-Image-19f0pb19f0pb19f0.png', badge: 'Hot bed' },
-          { id: 'sp5', title: 'Leg pain relief massage for women', rating: 4.85, reviews: 12, price: 849, image: 'https://i.postimg.cc/yd5jL5YX/Gemini-Generated-Image-eyr71ceyr71ceyr7.png' }
+          { id: 'sp1', title: 'Warm Swedish stress relief massage', rating: 4.83, reviews: 6, price: 1349, image: 'src/assets/images/Warm Swedish stress relief massage.png', badge: 'Hot bed' },
+          { id: 'sp2', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 6, price: 1499, image: 'src/assets/images/Warm deep tissue pain relief massage.png', badge: 'Hot bed' },
+          { id: 'sp3', title: '4 sessions (Mon-Sat only): Swedish massage', rating: 4.82, reviews: 231, price: 1299, image: 'src/assets/images/4 sessions (Mon-Sat only) Swedish massage.png' },
+          { id: 'sp4', title: '4 sessions (Mon-Sat only): Deep tissue massage', rating: 4.82, reviews: 157, price: 1449, image: 'src/assets/images/4 sessions (Mon-Sat only) Deep tissue massage create image .png', badge: 'Hot bed' },
+          { id: 'sp5', title: 'Leg pain relief massage for women', rating: 4.85, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for women.png.png' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -2181,6 +2120,7 @@ export default function Home() {
               scrollSnapAlign: 'start',
               position: 'relative'
             }}
+            onClick={() => navigate(`/services?category=Beauty`)}
           >
             {service.badge && (
               <div style={{
@@ -2284,7 +2224,7 @@ export default function Home() {
 </section>
 
 {/* SALON FOR WOMEN */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px" }}>
   <h2 className="section-title">Salon for Women</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Pamper yourself at home</p>
 
@@ -2338,10 +2278,10 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'sw1', title: 'Roll-on waxing (Full arms, legs & underarms)', rating: 4.88, reviews: 66, price: 899, image: 'https://i.postimg.cc/VLMq6K0d/Gemini-Generated-Image-3j-g5k03j-g5k03j-g.png' },
-          { id: 'sw2', title: 'Spatula waxing (Full arms, legs & underarms)', rating: 4.86, reviews: 47, price: 699, image: 'https://i.postimg.cc/sxDnLFqP/Gemini-Generated-Image-gtp1tz3gtp1tz3gtp.png' },
-          { id: 'sw3', title: 'Crystal rose pedicure', rating: 4.83, reviews: 134, price: 759, image: 'https://i.postimg.cc/Y2HSHF0s/Gemini-Generated-Image-3-7zl9-f3-7zl9-f3-7z.png' },
-          { id: 'sw4', title: 'Mani-pedi delight', rating: 4.82, reviews: 191, price: 1359, original: 1458, image: 'https://i.postimg.cc/j5qjr3nZ/Gemini-Generated-Image-kvukhfkvukhfkvuk.png', badge: '7% OFF' }
+          { id: 'sw1', title: 'Roll-on waxing (Full arms, legs & underarms)', rating: 4.88, reviews: 66, price: 899, image: 'src/assets/images/Roll-on waxing (Full arms, legs & underarms).png' },
+          { id: 'sw2', title: 'Spatula waxing (Full arms, legs & underarms)', rating: 4.86, reviews: 47, price: 699, image: 'src/assets/images/Spatula waxing (Full arms, legs & underarms).png' },
+          { id: 'sw3', title: 'Crystal rose pedicure', rating: 4.83, reviews: 134, price: 759, image: 'src/assets/images/Crystal rose pedicure.png' },
+          { id: 'sw4', title: 'Mani-pedi delight', rating: 4.82, reviews: 191, price: 1359, original: 1458, image: 'src/assets/images/Mani-pedi delight.png', badge: '7% OFF' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -2352,6 +2292,7 @@ export default function Home() {
               scrollSnapAlign: 'start',
               position: 'relative'
             }}
+            onClick={() => navigate(`/services?category=Beauty`)}
           >
             {service.badge && (
               <div style={{
@@ -2455,31 +2396,153 @@ export default function Home() {
 </section>
 
 {/* HOW IT WORKS */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
-  <h2 className="section-title">How HomeService99 Works</h2>
-  <div className="how-it-works-grid">
+<section className="container slide-up" style={{ marginTop: "24px", marginBottom: "24px" }}>
+  <div style={{ marginBottom: "60px", textAlign: "center" }}>
+    <h2 className="section-title" style={{ fontSize: "32px", marginBottom: "12px", fontWeight: "700" }}>How HomeService99 Works</h2>
+    <p style={{ fontSize: "16px", color: "#6b7280", maxWidth: "600px", margin: "0 auto" }}>
+      Simple, transparent, and secure. Book your service in just 6 easy steps.
+    </p>
+  </div>
+  
+  <div style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
+    gap: "32px",
+    maxWidth: "1400px",
+    margin: "0 auto"
+  }}>
     {[
-      { step: "1", icon: "🔍", title: "Browse Services", desc: "Explore thousands of services available in your area" },
-      { step: "2", icon: "📅", title: "Select Time", desc: "Choose your preferred date and time for the service" },
-      { step: "3", icon: "✓", title: "Confirm Booking", desc: "Complete details and confirm your appointment" },
-      { step: "4", icon: "👨‍🔧", title: "Professional Arrives", desc: "Expert arrives at your doorstep on scheduled time" },
-      { step: "5", icon: "⭐", title: "Service Completed", desc: "Service delivered with quality assurance" },
-      { step: "6", icon: "💰", title: "Pay & Rate", desc: "Safe payment after service + leave your review" }
+      { 
+        step: "1", 
+        icon: "🔍", 
+        title: "Browse Services", 
+        desc: "Explore thousands of verified services available in your area with detailed descriptions and ratings" 
+      },
+      { 
+        step: "2", 
+        icon: "📅", 
+        title: "Select Time", 
+        desc: "Choose your preferred date and time for the service. Get instant availability updates." 
+      },
+      { 
+        step: "3", 
+        icon: "✓", 
+        title: "Confirm Booking", 
+        desc: "Complete all details and confirm your appointment. Receive instant confirmation via SMS/Email." 
+      },
+      { 
+        step: "4", 
+        icon: "👨‍🔧", 
+        title: "Professional Arrives", 
+        desc: "Our verified expert arrives at your doorstep on scheduled time with all necessary tools." 
+      },
+      { 
+        step: "5", 
+        icon: "⭐", 
+        title: "Service Completed", 
+        desc: "Service is delivered with 100% quality assurance and attention to detail." 
+      },
+      { 
+        step: "6", 
+        icon: "💰", 
+        title: "Pay & Rate", 
+        desc: "Safe payment after service is completed. Share your feedback and help us improve." 
+      }
     ].map((item, idx) => (
-      <div key={idx} className="how-it-works-card">
-        <div className="how-step-circle">{item.step}</div>
-        <div style={{ fontSize: "32px", marginBottom: "8px" }}>{item.icon}</div>
-        <strong>{item.title}</strong>
-        <p style={{ fontSize: "13px", color: "#000000ff", textAlign: "center" }}>{item.desc}</p>
+      <div 
+        key={idx} 
+        style={{
+          position: "relative",
+          padding: "36px 28px",
+          borderRadius: "16px",
+          background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
+          border: "2px solid #e2e8f0",
+          transition: "all 0.3s ease",
+          cursor: "pointer"
+        }}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = "translateY(-8px)";
+          e.currentTarget.style.boxShadow = "0 12px 32px rgba(15, 23, 42, 0.12)";
+          e.currentTarget.style.borderColor = "#2563eb";
+          e.currentTarget.style.background = "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)";
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = "translateY(0)";
+          e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.08)";
+          e.currentTarget.style.borderColor = "#e2e8f0";
+          e.currentTarget.style.background = "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)";
+        }}
+      >
+        {/* Step Circle */}
+        <div
+          style={{
+            position: "absolute",
+            top: "20px",
+            right: "20px",
+            width: "48px",
+            height: "48px",
+            borderRadius: "50%",
+            background: "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
+            color: "white",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            fontWeight: "700",
+            fontSize: "20px",
+            boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)"
+          }}
+        >
+          {item.step}
+        </div>
+
+        {/* Icon */}
+        <div style={{
+          fontSize: "56px",
+          marginBottom: "16px",
+          display: "inline-block",
+          animation: "float 3s ease-in-out infinite"
+        }}>
+          {item.icon}
+        </div>
+
+        {/* Title */}
+        <h3 style={{
+          margin: "0 0 12px 0",
+          fontSize: "20px",
+          fontWeight: "700",
+          color: "#0f172a",
+          lineHeight: "1.4"
+        }}>
+          {item.title}
+        </h3>
+
+        {/* Description */}
+        <p style={{
+          margin: "0",
+          fontSize: "14px",
+          color: "#64748b",
+          lineHeight: "1.6",
+          fontWeight: "500"
+        }}>
+          {item.desc}
+        </p>
       </div>
     ))}
   </div>
+
+  {/* Animated floating styles */}
+  <style>{`
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+  `}</style>
 </section>
 
 
 
 {/* FAQ SECTION */}
-<section className="container slide-up" style={{ marginTop: "40px", marginBottom: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "24px", marginBottom: "40px" }}>
   <h2 className="section-title">Frequently Asked Questions</h2>
   <div className="faq-container">
     {[
@@ -2520,15 +2583,84 @@ export default function Home() {
   </div>
 </section>
 
-{/* CTA SECTION */}
-<section className="container slide-up" style={{ marginBottom: "40px" }}>
-  <div className="cta-banner">
-    <h2 style={{ margin: "0 0 12px 0", fontSize: "24px" }}>Ready to Get Started?</h2>
-    <p style={{ margin: "0 0 20px 0", fontSize: "15px", color: "#000000ff" }}>Book your first service in seconds. No signup required for browsing.</p>
-    <div style={{ display: "flex", gap: "12px", flexWrap: "wrap" }}>
-      <button className="btn-primary" onClick={() => navigate('/services')}>Browse Services</button>
-      <button className="btn-outline" onClick={() => navigate('/about')}>Learn More</button>
+{/* CTA SECTION - VENDOR SIGNUP */}
+<section className="container slide-up" style={{ marginBottom: "24px", marginTop: "24px" }}>
+  <div style={{
+    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
+    borderRadius: "16px",
+    padding: "40px 32px",
+    textAlign: "center",
+    border: "2px solid #2563eb",
+    maxWidth: "700px",
+    margin: "0 auto",
+    transition: "all 0.3s ease"
+  }}
+  onMouseEnter={(e) => {
+    e.currentTarget.style.boxShadow = "0 12px 32px rgba(37, 99, 235, 0.2)";
+  }}
+  onMouseLeave={(e) => {
+    e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.06)";
+  }}>
+    {/* Icon */}
+    <div style={{
+      fontSize: "40px",
+      marginBottom: "16px",
+      display: "inline-block"
+    }}>
+      🧩
     </div>
+
+    {/* Heading */}
+    <h2 style={{
+      margin: "0 0 12px 0",
+      fontSize: "28px",
+      fontWeight: "700",
+      color: "#0f172a",
+      lineHeight: "1.3"
+    }}>
+      Are you a skilled professional?
+    </h2>
+
+    {/* Description */}
+    <p style={{
+      margin: "0 0 24px 0",
+      fontSize: "14px",
+      color: "#64748b",
+      lineHeight: "1.5",
+      maxWidth: "550px",
+      marginLeft: "auto",
+      marginRight: "auto",
+      fontWeight: "500"
+    }}>
+      Elevate your business by joining HomeService99 as a Service Expert. Highlight your expertise, engage with homeowners, and expand your reach. Become a member now!
+    </p>
+
+    {/* Button */}
+    <button 
+      onClick={() => navigate('/vendor-signup')}
+      style={{
+        padding: "12px 36px",
+        fontSize: "15px",
+        fontWeight: "600",
+        borderRadius: "8px",
+        border: "none",
+        background: "#2563eb",
+        color: "white",
+        cursor: "pointer",
+        transition: "all 0.3s ease",
+        boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)"
+      }}
+      onMouseEnter={(e) => {
+        e.target.style.background = "#1e40af";
+        e.target.style.transform = "translateY(-2px)";
+      }}
+      onMouseLeave={(e) => {
+        e.target.style.background = "#2563eb";
+        e.target.style.transform = "translateY(0)";
+      }}
+    >
+      Join Our Pro Network
+    </button>
   </div>
 </section>
 

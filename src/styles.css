@@ -961,12 +961,7 @@ a {
   transition: all 0.3s ease;
 }
 
-.footer-col:hover {
-  border-color: rgba(37, 99, 235, 0.15);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.12);
-  transform: translateY(-4px);
-  background: #ffffff;
-}
+
 
 .footer-newsletter {
   grid-column: span 4;
@@ -979,15 +974,16 @@ a {
 }
 
 .footer-col-title {
-  font-weight: 700;
-  margin-bottom: 14px;
-  color: #1e293b;
-  font-size: 14px;
+  font-weight: 800;
+  margin-bottom: 12px;
+  color: #ffffff;
+  font-size: 13px;
   text-transform: uppercase;
-  letter-spacing: 0.6px;
+  letter-spacing: 0.8px;
   display: flex;
   align-items: center;
   gap: 6px;
+  opacity: 0.98;
 }
 
 .footer-newsletter .footer-col-title {
@@ -1006,121 +1002,111 @@ a {
 }
 
 .footer-link:hover {
-  color: #2563eb;
-  transform: translateX(6px);
   text-decoration: none;
 }
 
 /* Newsletter input group */
 .footer-input-group {
   display: flex;
-  gap: 10px;
-  margin-top: 12px;
-  margin-bottom: 10px;
+  gap: 8px;
+  margin-top: 10px;
+  margin-bottom: 8px;
 }
 
 .footer-input {
   flex: 1;
-  padding: 11px 14px;
-  border-radius: 10px;
-  border: 2px solid rgba(255, 255, 255, 0.25);
-  background: rgba(255, 255, 255, 0.12);
+  padding: 9px 12px;
+  border-radius: 8px;
+  border: 2px solid rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.14);
   color: #ffffff;
   outline: none;
-  font-size: 13px;
+  font-size: 12px;
   transition: all 0.25s ease;
+  font-weight: 500;
 }
 
 .footer-input::placeholder {
-  color: rgba(255, 255, 255, 0.7);
+  color: rgba(255, 255, 255, 0.75);
+  font-weight: 500;
 }
 
 .footer-input:focus {
-  border-color: rgba(255, 255, 255, 0.5);
-  background: rgba(255, 255, 255, 0.18);
-  box-shadow: 0 0 0 3px rgba(255, 215, 0, 0.15);
+  outline: none;
 }
 
 .footer-newsletter .btn-primary {
-  padding: 11px 16px;
+  padding: 9px 14px;
   background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
   border: none;
   color: #1e293b;
-  font-weight: 600;
-  border-radius: 10px;
+  font-weight: 700;
+  border-radius: 8px;
   cursor: pointer;
   transition: all 0.25s ease;
-  font-size: 13px;
+  font-size: 12px;
   white-space: nowrap;
-  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.2);
+  box-shadow: 0 4px 12px rgba(251, 191, 36, 0.25);
 }
 
-.footer-newsletter .btn-primary:hover:not(:disabled) {
-  transform: translateY(-2px);
-  box-shadow: 0 8px 20px rgba(251, 191, 36, 0.35);
-}
 
-.footer-newsletter .btn-primary:disabled {
-  opacity: 0.7;
-  cursor: not-allowed;
-}
+
+
 
 .form-note {
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 13px;
-  margin: 8px 0 0 0;
-  line-height: 1.4;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 12px;
+  margin: 6px 0 0 0;
+  line-height: 1.35;
+  font-weight: 500;
 }
 
 /* Social icons */
 .social-list {
   display: flex;
-  gap: 12px;
-  margin-top: 12px;
+  gap: 8px;
+  margin-top: 10px;
   flex-wrap: wrap;
 }
 
 .social-link {
   display: inline-flex;
-  width: 44px;
-  height: 44px;
+  width: 36px;
+  height: 36px;
   align-items: center;
   justify-content: center;
-  border-radius: 11px;
-  background: rgba(37, 99, 235, 0.12);
-  color: #2563eb;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.15);
+  color: #ffffff;
   text-decoration: none;
-  font-size: 20px;
+  font-size: 16px;
   transition: all 0.25s ease;
-  border: 1px solid rgba(37, 99, 235, 0.2);
+  border: 1.5px solid rgba(255, 255, 255, 0.25);
   cursor: pointer;
+  font-weight: 600;
 }
 
-.social-link:hover {
-  background: linear-gradient(135deg, #2563eb 0%, #0ea5a4 100%);
-  color: #ffffff;
-  transform: translateY(-5px) scale(1.05);
-  box-shadow: 0 6px 16px rgba(37, 99, 235, 0.25);
-  border-color: transparent;
-}
+
 
 .payments {
-  font-size: 12px;
-  color: #64748b;
-  margin-top: 12px;
+  font-size: 11px;
+  color: rgba(255, 255, 255, 0.88);
+  margin-top: 8px;
   display: flex;
-  gap: 12px;
+  gap: 8px;
   flex-wrap: wrap;
 }
 
 .payments span {
   display: inline-flex;
   align-items: center;
-  gap: 4px;
-  padding: 6px 12px;
-  background: rgba(37, 99, 235, 0.05);
-  border-radius: 6px;
-  border: 1px solid rgba(37, 99, 235, 0.1);
+  gap: 3px;
+  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 5px;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  font-weight: 600;
+  font-size: 11px;
 }
 
 /* Quick Service Categories */
@@ -7972,14 +7958,7 @@ input[type="text"], input[type="email"], input[type="password"], textarea, input
     min-width: 220px !important;
   }
 }
-  }
-}
 
-@media (max-width: 768px) {
-  .offers-scroll > div {
-    flex: 0 0 calc(50% - 12px) !important;
-    min-width: 180px !important;
-  }
 @media (max-width: 768px) {
   .container {
     padding: 16px 12px;

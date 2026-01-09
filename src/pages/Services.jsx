@@ -312,134 +312,467 @@ export default function Services() {
   ];
 
   return (
-    <div style={{ display: 'flex', gap: '24px', alignItems: 'flex-start', background: '#f8f9fb', padding: '32px 16px' }}>
-      {/* Main Content */}
-      <div style={{ flex: 2, minWidth: 320, display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        {/* Location & Cart Row */}
-        <div style={{ display: 'flex', gap: '24px', marginBottom: 0 }}>
-          <div style={{ flex: 2, background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#2563eb', fontWeight: 600, fontSize: 15 }}>
-              <svg width="18" height="18" fill="none" viewBox="0 0 24 24"><path fill="#2563eb" d="M12 2C7.03 2 3 6.03 3 11c0 5.25 7.2 10.62 7.51 10.84.3.21.68.21.98 0C13.8 21.62 21 16.25 21 11c0-4.97-4.03-9-9-9Zm0 18.54C9.14 18.07 5 14.28 5 11c0-3.86 3.14-7 7-7s7 3.14 7 7c0 3.28-4.14 7.07-7 9.54Z"/><path fill="#2563eb" d="M12 13.5A2.5 2.5 0 1 0 12 8.5a2.5 2.5 0 0 0 0 5Zm0-4A1.5 1.5 0 1 1 12 12a1.5 1.5 0 0 1 0-3Z"/></svg>
-              Noida
-            </div>
-            <div style={{ color: '#6c7a89', fontSize: 14 }}>Gautam Buddha Nagar, Noida - 201304, Uttar Pradesh, India...</div>
-            <div style={{ fontWeight: 700, fontSize: 20, color: '#1a2233', marginTop: 8 }}>{categoryData.label} in Noida</div>
-            <div style={{ color: '#2563eb', fontSize: 15, fontWeight: 500, display: 'flex', alignItems: 'center', gap: 6 }}>
-              <svg width="16" height="16" fill="none" viewBox="0 0 24 24"><path fill="#2563eb" d="M12 17.27 18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/></svg>
-              4.5 <span style={{ color: '#6c7a89', fontWeight: 400, fontSize: 14, marginLeft: 4 }}>(144 reviews)</span>
-            </div>
-          </div>
-          <div style={{ flex: 1, background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 80 }}>
-            <svg width="36" height="36" fill="none" viewBox="0 0 24 24"><path fill="#b0b4bb" d="M7 18c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2Zm10 0c-1.1 0-2-.9-2-2s.9-2 2-2 2 .9 2 2-.9 2-2 2ZM7.16 14.26l.03.01.01.01c.13.05.27.09.41.09h8.78c.14 0 .28-.03.41-.09l.01-.01.03-.01c.36-.15.59-.52.53-.91l-1.1-7.72A2 2 0 0 0 14.84 4H9.16a2 2 0 0 0-1.97 1.63l-1.1 7.72c-.06.39.17.76.53.91ZM9.16 6h5.68l1.04 7.27H8.12L9.16 6Z"/></svg>
-            <div style={{ color: '#888', fontSize: 15, marginTop: 8 }}>No package selected</div>
+    <div style={{ 
+      minHeight: '100vh', 
+      background: '#f8f9fb',
+      display: 'grid',
+      gridTemplateColumns: '280px 1fr 320px',
+      gridTemplateRows: '1fr',
+      gap: '0',
+      overflow: 'hidden'
+    }}>
+      {/* LEFT SIDEBAR - FIXED */}
+      <div style={{ 
+        background: '#fff',
+        borderRight: '1px solid #e5e7eb',
+        height: '100vh',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        padding: '24px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '16px'
+      }}>
+        {/* Category Header */}
+        <div style={{
+          background: '#f9fafb',
+          borderRadius: '12px',
+          padding: '16px',
+          textAlign: 'center',
+          flexShrink: 0
+        }}>
+          <h2 style={{ fontSize: '16px', fontWeight: '700', margin: '0 0 10px 0', color: '#0f172a' }}>
+            {categoryData.label}
+          </h2>
+          <div style={{ fontSize: '12px', color: '#6b7280', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+            ⭐ <span style={{ fontWeight: '600', color: '#0f172a' }}>4.74</span> <span>(11.4M)</span>
           </div>
         </div>
-        {/* Subcategory Grid */}
-        <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px', marginBottom: 0 }}>
-          <div style={{ fontWeight: 600, marginBottom: 12, color: '#2d3a4a', fontSize: 16 }}>What service do you need ?</div>
-          <div style={{ display: 'flex', flexWrap: 'wrap', gap: 18 }}>
-            {subcategories.map(([subcat, servicesArr]) => (
-              <div key={subcat} style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', background: '#f4f7fa', borderRadius: 8, padding: '12px 10px', minWidth: 90, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', cursor: 'pointer', border: selectedSubcategory === subcat ? '2px solid #2563eb' : '2px solid transparent', transition: 'box-shadow 0.2s' }} onClick={() => handleSubcategorySelect(subcat)}>
-                <img src={servicesArr[0]?.image} alt={subcat} style={{ width: 56, height: 56, borderRadius: 8, objectFit: 'cover', marginBottom: 8, border: selectedSubcategory === subcat ? '2px solid #2563eb' : '2px solid #e5e7eb' }} />
-                <div style={{ fontSize: 14, color: '#2d3a4a', textAlign: 'center', fontWeight: 500 }}>{subcat}</div>
-              </div>
-            ))}
-          </div>
-        </div>
-        {/* Subcategory Banner and Service List */}
-        {selectedSubcategory && (
-          <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: 0, marginTop: 0 }}>
-            <div style={{ fontSize: 17, fontWeight: 600, padding: '20px 24px 0 24px', color: '#1a2233' }}>{selectedSubcategory}</div>
-            <img src={services[0]?.image} alt={selectedSubcategory} style={{ width: '100%', maxHeight: 220, objectFit: 'cover', borderRadius: '0 0 12px 12px', marginBottom: 0 }} />
-            {/* Search Bar */}
-            <div style={{ padding: '20px 24px 0 24px' }}>
-              <input
-                type="text"
-                placeholder="Search for services?"
-                value={search}
-                onChange={e => setSearch(e.target.value)}
-                style={{ width: '100%', padding: '12px 16px', borderRadius: 8, border: '1.5px solid #e5e7eb', fontSize: 16, marginBottom: 0, boxSizing: 'border-box' }}
+
+        {/* Service Type Cards */}
+        <div style={{
+          display: 'flex',
+          flexDirection: 'column',
+          gap: '10px',
+          flex: 1,
+          overflow: 'auto'
+        }}>
+          <h3 style={{ fontSize: '11px', fontWeight: '700', color: '#0f172a', margin: '0', textTransform: 'uppercase', letterSpacing: '0.4px' }}>
+            Select
+          </h3>
+          {subcategories.map(([subcat, servicesArr]) => (
+            <button
+              key={subcat}
+              onClick={() => handleSubcategorySelect(subcat)}
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '6px',
+                padding: '10px',
+                background: selectedSubcategory === subcat ? '#2563eb' : '#f4f7fa',
+                border: 'none',
+                borderRadius: '8px',
+                cursor: 'pointer',
+                transition: 'all 0.2s ease',
+                minHeight: '90px',
+                justifyContent: 'center'
+              }}
+              onMouseEnter={(e) => {
+                if (selectedSubcategory !== subcat) {
+                  e.currentTarget.style.background = '#e8ecf7';
+                }
+              }}
+              onMouseLeave={(e) => {
+                if (selectedSubcategory !== subcat) {
+                  e.currentTarget.style.background = '#f4f7fa';
+                }
+              }}
+            >
+              <img
+                src={servicesArr[0]?.image}
+                alt={subcat}
+                style={{
+                  width: '50px',
+                  height: '50px',
+                  borderRadius: '6px',
+                  objectFit: 'cover',
+                  border: selectedSubcategory === subcat ? '2px solid #fff' : '2px solid transparent'
+                }}
               />
-            </div>
-            {/* Service List */}
-            <div style={{ display: 'flex', flexDirection: 'column', gap: 24, padding: '20px 24px' }}>
-              {services.filter(s => s.title.toLowerCase().includes(search.toLowerCase())).map(service => (
-                <div key={service.id} style={{ background: '#fff', borderRadius: 12, boxShadow: '0 1px 4px rgba(0,0,0,0.04)', border: '1px solid #e5e7eb', display: 'flex', flexDirection: 'row', alignItems: 'flex-start', padding: 0 }}>
-                  <img src={service.image} alt={service.title} style={{ width: 120, height: 120, objectFit: 'cover', borderRadius: '12px 0 0 12px', marginRight: 0 }} />
-                  <div style={{ flex: 1, padding: '18px 18px 18px 24px', display: 'flex', flexDirection: 'column', gap: 8 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 8 }}>
-                      <span style={{ fontWeight: 700, fontSize: 18, color: '#0f172a' }}>{service.title}</span>
-                      <span style={{ color: '#fbbf24', fontSize: 16 }}>★</span>
-                      <span style={{ fontWeight: 600, color: '#0f172a', fontSize: 14 }}>{service.rating}</span>
-                      <span style={{ color: '#6b7280', fontSize: 13 }}>({service.reviews} reviews)</span>
+              <span style={{
+                fontSize: '11px',
+                fontWeight: selectedSubcategory === subcat ? '600' : '500',
+                color: selectedSubcategory === subcat ? '#fff' : '#0f172a',
+                textAlign: 'center',
+                lineHeight: '1.2'
+              }}>
+                {subcat}
+              </span>
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {/* MIDDLE SECTION - SCROLLABLE */}
+      <div style={{
+        height: '100vh',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        padding: '24px 20px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '20px'
+      }}>
+        {/* Header with search */}
+        <div style={{
+          display: 'flex',
+          alignItems: 'center',
+          gap: '12px',
+          flexShrink: 0
+        }}>
+          <input
+            type="text"
+            placeholder="Search services..."
+            value={search}
+            onChange={e => setSearch(e.target.value)}
+            style={{
+              flex: 1,
+              padding: '10px 14px',
+              border: '1.5px solid #e5e7eb',
+              borderRadius: '6px',
+              fontSize: '13px'
+            }}
+          />
+        </div>
+
+        {selectedSubcategory && (
+          <>
+            {/* Featured Package */}
+            <div style={{
+              background: '#fff',
+              borderRadius: '12px',
+              overflow: 'hidden',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+              display: 'grid',
+              gridTemplateColumns: '0.8fr 1.2fr',
+              gap: '20px',
+              padding: '20px',
+              alignItems: 'center',
+              flexShrink: 0
+            }}>
+              <div style={{ position: 'relative' }}>
+                <img
+                  src={services[0]?.image}
+                  alt={services[0]?.title}
+                  style={{
+                    width: '100%',
+                    height: '220px',
+                    objectFit: 'cover',
+                    borderRadius: '8px'
+                  }}
+                />
+                <div style={{
+                  position: 'absolute',
+                  top: '12px',
+                  left: '12px',
+                  background: '#1a1a1a',
+                  color: '#fff',
+                  padding: '4px 10px',
+                  borderRadius: '3px',
+                  fontSize: '10px',
+                  fontWeight: '700',
+                  textTransform: 'uppercase',
+                  zIndex: 2
+                }}>
+                  {selectedSubcategory.slice(0, 12)}
+                </div>
+              </div>
+              <div>
+                <h3 style={{ fontSize: '22px', fontWeight: '700', color: '#0f172a', margin: '0 0 6px 0' }}>
+                  {services[0]?.title}
+                </h3>
+                <p style={{ fontSize: '13px', color: '#6b7280', margin: '0 0 12px 0', lineHeight: '1.4' }}>
+                  {services[0]?.features?.[0] || 'Professional service'}
+                </p>
+                <div style={{ display: 'flex', alignItems: 'baseline', gap: '12px', marginBottom: '12px' }}>
+                  <div>
+                    <div style={{ fontSize: '10px', color: '#6b7280', fontWeight: '600', textTransform: 'uppercase' }}>
+                      From
                     </div>
-                    <div style={{ color: '#2563eb', fontWeight: 700, fontSize: 18 }}>₹{service.price}</div>
-                    <div style={{ color: '#6b7280', fontSize: 13 }}>Time: {service.duration}</div>
-                    <div style={{ margin: '8px 0' }}>
-                      {service.features && (
-                        <ul style={{ paddingLeft: 18, margin: 0 }}>
-                          {(expandedService === service.id ? service.features : service.features.slice(0, 2)).map((feature, idx) => (
-                            <li key={idx} style={{ fontSize: 13, color: '#374151', marginBottom: 4 }}>{feature}</li>
-                          ))}
-                        </ul>
-                      )}
-                      {service.features && service.features.length > 2 && (
+                    <div style={{ fontSize: '24px', fontWeight: '700', color: '#0f172a' }}>
+                      ₹{services[0]?.price}
+                    </div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+                    <span style={{ color: '#8b5cf6', fontSize: '13px', fontWeight: '600' }}>⭐ {services[0]?.rating}</span>
+                    <span style={{ color: '#6b7280', fontSize: '11px' }}>({services[0]?.reviews})</span>
+                  </div>
+                </div>
+                <div style={{ fontSize: '11px', color: '#6b7280', marginBottom: '12px' }}>
+                  ⏱ {services[0]?.duration}
+                </div>
+                <button
+                  onClick={() => handleAddToCart(services[0])}
+                  style={{
+                    padding: '10px 24px',
+                    background: '#fff',
+                    border: '2px solid #2563eb',
+                    color: '#2563eb',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    transition: 'all 0.3s ease'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#2563eb';
+                    e.currentTarget.style.color = '#fff';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#fff';
+                    e.currentTarget.style.color = '#2563eb';
+                  }}
+                >
+                  Add
+                </button>
+              </div>
+            </div>
+
+            {/* All Services List */}
+            <div>
+              <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#0f172a', margin: '0 0 12px 0' }}>
+                All Services
+              </h3>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                {services.filter(s => s.title.toLowerCase().includes(search.toLowerCase())).map((service, idx) => (
+                  <div
+                    key={service.id}
+                    style={{
+                      background: '#fff',
+                      borderRadius: '12px',
+                      padding: '12px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                      display: 'grid',
+                      gridTemplateColumns: '100px 1fr 70px',
+                      gap: '12px',
+                      alignItems: 'flex-start',
+                      transition: 'all 0.3s ease',
+                      position: 'relative'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(37,99,235,0.15)';
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                    {idx === 0 && (
+                      <div style={{
+                        position: 'absolute',
+                        top: 8,
+                        left: 8,
+                        background: '#059669',
+                        color: '#fff',
+                        padding: '3px 8px',
+                        borderRadius: '3px',
+                        fontSize: '9px',
+                        fontWeight: '700',
+                        zIndex: 2
+                      }}>
+                        TOP PICK
+                      </div>
+                    )}
+                    <img
+                      src={service.image}
+                      alt={service.title}
+                      style={{
+                        width: '100px',
+                        height: '90px',
+                        objectFit: 'cover',
+                        borderRadius: '6px'
+                      }}
+                    />
+                    <div>
+                      <h4 style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', margin: '0 0 4px 0' }}>
+                        {service.title}
+                      </h4>
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', marginBottom: '6px' }}>
+                        <span style={{ color: '#8b5cf6', fontWeight: '600' }}>⭐ {service.rating}</span>
+                        <span style={{ color: '#6b7280' }}>({service.reviews})</span>
+                        <span style={{ color: '#6b7280' }}>⏱ {service.duration}</span>
+                      </div>
+                      <div style={{ fontSize: '12px', color: '#6b7280', lineHeight: '1.3' }}>
+                        {(service.features || []).slice(0, expandedService === service.id ? undefined : 1).map((f, i) => (
+                          <div key={i}>✓ {f}</div>
+                        ))}
+                      </div>
+                      {service.features && service.features.length > 1 && (
                         <button
                           onClick={() => setExpandedService(expandedService === service.id ? null : service.id)}
-                          style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', fontSize: 13, fontWeight: 600, marginTop: 6, padding: 0 }}
+                          style={{
+                            background: 'none',
+                            border: 'none',
+                            color: '#2563eb',
+                            cursor: 'pointer',
+                            fontSize: '11px',
+                            fontWeight: '600',
+                            padding: 0,
+                            textAlign: 'left',
+                            marginTop: '2px'
+                          }}
                         >
-                          {expandedService === service.id ? 'Show less' : 'Show more'}
+                          {expandedService === service.id ? 'Less ↑' : 'More ↓'}
                         </button>
                       )}
                     </div>
-                    {/* Add to Cart */}
-                    <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginTop: 8 }}>
-                      <div style={{ display: 'flex', alignItems: 'center', border: '1px solid #d1d5db', borderRadius: 6, background: '#f9fafb' }}>
-                        <button onClick={() => updateQuantity(service.id, -1)} style={{ background: 'none', border: 'none', padding: '6px 10px', cursor: 'pointer', fontSize: 16, color: '#6b7280' }}>−</button>
-                        <span style={{ minWidth: 30, textAlign: 'center', fontSize: 14, fontWeight: 600 }}>{quantities[service.id] || 1}</span>
-                        <button onClick={() => updateQuantity(service.id, 1)} style={{ background: 'none', border: 'none', padding: '6px 10px', cursor: 'pointer', fontSize: 16, color: '#6b7280' }}>+</button>
-                      </div>
-                      <button onClick={() => handleAddToCart(service)} style={{ flex: 1, padding: '10px 16px', background: '#2563eb', color: 'white', border: 'none', borderRadius: 6, cursor: 'pointer', fontWeight: 600, fontSize: 14, transition: 'all 0.3s ease' }}>Add</button>
+                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
+                      <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a' }}>₹{service.price}</div>
+                      <button
+                        onClick={() => handleAddToCart(service)}
+                        style={{
+                          padding: '5px 10px',
+                          background: '#fff',
+                          border: '2px solid #2563eb',
+                          color: '#2563eb',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: '600',
+                          cursor: 'pointer',
+                          transition: 'all 0.2s ease',
+                          minWidth: '55px'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.background = '#2563eb';
+                          e.currentTarget.style.color = '#fff';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.background = '#fff';
+                          e.currentTarget.style.color = '#2563eb';
+                        }}
+                      >
+                        Add
+                      </button>
                     </div>
                   </div>
-                </div>
-              ))}
+                ))}
+              </div>
             </div>
-          </div>
+          </>
         )}
       </div>
-      {/* Sidebar */}
-      <div style={{ flex: 1, minWidth: 260, display: 'flex', flexDirection: 'column', gap: '24px' }}>
-        <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px', marginBottom: 0 }}>
-          {offers.map((offer, i) => (
-            <div key={i} style={{ fontSize: 15, color: '#2d3a4a', marginBottom: 16, display: 'flex', alignItems: 'center', gap: 10 }}>
-              {i === 0 ? (
-                <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#fde68a"/><path d="M12 7v5l3 3" stroke="#f59e0b" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              ) : (
-                <svg width="22" height="22" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#bbf7d0"/><path d="M8 12l2 2 4-4" stroke="#22c55e" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              )}
-              {offer}
+
+      {/* RIGHT SIDEBAR - FIXED */}
+      <div style={{
+        background: '#fff',
+        borderLeft: '1px solid #e5e7eb',
+        height: '100vh',
+        overflowY: 'auto',
+        overflowX: 'hidden',
+        padding: '24px 16px',
+        display: 'flex',
+        flexDirection: 'column',
+        gap: '12px'
+      }}>
+        {/* Cart */}
+        <div style={{
+          background: '#f9fafb',
+          borderRadius: '12px',
+          padding: '16px',
+          textAlign: 'center',
+          flexShrink: 0
+        }}>
+          <div style={{ fontSize: '36px', marginBottom: '8px' }}>🛒</div>
+          <div style={{ fontSize: '12px', color: '#6b7280', fontWeight: '500', marginBottom: '8px' }}>
+            No items
+          </div>
+          <div style={{ fontSize: '11px', color: '#2563eb', fontWeight: '600', cursor: 'pointer' }}>
+            → Cart
+          </div>
+        </div>
+
+        {/* Offers */}
+        <div style={{
+          background: '#dcfce7',
+          borderRadius: '12px',
+          padding: '12px',
+          flexShrink: 0
+        }}>
+          <h4 style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a', margin: '0 0 8px 0' }}>
+            Offers
+          </h4>
+          <div style={{
+            display: 'flex',
+            alignItems: 'flex-start',
+            gap: '8px'
+          }}>
+            <span style={{ fontSize: '18px' }}>💰</span>
+            <div style={{ textAlign: 'left' }}>
+              <div style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a' }}>
+                Up to ₹150 cashback
+              </div>
+              <div style={{ fontSize: '10px', color: '#6b7280', marginTop: '2px' }}>
+                Via Paytm UPI
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Promise */}
+        <div style={{
+          background: '#f9fafb',
+          borderRadius: '12px',
+          padding: '12px',
+          flex: 1,
+          overflow: 'auto'
+        }}>
+          <h4 style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a', margin: '0 0 10px 0' }}>
+            ✨ Promise
+          </h4>
+          {['Verified Pros', 'Easy Booking', 'Transparent'].map((item, i) => (
+            <div key={i} style={{
+              display: 'flex',
+              alignItems: 'center',
+              gap: '6px',
+              fontSize: '11px',
+              color: '#0f172a',
+              marginBottom: i < 2 ? '8px' : 0
+            }}>
+              <span style={{ color: '#10b981', fontWeight: 'bold' }}>✓</span>
+              {item}
             </div>
           ))}
         </div>
-        <div style={{ background: '#fff', borderRadius: 12, boxShadow: '0 2px 8px rgba(0,0,0,0.06)', padding: '20px 24px' }}>
-          <div style={{ fontWeight: 600, marginBottom: 12, color: '#2d3a4a', fontSize: 16 }}>Why Home Triangle?</div>
-          <div style={{ display: 'flex', flexDirection: 'column', gap: 14 }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#2563eb', fontWeight: 500, fontSize: 15 }}>
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="#e0e7ff"/><path d="M9 12l2 2 4-4" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Verified & Vetted professionals
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#2563eb', fontWeight: 500, fontSize: 15 }}>
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="8" fill="#e0e7ff"/><path d="M8 12h8M12 8v8" stroke="#2563eb" strokeWidth="2" strokeLinecap="round"/></svg>
-              Matched to your Needs.
-            </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: 10, color: '#2563eb', fontWeight: 500, fontSize: 15 }}>
-              <svg width="20" height="20" fill="none" viewBox="0 0 24 24"><rect x="4" y="4" width="16" height="16" rx="8" fill="#e0e7ff"/><path d="M12 8v4l3 3" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
-              Customer support at every step.
-            </div>
-          </div>
-        </div>
       </div>
+
+      <style>{`
+        @media (max-width: 1200px) {
+          div[style*="gridTemplateColumns: '280px 1fr 320px'"] {
+            grid-template-columns: 220px 1fr 260px !important;
+          }
+        }
+        @media (max-width: 1024px) {
+          div[style*="gridTemplateColumns: '280px 1fr 320px'"] {
+            grid-template-columns: 1fr !important;
+          }
+          div[style*="gridTemplateColumns: '0.8fr 1.2fr'"] {
+            grid-template-columns: 1fr !important;
+          }
+        }
+        @media (max-width: 768px) {
+          div[style*="gridTemplateColumns: '100px 1fr 70px'"] {
+            grid-template-columns: 80px 1fr 55px !important;
+            gap: 8px !important;
+            padding: 10px !important;
+          }
+          img[style*="width: '100px'"] {
+            width: 80px !important;
+            height: 70px !important;
+          }
+        }
+      `}</style>
     </div>
   );
 

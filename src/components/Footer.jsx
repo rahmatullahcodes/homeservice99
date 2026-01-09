@@ -99,8 +99,8 @@ export default function Footer() {
 
           {/* Newsletter & Social */}
           <div className="footer-col footer-newsletter">
-            <div className="footer-col-title">📧 Get Updates</div>
-            <p className="form-note">Subscribe for exclusive offers, tips & latest service updates delivered to your inbox.</p>
+            <div className="footer-col-title" style={{ fontSize: '13px', marginBottom: '10px', fontWeight: '800', letterSpacing: '0.8px' }}>📧 GET UPDATES</div>
+            <p className="form-note" style={{ fontSize: '12px', opacity: 0.9, marginBottom: '12px', lineHeight: '1.35' }}>Exclusive offers & tips delivered to your inbox</p>
 
             <form onSubmit={handleSubscribe}>
               <div className="footer-input-group">
@@ -111,35 +111,37 @@ export default function Footer() {
                   value={email}
                   onChange={e => setEmail(e.target.value)}
                   type="email"
+                  style={{ fontSize: '12px', padding: '9px 12px' }}
                 />
                 <button 
                   className="btn-primary" 
                   aria-label="Subscribe" 
                   disabled={submitting}
                   type="submit"
+                  style={{ fontSize: '12px', padding: '9px 14px', fontWeight: '700' }}
                 >
                   {submitting ? '⏳' : '✉️ Subscribe'}
                 </button>
               </div>
             </form>
 
-            <div style={{ marginTop: 14 }}>
-              <div className="footer-col-title" style={{ marginBottom: 10 }}>Follow Us</div>
-              <div className="social-list">
-                <a href="https://instagram.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Instagram" className="social-link" title="Instagram">📸</a>
-                <a href="https://facebook.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Facebook" className="social-link" title="Facebook">👍</a>
-                <a href="https://youtube.com/homeservice99" target="_blank" rel="noreferrer" aria-label="YouTube" className="social-link" title="YouTube">▶️</a>
-                <a href="https://linkedin.com/company/homeservice99" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="social-link" title="LinkedIn">💼</a>
-                <a href="https://twitter.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Twitter" className="social-link" title="Twitter">𝕏</a>
+            <div style={{ marginTop: 10 }}>
+              <div className="footer-col-title" style={{ fontSize: '12px', marginBottom: '8px', fontWeight: '800', letterSpacing: '0.7px' }}>FOLLOW US</div>
+              <div className="social-list" style={{ gap: '8px' }}>
+                <a href="https://instagram.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Instagram" className="social-link" title="Instagram" style={{ width: '36px', height: '36px', fontSize: '16px' }}>📸</a>
+                <a href="https://facebook.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Facebook" className="social-link" title="Facebook" style={{ width: '36px', height: '36px', fontSize: '16px' }}>👍</a>
+                <a href="https://youtube.com/homeservice99" target="_blank" rel="noreferrer" aria-label="YouTube" className="social-link" title="YouTube" style={{ width: '36px', height: '36px', fontSize: '16px' }}>▶️</a>
+                <a href="https://linkedin.com/company/homeservice99" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="social-link" title="LinkedIn" style={{ width: '36px', height: '36px', fontSize: '16px' }}>💼</a>
+                <a href="https://twitter.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Twitter" className="social-link" title="Twitter" style={{ width: '36px', height: '36px', fontSize: '14px' }}>𝕏</a>
               </div>
             </div>
 
-            <div style={{ marginTop: 14 }}>
-              <div className="footer-col-title" style={{ marginBottom: 10 }}>Payment Methods</div>
-              <div className="payments">
-                <span>💳 Credit/Debit Card</span>
-                <span>📱 UPI</span>
-                <span>🏦 Net Banking</span>
+            <div style={{ marginTop: 10 }}>
+              <div className="footer-col-title" style={{ fontSize: '12px', marginBottom: '8px', fontWeight: '800', letterSpacing: '0.7px' }}>PAYMENT METHODS</div>
+              <div className="payments" style={{ gap: '8px', fontSize: '11px' }}>
+                <span style={{ padding: '4px 8px', fontSize: '11px', fontWeight: '600' }}>💳 Card</span>
+                <span style={{ padding: '4px 8px', fontSize: '11px', fontWeight: '600' }}>📱 UPI</span>
+                <span style={{ padding: '4px 8px', fontSize: '11px', fontWeight: '600' }}>🏦 Banking</span>
               </div>
             </div>
           </div>
