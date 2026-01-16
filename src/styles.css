@@ -8017,3 +8017,62 @@ input[type="text"], input[type="email"], input[type="password"], textarea, input
     height: 36px !important;
   }
 }
+.appliance-modal {
+  padding: 12px 6px;
+}
+
+.appliance-group {
+  margin-bottom: 22px;
+}
+
+.group-title {
+  font-size: 15px;
+  font-weight: 600;
+  margin-bottom: 10px;
+  color: #0f172a;
+}
+
+.appliance-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+  gap: 14px;
+}
+
+.appliance-card {
+  background: #f9fafb;
+  border-radius: 12px;
+  padding: 12px 6px;
+  text-align: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.appliance-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 14px rgba(0,0,0,0.08);
+}
+
+.appliance-card img {
+  width: 42px;
+  height: 42px;
+  object-fit: contain;
+  margin-bottom: 6px;
+}
+
+.appliance-card p {
+  font-size: 12px;
+  font-weight: 600;
+  margin: 0;
+  line-height: 1.3;
+}
+
+.instant-badge {
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 10px;
+  font-weight: 700;
+  color: #059669;
+}

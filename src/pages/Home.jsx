@@ -197,8 +197,82 @@ export default function Home() {
   // Subcategories for better browsing experience
   const SUBCATEGORIES = {
     Appliances: {
-      'AC Services': ['ap1', 'ap2', 'ap3', 'ap4', 'ap5', 'ap6'],
-      'Kitchen Appliances': ['ap7', 'ap8', 'ap9', 'ap10', 'ap11', 'ap12', 'ap13']
+      'Home appliances': [
+        {
+          key: 'AC',
+          label: 'AC',
+          instant: true,
+          icon: 'https://img.icons8.com/fluency/96/air-conditioner.png'
+        },
+        {
+          key: 'Washing Machine',
+          label: 'Washing Machine',
+          instant: true,
+          icon: 'https://img.icons8.com/fluency/96/washing-machine.png'
+        },
+        {
+          key: 'Television',
+          label: 'Television',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/tv.png'
+        },
+        {
+          key: 'Laptop',
+          label: 'Laptop',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/laptop.png'
+        },
+        {
+          key: 'Air Purifier',
+          label: 'Air Purifier',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/air-purifier.png'
+        },
+        {
+          key: 'Air Cooler',
+          label: 'Air Cooler',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/fan.png'
+        },
+        {
+          key: 'Geyser',
+          label: 'Geyser',
+          instant: true,
+          icon: 'https://img.icons8.com/fluency/96/geyser.png'
+        }
+      ],
+      'Kitchen appliances': [
+        {
+          key: 'Water Purifier',
+          label: 'Water Purifier Repair',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/water-purifier.png'
+        },
+        {
+          key: 'Refrigerator',
+          label: 'Refrigerator',
+          instant: true,
+          icon: 'https://img.icons8.com/fluency/96/fridge.png'
+        },
+        {
+          key: 'Microwave',
+          label: 'Microwave',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/microwave.png'
+        },
+        {
+          key: 'Chimney',
+          label: 'Chimney',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/chimney.png'
+        },
+        {
+          key: 'Stove',
+          label: 'Stove / Hob',
+          instant: false,
+          icon: 'https://img.icons8.com/fluency/96/gas-stove.png'
+        }
+      ]
     },
     Cleaning: {
       'Home Cleaning': ['cl1', 'cl2', 'cl3', 'cl4', 'cl5', 'cl9', 'cl10'],
@@ -471,15 +545,186 @@ export default function Home() {
     <div className="category-card">
       <h3 className="category-card-title">What are you looking for?</h3>
 
-      <div className="category-grid" aria-hidden={false}>
-        {categories.slice(0, 9).map((c) => (
-          <button key={c.key} className="category-tile" onClick={() => openCategoryModal(c.key)} aria-label={c.title}>
-            <div className="category-icon" aria-hidden="true">
-              <img src={CATEGORY_ICONS[c.key] || CATEGORY_ICONS['All']} alt={c.title} style={{width: '48px', height: '48px', objectFit: 'contain'}} />
-            </div>
-            <span>{c.title}</span>
-          </button>
-        ))}
+      <div style={{
+        display: 'grid',
+        gridTemplateColumns: 'repeat(3, 1fr)',
+        gap: '16px',
+        marginBottom: '20px'
+      }}>
+        {/* Women's Salon & Spa */}
+        <button 
+          onClick={() => openCategoryModal('Beauty')} 
+          style={{
+            border: 'none',
+            background: '#f5f5f5',
+            borderRadius: '12px',
+            padding: '16px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            transition: 'all 0.3s ease',
+            textAlign: 'center'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#e8f5e9';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f5f5f5';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <img src="https://img.icons8.com/fluency/96/woman-face-with-mouths-open.png" alt="Women's Salon" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
+          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Women's Salon & Spa</span>
+        </button>
+
+        {/* Men's Salon & Massage */}
+        <button 
+          onClick={() => openCategoryModal('Men')} 
+          style={{
+            border: 'none',
+            background: '#f5f5f5',
+            borderRadius: '12px',
+            padding: '16px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            transition: 'all 0.3s ease',
+            textAlign: 'center'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#e3f2fd';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f5f5f5';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <img src="https://img.icons8.com/fluency/96/male-user.png" alt="Men's Salon" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
+          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Men's Salon & Massage</span>
+        </button>
+
+        {/* Cleaning & Pest Control */}
+        <button 
+          onClick={() => openCategoryModal('Cleaning')} 
+          style={{
+            border: 'none',
+            background: '#f5f5f5',
+            borderRadius: '12px',
+            padding: '16px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            transition: 'all 0.3s ease',
+            textAlign: 'center'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#fff3e0';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f5f5f5';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <img src="https://img.icons8.com/fluency/96/vacuum-cleaner.png" alt="Cleaning" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
+          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Cleaning & Pest Control</span>
+        </button>
+
+        {/* Electrician, Plumber & Carpenter */}
+        <button 
+          onClick={() => openCategoryModal('Electrician')} 
+          style={{
+            border: 'none',
+            background: '#f5f5f5',
+            borderRadius: '12px',
+            padding: '16px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            transition: 'all 0.3s ease',
+            textAlign: 'center'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#f3e5f5';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f5f5f5';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <img src="https://img.icons8.com/fluency/96/toolbox.png" alt="Repairs" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
+          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Electrician, Plumber & Carpenter</span>
+        </button>
+
+        {/* Painting & Waterproofing */}
+        <button 
+          onClick={() => openCategoryModal('Painting')} 
+          style={{
+            border: 'none',
+            background: '#f5f5f5',
+            borderRadius: '12px',
+            padding: '16px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            transition: 'all 0.3s ease',
+            textAlign: 'center'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#fce4ec';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f5f5f5';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <img src="https://img.icons8.com/fluency/96/color-palette.png" alt="Painting" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
+          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Painting & Waterproofing</span>
+        </button>
+
+        {/* AC & Appliance Repair */}
+        <button 
+          onClick={() => openCategoryModal('Appliances')} 
+          style={{
+            border: 'none',
+            background: '#f5f5f5',
+            borderRadius: '12px',
+            padding: '16px',
+            cursor: 'pointer',
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            gap: '12px',
+            transition: 'all 0.3s ease',
+            textAlign: 'center'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = '#e1f5fe';
+            e.currentTarget.style.transform = 'translateY(-4px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = '#f5f5f5';
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}
+        >
+          <img src="https://img.icons8.com/fluency/96/air-conditioner.png" alt="AC Service" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
+          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>AC & Appliance Repair</span>
+        </button>
+
       </div>
     </div>
 <div className="search-helpers">
@@ -551,50 +796,1250 @@ export default function Home() {
 
       {/* Service Cards Grid View - Category Wise */}
       <div className="modal-body">
-        {Object.keys(SUBCATEGORIES[modalCategory] || {}).map((subcategoryName) => (
-          <div key={subcategoryName} style={{ marginBottom: '24px' }}>
-            <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
-              {subcategoryName}
-            </h4>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
-              {SUBCATEGORIES[modalCategory][subcategoryName]?.map((serviceId) => {
-                const service = SERVICES_BY_CATEGORY[modalCategory]?.find(s => s.id === serviceId);
-                return service ? (
-                  <div
-                    key={service.id}
-                    onClick={() => {
-                      setModalOpen(false);
-                      navigate(`/services?category=${encodeURIComponent(modalCategory)}`);
-                    }}
-                    style={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: '6px',
-                      cursor: 'pointer',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'scale(1.05)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'scale(1)';
-                    }}
-                  >
-                    <img 
-                      src={service.image} 
-                      alt={service.title} 
-                      style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '8px' }} 
-                      onError={(e) => { e.target.src = 'https://via.placeholder.com/100x90?text=Service'; }} 
-                    />
-                    <p style={{ margin: '0', fontSize: '11px', fontWeight: '600', color: '#0f172a', textAlign: 'center', lineHeight: '1.3' }}>
-                      {service.title}
-                    </p>
-                  </div>
-                ) : null;
-              })}
+        {modalCategory === 'Beauty' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Beauty`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#fce7f3',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/woman-face.png" alt="Salon for Women" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Salon for Women
+              </p>
+            </div>
+
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Beauty`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#fce7f3',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/spa.png" alt="Spa for Women" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Spa for Women
+              </p>
+            </div>
+
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Beauty`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#fce7f3',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/hair.png" alt="Hair Studio for Women" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Hair Studio for Women
+              </p>
+            </div>
+
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Beauty`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#fce7f3',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/makeup.png" alt="Makeup & Styling Studio" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Makeup & Styling Studio
+              </p>
             </div>
           </div>
-        ))}
+        ) : modalCategory === 'Men' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Men`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#e3f2fd',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/barber.png" alt="Salon for Men" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Salon for Men
+              </p>
+            </div>
+
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Men`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#e3f2fd',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/massage.png" alt="Massage for Men" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Massage for Men
+              </p>
+            </div>
+          </div>
+        ) : modalCategory === 'Cleaning' ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {/* Cleaning Section */}
+            <div>
+              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
+                Cleaning
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Cleaning`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/bathtub.png" alt="Bathroom Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Bathroom Cleaning
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Cleaning`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/kitchenware.png" alt="Kitchen Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Kitchen Cleaning
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Cleaning`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    position: 'relative'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    position: 'relative'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/comfortable-sofa.png" alt="Living & Bedroom Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <span style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '4px',
+                      background: '#ff1493',
+                      color: 'white',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      padding: '2px 6px',
+                      borderRadius: '4px'
+                    }}>
+                      NEW
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Living & Bedroom Cleaning
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Cleaning`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/cardboard-box.png" alt="Full Home / Move-in Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Full Home / Move-in Cleaning
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Pest Control Section */}
+            <div>
+              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
+                Pest Control
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Pest`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#ffebee',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/cockroach.png" alt="Cockroach Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Cockroach Control
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Pest`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#ffebee',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/termite.png" alt="Termite Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Termite Control
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Pest`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#ffebee',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/bed-bug.png" alt="Bed Bugs Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Bed Bugs Control
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Pest`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    position: 'relative'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#ffebee',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    position: 'relative'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/ant.png" alt="Ant Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <span style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '4px',
+                      background: '#ff1493',
+                      color: 'white',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      padding: '2px 6px',
+                      borderRadius: '4px'
+                    }}>
+                      NEW
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Ant Control
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : modalCategory === 'Electrician' ? (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+            {/* Repairs Section */}
+            <div>
+              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
+                Repairs
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Electrician`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#e3f2fd',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/electrician.png" alt="Electrician" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Electrician
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Plumber`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#ffebee',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/plumber.png" alt="Plumber" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Plumber
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Carpentry`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/hammer.png" alt="Carpenter" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Carpenter
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Electrician`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#f3e5f5',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/light-on.png" alt="Festival Lights" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Festival Lights
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+              </div>
+            </div>
+
+            {/* Installations & Other Services Section */}
+            <div>
+              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
+                Installations & other services
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Electrician`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#e3f2fd',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/ceiling-fan.png" alt="Fan Installation" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Fan Installation
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Carpentry`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/sofa.png" alt="Furniture Assembly" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Furniture Assembly
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Appliances`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#e0f2f1',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/geyser.png" alt="Geyser" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Geyser
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Carpentry`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/furniture.png" alt="IKEA Furniture Assembly" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    IKEA Furniture Assembly
+                  </p>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Painting`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    position: 'relative'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#f3e5f5',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    position: 'relative'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/tile.png" alt="Tile Grouting" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <span style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '4px',
+                      background: '#ff1493',
+                      color: 'white',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      padding: '2px 6px',
+                      borderRadius: '4px'
+                    }}>
+                      NEW
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Tile Grouting
+                  </p>
+                </div>
+
+                <div
+                  onClick={() => {
+                    setModalOpen(false);
+                    navigate(`/services?category=Carpentry`);
+                  }}
+                  style={{
+                    textAlign: 'center',
+                    cursor: 'pointer',
+                    transition: '0.3s',
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    gap: '8px',
+                    position: 'relative'
+                  }}
+                  onMouseEnter={(e) => {
+                    e.currentTarget.style.transform = 'translateY(-4px)';
+                  }}
+                  onMouseLeave={(e) => {
+                    e.currentTarget.style.transform = 'translateY(0)';
+                  }}
+                >
+                  <div style={{
+                    width: '80px',
+                    height: '80px',
+                    background: '#fff3e0',
+                    borderRadius: '12px',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    overflow: 'hidden',
+                    position: 'relative'
+                  }}>
+                    <img src="https://img.icons8.com/fluency/96/wood.png" alt="Wood Polish" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <span style={{
+                      position: 'absolute',
+                      top: '4px',
+                      right: '4px',
+                      background: '#ff1493',
+                      color: 'white',
+                      fontSize: '10px',
+                      fontWeight: 'bold',
+                      padding: '2px 6px',
+                      borderRadius: '4px'
+                    }}>
+                      NEW
+                    </span>
+                  </div>
+                  <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                    Wood Polish
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        ) : modalCategory === 'Painting' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Painting`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px',
+                position: 'relative'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#f3e5f5',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden',
+                position: 'relative'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/paint-palette.png" alt="Full home painting" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+                <span style={{
+                  position: 'absolute',
+                  top: '4px',
+                  left: '4px',
+                  background: '#ff1493',
+                  color: 'white',
+                  fontSize: '10px',
+                  fontWeight: 'bold',
+                  padding: '2px 6px',
+                  borderRadius: '4px'
+                }}>
+                  NEW
+                </span>
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Full home painting
+              </p>
+            </div>
+
+            <div
+              onClick={() => {
+                setModalOpen(false);
+                navigate(`/services?category=Painting`);
+              }}
+              style={{
+                textAlign: 'center',
+                cursor: 'pointer',
+                transition: '0.3s',
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                gap: '12px'
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = 'translateY(-6px)';
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = 'translateY(0)';
+              }}
+            >
+              <div style={{
+                width: '90px',
+                height: '90px',
+                background: '#fce4ec',
+                borderRadius: '12px',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+                overflow: 'hidden'
+              }}>
+                <img src="https://img.icons8.com/fluency/96/paint-roller.png" alt="Walls & Rooms Painting" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+              </div>
+              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                Walls & Rooms Painting
+              </p>
+            </div>
+          </div>
+        ) : modalCategory === 'Appliances' ? (
+          Object.entries(SUBCATEGORIES.Appliances).map(([groupName, items]) => (
+            <div key={groupName} style={{ marginBottom: '24px' }}>
+              <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
+                {groupName}
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+                {items.map((item) => (
+                  <div
+                    key={item.key}
+                    onClick={() => {
+                      setModalOpen(false);
+                      navigate(`/services?category=Appliances&appliance=${encodeURIComponent(item.key)}`);
+                    }}
+                    style={{
+                      textAlign: 'center',
+                      cursor: 'pointer',
+                      transition: '0.25s',
+                      display: 'flex',
+                      flexDirection: 'column',
+                      alignItems: 'center',
+                      gap: '8px'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                    }}
+                  >
+                  <div style={{
+                      width: '80px',
+                      height: '80px',
+                      background: '#f5f5f5',
+                      borderRadius: '12px',
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      overflow: 'hidden',
+                      position: 'relative'
+                    }}>
+                      <img
+                        src={item.icon}
+                        alt={item.key}
+                        style={{ width: '100%', height: '100%', objectFit: 'contain', padding: '8px' }}
+                        onError={(e) => { e.target.src = 'https://via.placeholder.com/80x80?text=' + item.key; }}
+                      />
+                      {item.instant && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '-4px',
+                          right: '-4px',
+                          width: '20px',
+                          height: '20px',
+                          background: '#10b981',
+                          borderRadius: '50%',
+                          display: 'flex',
+                          alignItems: 'center',
+                          justifyContent: 'center',
+                          color: 'white',
+                          fontSize: '12px',
+                          fontWeight: 'bold'
+                        }}>
+                          ✓
+                        </div>
+                      )}
+                    </div>
+                    <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+                      {item.label || item.key}
+                    </p>
+                    {item.instant && (
+                      <span style={{
+                        display: 'inline-block',
+                        fontSize: '10px',
+                        fontWeight: '600',
+                        color: '#059669'
+                      }}>
+                        ✓ Instant
+                      </span>
+                    )}
+                  </div>
+                ))}
+              </div>
+            </div>
+          ))
+        ) : (
+          Object.keys(SUBCATEGORIES[modalCategory] || {}).map((subcategoryName) => (
+            <div key={subcategoryName} style={{ marginBottom: '24px' }}>
+              <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
+                {subcategoryName}
+              </h4>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+                {SUBCATEGORIES[modalCategory][subcategoryName]?.map((serviceId) => {
+                  const service = SERVICES_BY_CATEGORY[modalCategory]?.find(s => s.id === serviceId);
+                  return service ? (
+                    <div
+                      key={service.id}
+                      onClick={() => {
+                        setModalOpen(false);
+                        navigate(`/services?category=${encodeURIComponent(modalCategory)}`);
+                      }}
+                      style={{
+                        display: 'flex',
+                        flexDirection: 'column',
+                        gap: '6px',
+                        cursor: 'pointer',
+                        transition: 'all 0.3s ease'
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.transform = 'scale(1.05)';
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.transform = 'scale(1)';
+                      }}
+                    >
+                      <img 
+                        src={service.image} 
+                        alt={service.title} 
+                        style={{ width: '100%', height: '90px', objectFit: 'cover', borderRadius: '8px' }} 
+                        onError={(e) => { e.target.src = 'https://via.placeholder.com/100x90?text=Service'; }} 
+                      />
+                      <p style={{ margin: '0', fontSize: '11px', fontWeight: '600', color: '#0f172a', textAlign: 'center', lineHeight: '1.3' }}>
+                        {service.title}
+                      </p>
+                    </div>
+                  ) : null;
+                })}
+              </div>
+            </div>
+          ))
+        )}
       </div>
     </div>
   </div>

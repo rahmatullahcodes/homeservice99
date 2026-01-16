@@ -539,77 +539,106 @@ export default function Services() {
               </div>
             </div>
 
-            {/* All Services List */}
-            <div>
-              <h3 style={{ fontSize: '15px', fontWeight: '700', color: '#0f172a', margin: '0 0 12px 0' }}>
-                All Services
-              </h3>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-                {services.filter(s => s.title.toLowerCase().includes(search.toLowerCase())).map((service, idx) => (
+            {/* All Services List - UrbanCompany Style Sections */}
+            <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+              {services.filter(s => s.title.toLowerCase().includes(search.toLowerCase())).map((service, idx) => (
+                <div key={service.id} style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                  {/* Section Header (show once per section change) */}
+                  {idx === 0 && (
+                    <h3 style={{ fontSize: '16px', fontWeight: '700', color: '#0f172a', margin: '0 0 16px 0' }}>
+                      {selectedSubcategory}
+                    </h3>
+                  )}
+
+                  {/* Service Card - Large Format */}
                   <div
-                    key={service.id}
                     style={{
                       background: '#fff',
                       borderRadius: '12px',
-                      padding: '12px',
-                      boxShadow: '0 2px 8px rgba(0,0,0,0.06)',
+                      padding: '16px',
+                      boxShadow: '0 2px 8px rgba(0,0,0,0.08)',
                       display: 'grid',
-                      gridTemplateColumns: '100px 1fr 70px',
-                      gap: '12px',
-                      alignItems: 'flex-start',
+                      gridTemplateColumns: '280px 1fr',
+                      gap: '20px',
+                      alignItems: 'center',
                       transition: 'all 0.3s ease',
                       position: 'relative'
                     }}
                     onMouseEnter={(e) => {
-                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(37,99,235,0.15)';
+                      e.currentTarget.style.boxShadow = '0 6px 16px rgba(37,99,235,0.12)';
                       e.currentTarget.style.transform = 'translateY(-2px)';
                     }}
                     onMouseLeave={(e) => {
-                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.06)';
+                      e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.08)';
                       e.currentTarget.style.transform = 'translateY(0)';
                     }}
                   >
-                    {idx === 0 && (
-                      <div style={{
-                        position: 'absolute',
-                        top: 8,
-                        left: 8,
-                        background: '#059669',
-                        color: '#fff',
-                        padding: '3px 8px',
-                        borderRadius: '3px',
-                        fontSize: '9px',
-                        fontWeight: '700',
-                        zIndex: 2
-                      }}>
-                        TOP PICK
+                    {/* Image with Badge */}
+                    <div style={{ position: 'relative' }}>
+                      <img
+                        src={service.image}
+                        alt={service.title}
+                        style={{
+                          width: '100%',
+                          height: '200px',
+                          objectFit: 'cover',
+                          borderRadius: '8px'
+                        }}
+                      />
+                      {selectedSubcategory === 'AC Services' && idx < 3 && (
+                        <div style={{
+                          position: 'absolute',
+                          top: '12px',
+                          left: '12px',
+                          background: '#1a1a1a',
+                          color: '#fff',
+                          padding: '6px 12px',
+                          borderRadius: '4px',
+                          fontSize: '11px',
+                          fontWeight: '700',
+                          textTransform: 'uppercase',
+                          zIndex: 2
+                        }}>
+                          {idx === 0 ? '2 ACs PACK' : idx === 1 ? '4 ACs PACK' : '5 ACs PACK'}
+                        </div>
+                      )}
+                    </div>
+
+                    {/* Details Section */}
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
+                      <div>
+                        <h4 style={{ fontSize: '18px', fontWeight: '700', color: '#0f172a', margin: '0 0 6px 0' }}>
+                          {service.title}
+                        </h4>
+                        <p style={{ fontSize: '13px', color: '#6b7280', margin: '0', lineHeight: '1.4' }}>
+                          {service.features?.[0] || 'Professional service included'}
+                        </p>
                       </div>
-                    )}
-                    <img
-                      src={service.image}
-                      alt={service.title}
-                      style={{
-                        width: '100px',
-                        height: '90px',
-                        objectFit: 'cover',
-                        borderRadius: '6px'
-                      }}
-                    />
-                    <div>
-                      <h4 style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a', margin: '0 0 4px 0' }}>
-                        {service.title}
-                      </h4>
-                      <div style={{ display: 'flex', alignItems: 'center', gap: '6px', fontSize: '11px', marginBottom: '6px' }}>
-                        <span style={{ color: '#8b5cf6', fontWeight: '600' }}>⭐ {service.rating}</span>
-                        <span style={{ color: '#6b7280' }}>({service.reviews})</span>
-                        <span style={{ color: '#6b7280' }}>⏱ {service.duration}</span>
+
+                      {/* Rating, Duration, Price */}
+                      <div style={{ display: 'flex', alignItems: 'center', gap: '16px', fontSize: '13px' }}>
+                        <div>
+                          <span style={{ color: '#8b5cf6', fontWeight: '700', marginRight: '4px' }}>⭐ {service.rating}</span>
+                          <span style={{ color: '#6b7280' }}>({service.reviews})</span>
+                        </div>
+                        <div style={{ color: '#6b7280' }}>⏱ {service.duration}</div>
+                        <div style={{ marginLeft: 'auto' }}>
+                          <div style={{ fontSize: '11px', color: '#6b7280', fontWeight: '600' }}>Starts at</div>
+                          <div style={{ fontSize: '20px', fontWeight: '700', color: '#0f172a' }}>₹{service.price}</div>
+                        </div>
                       </div>
-                      <div style={{ fontSize: '12px', color: '#6b7280', lineHeight: '1.3' }}>
-                        {(service.features || []).slice(0, expandedService === service.id ? undefined : 1).map((f, i) => (
-                          <div key={i}>✓ {f}</div>
+
+                      {/* Features List */}
+                      <div style={{ display: 'flex', flexDirection: 'column', gap: '8px' }}>
+                        {(service.features || []).slice(0, expandedService === service.id ? undefined : 2).map((f, i) => (
+                          <div key={i} style={{ display: 'flex', alignItems: 'flex-start', gap: '6px', fontSize: '12px', color: '#4b5563' }}>
+                            <span style={{ color: '#059669', fontWeight: 'bold', marginTop: '2px' }}>✓</span>
+                            <span>{f}</span>
+                          </div>
                         ))}
                       </div>
-                      {service.features && service.features.length > 1 && (
+
+                      {service.features && service.features.length > 2 && (
                         <button
                           onClick={() => setExpandedService(expandedService === service.id ? null : service.id)}
                           style={{
@@ -617,48 +646,48 @@ export default function Services() {
                             border: 'none',
                             color: '#2563eb',
                             cursor: 'pointer',
-                            fontSize: '11px',
+                            fontSize: '12px',
                             fontWeight: '600',
                             padding: 0,
-                            textAlign: 'left',
-                            marginTop: '2px'
+                            textAlign: 'left'
                           }}
                         >
-                          {expandedService === service.id ? 'Less ↑' : 'More ↓'}
+                          {expandedService === service.id ? 'View less' : 'View details'}
                         </button>
                       )}
-                    </div>
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '6px', justifyContent: 'center' }}>
-                      <div style={{ fontSize: '13px', fontWeight: '700', color: '#0f172a' }}>₹{service.price}</div>
-                      <button
-                        onClick={() => handleAddToCart(service)}
-                        style={{
-                          padding: '5px 10px',
-                          background: '#fff',
-                          border: '2px solid #2563eb',
-                          color: '#2563eb',
-                          borderRadius: '4px',
-                          fontSize: '11px',
-                          fontWeight: '600',
-                          cursor: 'pointer',
-                          transition: 'all 0.2s ease',
-                          minWidth: '55px'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.background = '#2563eb';
-                          e.currentTarget.style.color = '#fff';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.background = '#fff';
-                          e.currentTarget.style.color = '#2563eb';
-                        }}
-                      >
-                        Add
-                      </button>
+
+                      {/* Action Buttons */}
+                      <div style={{ display: 'flex', gap: '12px', marginTop: '8px' }}>
+                        <button
+                          onClick={() => handleAddToCart(service)}
+                          style={{
+                            padding: '10px 24px',
+                            background: '#fff',
+                            border: '2px solid #2563eb',
+                            color: '#2563eb',
+                            borderRadius: '6px',
+                            fontSize: '13px',
+                            fontWeight: '600',
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease',
+                            minWidth: '80px'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = '#2563eb';
+                            e.currentTarget.style.color = '#fff';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = '#fff';
+                            e.currentTarget.style.color = '#2563eb';
+                          }}
+                        >
+                          Add
+                        </button>
+                      </div>
                     </div>
                   </div>
-                ))}
-              </div>
+                </div>
+              ))}
             </div>
           </>
         )}
