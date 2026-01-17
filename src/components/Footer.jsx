@@ -1,24 +1,12 @@
-import { Link, useNavigate } from "react-router-dom";
+import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "../context/ToastContext";
+import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
 
 export default function Footer() {
-  const navigate = useNavigate();
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const { addToast } = useToast();
-
-  // Service categories for quick access
-  const services = [
-    { name: "Cleaning", icon: "🧹", query: "Cleaning" },
-    { name: "Appliances", icon: "❄️", query: "Appliances" },
-    { name: "Electrician", icon: "⚡", query: "Electrician" },
-    { name: "Plumbing", icon: "🔧", query: "Plumber" },
-    { name: "Salon", icon: "✨", query: "Beauty" },
-    { name: "Painting", icon: "🎨", query: "Painter" },
-    { name: "Carpentry", icon: "🔨", query: "Carpenter" },
-    { name: "Pest Control", icon: "🐛", query: "Pest Control" }
-  ];
 
   function validateEmail(v) {
     return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v);
@@ -27,171 +15,160 @@ export default function Footer() {
   function handleSubscribe(e) {
     e.preventDefault();
     if (!email || !validateEmail(email)) {
-      addToast("Enter a valid email address", 'warning');
+      addToast("Enter valid email", 'warning');
       return;
     }
-
     setSubmitting(true);
-
     try {
       const list = JSON.parse(localStorage.getItem('newsletter') || '[]');
-      if (list.includes(email)) {
-        addToast("You're already subscribed", 'info');
-      } else {
+      if (!list.includes(email)) {
         list.push(email);
         localStorage.setItem('newsletter', JSON.stringify(list));
-        addToast('✅ Subscribed! Check your inbox for updates.', 'success');
+        addToast('✅ Subscribed!', 'success');
         setEmail("");
+      } else {
+        addToast('Already subscribed', 'info');
       }
-    } catch (err) {
-      addToast('Subscription failed', 'error');
+    } catch {
+      addToast('Failed', 'error');
     } finally {
       setSubmitting(false);
     }
   }
 
-  function backToTop() {
-    window.scrollTo({ top: 0, behavior: 'smooth' });
-  }
-
   return (
     <footer className="footer">
-      <div className="footer-inner">
-        <div className="footer-grid">
-
-          {/* Company Info */}
-          <div className="footer-col">
-            <div className="footer-col-title">📱 Company</div>
-            <Link to="/" className="footer-link">Home</Link>
-            <Link to="/about" className="footer-link">About Us</Link>
-            <Link to="/pricing" className="footer-link">Pricing</Link>
-            <Link to="/blog" className="footer-link">Blog & Articles</Link>
-            <Link to="/contact" className="footer-link">Contact Us</Link>
+      {/* Newsletter Banner */}
+      <div className="newsletter-banner">
+        <div className="newsletter-content">
+          <div className="newsletter-text">
+            <h3>Subscribe to Our Newsletter</h3>
+            <p>Get exclusive deals, tips, and updates delivered to your inbox</p>
           </div>
-
-          {/* Browse Services */}
-          <div className="footer-col">
-            <div className="footer-col-title">🛠️ Services</div>
-            <Link to="/services" className="footer-link">All Services</Link>
-            <Link to="/services?category=Cleaning" className="footer-link">Home Cleaning</Link>
-            <Link to="/services?category=Appliances" className="footer-link">AC & Appliances</Link>
-            <Link to="/services?category=Electrician" className="footer-link">Electrician</Link>
-            <Link to="/services?category=Plumber" className="footer-link">Plumbing</Link>
-          </div>
-
-          {/* For Professionals */}
-          <div className="footer-col">
-            <div className="footer-col-title">👔 Professionals</div>
-            <Link to="/vendor-login" className="footer-link">Login as Professional</Link>
-            <Link to="/vendor-signup" className="footer-link">Register as Partner</Link>
-            <Link to="/pricing" className="footer-link">Partner Benefits</Link>
-            <Link to="/contact" className="footer-link">Support</Link>
-          </div>
-
-          {/* Support & Policies */}
-          <div className="footer-col">
-            <div className="footer-col-title">⚖️ Support</div>
-            <Link to="/terms-conditions" className="footer-link">Terms & Conditions</Link>
-            <Link to="/privacy-policy" className="footer-link">Privacy Policy</Link>
-            <Link to="/cancellation-refund" className="footer-link">Cancellation & Refund</Link>
-            <Link to="/disclaimer" className="footer-link">Disclaimer</Link>
-          </div>
-
-          {/* Newsletter & Social */}
-          <div className="footer-col footer-newsletter">
-            <div className="footer-col-title" style={{ fontSize: '13px', marginBottom: '10px', fontWeight: '800', letterSpacing: '0.8px' }}>📧 GET UPDATES</div>
-            <p className="form-note" style={{ fontSize: '12px', opacity: 0.9, marginBottom: '12px', lineHeight: '1.35' }}>Exclusive offers & tips delivered to your inbox</p>
-
-            <form onSubmit={handleSubscribe}>
-              <div className="footer-input-group">
-                <input
-                  aria-label="Email for newsletter"
-                  className="footer-input"
-                  placeholder="Enter your email"
-                  value={email}
-                  onChange={e => setEmail(e.target.value)}
-                  type="email"
-                  style={{ fontSize: '12px', padding: '9px 12px' }}
-                />
-                <button 
-                  className="btn-primary" 
-                  aria-label="Subscribe" 
-                  disabled={submitting}
-                  type="submit"
-                  style={{ fontSize: '12px', padding: '9px 14px', fontWeight: '700' }}
-                >
-                  {submitting ? '⏳' : '✉️ Subscribe'}
-                </button>
-              </div>
-            </form>
-
-            <div style={{ marginTop: 10 }}>
-              <div className="footer-col-title" style={{ fontSize: '12px', marginBottom: '8px', fontWeight: '800', letterSpacing: '0.7px' }}>FOLLOW US</div>
-              <div className="social-list" style={{ gap: '8px' }}>
-                <a href="https://instagram.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Instagram" className="social-link" title="Instagram" style={{ width: '36px', height: '36px', fontSize: '16px' }}>📸</a>
-                <a href="https://facebook.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Facebook" className="social-link" title="Facebook" style={{ width: '36px', height: '36px', fontSize: '16px' }}>👍</a>
-                <a href="https://youtube.com/homeservice99" target="_blank" rel="noreferrer" aria-label="YouTube" className="social-link" title="YouTube" style={{ width: '36px', height: '36px', fontSize: '16px' }}>▶️</a>
-                <a href="https://linkedin.com/company/homeservice99" target="_blank" rel="noreferrer" aria-label="LinkedIn" className="social-link" title="LinkedIn" style={{ width: '36px', height: '36px', fontSize: '16px' }}>💼</a>
-                <a href="https://twitter.com/homeservice99" target="_blank" rel="noreferrer" aria-label="Twitter" className="social-link" title="Twitter" style={{ width: '36px', height: '36px', fontSize: '14px' }}>𝕏</a>
-              </div>
-            </div>
-
-            <div style={{ marginTop: 10 }}>
-              <div className="footer-col-title" style={{ fontSize: '12px', marginBottom: '8px', fontWeight: '800', letterSpacing: '0.7px' }}>PAYMENT METHODS</div>
-              <div className="payments" style={{ gap: '8px', fontSize: '11px' }}>
-                <span style={{ padding: '4px 8px', fontSize: '11px', fontWeight: '600' }}>💳 Card</span>
-                <span style={{ padding: '4px 8px', fontSize: '11px', fontWeight: '600' }}>📱 UPI</span>
-                <span style={{ padding: '4px 8px', fontSize: '11px', fontWeight: '600' }}>🏦 Banking</span>
-              </div>
-            </div>
-          </div>
-
+          <form onSubmit={handleSubscribe} className="newsletter-sub">
+            <input
+              type="email"
+              placeholder="Enter your email"
+              value={email}
+              onChange={e => setEmail(e.target.value)}
+              className="sub-input"
+              disabled={submitting}
+            />
+            <button type="submit" disabled={submitting} className="sub-btn">
+              {submitting ? '...' : 'Subscribe'}
+            </button>
+          </form>
         </div>
+      </div>
 
-        {/* Quick Service Categories */}
-        <div className="footer-divider"></div>
-        
-        <div className="footer-quick-services">
-          <h3 className="footer-quick-title">Quick Service Access</h3>
-          <div className="footer-services-grid">
-            {services.map(service => (
-              <button
-                key={service.query}
-                className="footer-service-chip"
-                onClick={() => navigate(`/services?category=${service.query}`)}
-                title={`Browse ${service.name}`}
-              >
-                <span className="service-chip-icon">{service.icon}</span>
-                <span className="service-chip-name">{service.name}</span>
-              </button>
-            ))}
+      {/* Main Footer Content */}
+      <div className="footer-main">
+        <div className="footer-container">
+          {/* About */}
+          <div className="footer-section">
+            <h4>About Us</h4>
+            <Link to="/">Home</Link>
+            <Link to="/about">About Us</Link>
+            <Link to="/services">Services</Link>
+            <Link to="/blog">Blog</Link>
+            <Link to="/contact">Careers</Link>
+          </div>
+
+          {/* Services */}
+          <div className="footer-section">
+            <h4>Services</h4>
+            <Link to="/services">All Services</Link>
+            <Link to="/services?category=Cleaning">Cleaning</Link>
+            <Link to="/services?category=Appliances">Appliances</Link>
+            <Link to="/services?category=Electrician">Electrical</Link>
+            <Link to="/services?category=Plumber">Plumbing</Link>
+          </div>
+
+          {/* Customer */}
+          <div className="footer-section">
+            <h4>For Customers</h4>
+            <Link to="/account">My Account</Link>
+            <Link to="/account/bookings">My Bookings</Link>
+            <Link to="/account/payments">Payments</Link>
+            <Link to="/cart">Cart</Link>
+            <Link to="/contact">Support</Link>
+          </div>
+
+          {/* Business */}
+          <div className="footer-section">
+            <h4>For Business</h4>
+            <Link to="/vendor-signup">Become a Vendor</Link>
+            <Link to="/vendor-login">Vendor Login</Link>
+            <Link to="/admin/login">Admin Portal</Link>
+            <Link to="/contact">Partnerships</Link>
+            <Link to="/contact">Contact Us</Link>
+          </div>
+
+          {/* Contact */}
+          <div className="footer-section contact-section">
+            <h4>Connect With Us</h4>
+            <div className="social-icons">
+              <a href="https://facebook.com/homeservice99" target="_blank" rel="noopener noreferrer" title="Facebook">
+                <Facebook size={18} />
+              </a>
+              <a href="https://twitter.com/homeservice99" target="_blank" rel="noopener noreferrer" title="Twitter">
+                <Twitter size={18} />
+              </a>
+              <a href="https://instagram.com/homeservice99" target="_blank" rel="noopener noreferrer" title="Instagram">
+                <Instagram size={18} />
+              </a>
+              <a href="https://linkedin.com/company/homeservice99" target="_blank" rel="noopener noreferrer" title="LinkedIn">
+                <Linkedin size={18} />
+              </a>
+            </div>
+
+            <div className="payment-methods">
+              <div className="method">✓ Secure Payments</div>
+              <div className="method">✓ Verified Vendors</div>
+              <div className="method">✓ Money-Back Guarantee</div>
+            </div>
           </div>
         </div>
 
-        {/* Footer Bottom */}
-        <div className="footer-divider"></div>
-        <div className="footer-bottom">
-          <div className="footer-bottom-left">
-            <span className="copyright">© {new Date().getFullYear()} <strong>HomeService99</strong> · All rights reserved</span>
-            <span className="footer-tagline">Trusted by millions for professional home services</span>
+        {/* Statistics Bar */}
+        <div className="stats-bar">
+          <div className="stat">
+            <div className="stat-icon">⭐</div>
+            <div className="stat-text">4.8/5 Rating<br/>50K+ Reviews</div>
           </div>
-          <div className="footer-bottom-center">
-            <div className="footer-rating">
-              <span>⭐ 4.8/5 Rating</span>
-              <span>✅ 50K+ Services</span>
-              <span>👥 100K+ Professionals</span>
+          <div className="stat">
+            <div className="stat-icon">🛠️</div>
+            <div className="stat-text">100K+ Services<br/>Available</div>
+          </div>
+          <div className="stat">
+            <div className="stat-icon">👥</div>
+            <div className="stat-text">50K+ Professionals<br/>Verified</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Footer Bottom */}
+      <div className="footer-bottom">
+        <div className="footer-bottom-content">
+          <div>
+            <p>&copy; {new Date().getFullYear()} HomeService99. All rights reserved.</p>
+            <div style={{ display: 'flex', gap: '16px', fontSize: '12px', marginTop: '8px', color: '#64748b' }}>
+              <Link to="/privacy-policy" style={{ textDecoration: 'none', color: 'inherit', transition: 'color 0.2s' }}>
+                Privacy Policy
+              </Link>
+              <Link to="/terms-conditions" style={{ textDecoration: 'none', color: 'inherit', transition: 'color 0.2s' }}>
+                Terms & Conditions
+              </Link>
+              <Link to="/disclaimer" style={{ textDecoration: 'none', color: 'inherit', transition: 'color 0.2s' }}>
+                Disclaimer
+              </Link>
             </div>
           </div>
-          <div className="footer-bottom-right">
-            <button 
-              className="btn-back-to-top" 
-              onClick={backToTop} 
-              aria-label="Back to top"
-              title="Scroll to top"
-            >
+          <div style={{ textAlign: 'right', display: 'flex', alignItems: 'center', gap: '12px' }}>
+            <p className="tagline">🇮🇳 Made in India with ❤️</p>
+            <button className="btn-scroll-top" onClick={() => window.scrollTo({top: 0, behavior: 'smooth'})}>
               ⬆️ Top
             </button>
-            <span className="footer-credit">Made in India with ❤️</span>
           </div>
         </div>
       </div>

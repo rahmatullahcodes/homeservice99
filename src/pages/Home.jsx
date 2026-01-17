@@ -521,7 +521,7 @@ export default function Home() {
 
     {/* <span className="hero-badge">⭐ 50,000+ Happy Customers in {location}</span> */}
 
-    <h1 className="hero-title">HomeService99: Trusted Home Services at Your Doorstep</h1>
+    <h5 className="hero-title">Trusted Home Services at Your Doorstep</h5>
 
     {/* <p className="hero-subtitle">
       Book verified professionals for cleaning, repairs, beauty, and maintenance in minutes. Transparent pricing, quality guaranteed, and payment after service completion.
@@ -548,7 +548,7 @@ export default function Home() {
       <div style={{
         display: 'grid',
         gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '16px',
+        gap: '12px',
         marginBottom: '20px'
       }}>
         {/* Women's Salon & Spa */}
@@ -557,13 +557,13 @@ export default function Home() {
           style={{
             border: 'none',
             background: '#f5f5f5',
-            borderRadius: '12px',
-            padding: '16px',
+            borderRadius: '10px',
+            padding: '12px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: '8px',
             transition: 'all 0.3s ease',
             textAlign: 'center'
           }}
@@ -576,8 +576,8 @@ export default function Home() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <img src="https://img.icons8.com/fluency/96/woman-face-with-mouths-open.png" alt="Women's Salon" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
-          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Women's Salon & Spa</span>
+          <span style={{fontSize: '32px', lineHeight: '1'}}>💅</span>
+          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Women's Salon & Spa</span>
         </button>
 
         {/* Men's Salon & Massage */}
@@ -586,13 +586,13 @@ export default function Home() {
           style={{
             border: 'none',
             background: '#f5f5f5',
-            borderRadius: '12px',
-            padding: '16px',
+            borderRadius: '10px',
+            padding: '12px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: '8px',
             transition: 'all 0.3s ease',
             textAlign: 'center'
           }}
@@ -605,8 +605,8 @@ export default function Home() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <img src="https://img.icons8.com/fluency/96/male-user.png" alt="Men's Salon" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
-          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Men's Salon & Massage</span>
+          <span style={{fontSize: '32px', lineHeight: '1'}}>💈</span>
+          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Men's Salon & Massage</span>
         </button>
 
         {/* Cleaning & Pest Control */}
@@ -615,13 +615,13 @@ export default function Home() {
           style={{
             border: 'none',
             background: '#f5f5f5',
-            borderRadius: '12px',
-            padding: '16px',
+            borderRadius: '10px',
+            padding: '12px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: '8px',
             transition: 'all 0.3s ease',
             textAlign: 'center'
           }}
@@ -634,8 +634,8 @@ export default function Home() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <img src="https://img.icons8.com/fluency/96/vacuum-cleaner.png" alt="Cleaning" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
-          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Cleaning & Pest Control</span>
+          <span style={{fontSize: '32px', lineHeight: '1'}}>🧹</span>
+          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Cleaning & Pest Control</span>
         </button>
 
         {/* Electrician, Plumber & Carpenter */}
@@ -644,13 +644,13 @@ export default function Home() {
           style={{
             border: 'none',
             background: '#f5f5f5',
-            borderRadius: '12px',
-            padding: '16px',
+            borderRadius: '10px',
+            padding: '12px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: '8px',
             transition: 'all 0.3s ease',
             textAlign: 'center'
           }}
@@ -663,8 +663,8 @@ export default function Home() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <img src="https://img.icons8.com/fluency/96/toolbox.png" alt="Repairs" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
-          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Electrician, Plumber & Carpenter</span>
+          <span style={{fontSize: '32px', lineHeight: '1'}}>🔧</span>
+          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Electrician, Plumber & Carpenter</span>
         </button>
 
         {/* Painting & Waterproofing */}
@@ -673,13 +673,13 @@ export default function Home() {
           style={{
             border: 'none',
             background: '#f5f5f5',
-            borderRadius: '12px',
-            padding: '16px',
+            borderRadius: '10px',
+            padding: '12px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: '8px',
             transition: 'all 0.3s ease',
             textAlign: 'center'
           }}
@@ -692,8 +692,8 @@ export default function Home() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <img src="https://img.icons8.com/fluency/96/color-palette.png" alt="Painting" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
-          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>Painting & Waterproofing</span>
+          <span style={{fontSize: '32px', lineHeight: '1'}}>🎨</span>
+          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Painting & Waterproofing</span>
         </button>
 
         {/* AC & Appliance Repair */}
@@ -702,13 +702,13 @@ export default function Home() {
           style={{
             border: 'none',
             background: '#f5f5f5',
-            borderRadius: '12px',
-            padding: '16px',
+            borderRadius: '10px',
+            padding: '12px',
             cursor: 'pointer',
             display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            gap: '12px',
+            gap: '8px',
             transition: 'all 0.3s ease',
             textAlign: 'center'
           }}
@@ -721,8 +721,8 @@ export default function Home() {
             e.currentTarget.style.transform = 'translateY(0)';
           }}
         >
-          <img src="https://img.icons8.com/fluency/96/air-conditioner.png" alt="AC Service" style={{width: '60px', height: '60px', objectFit: 'contain'}} />
-          <span style={{fontSize: '13px', fontWeight: '600', color: '#333'}}>AC & Appliance Repair</span>
+          <span style={{fontSize: '32px', lineHeight: '1'}}>❄️</span>
+          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>AC & Appliance Repair</span>
         </button>
 
       </div>
@@ -747,9 +747,9 @@ export default function Home() {
       <div className="mosaic-item">
         <img src="https://i.postimg.cc/X7SGMyH5/body-massage-parlour-jpg.webp" alt="Massage" />
       </div>
-      <div className="mosaic-item">
+      {/* <div className="mosaic-item">
         <img src="https://i.postimg.cc/C1rGHLS1/834431670584630.jpg" alt="Repair" />
-      </div>
+      </div> */}
       <div className="mosaic-item wide">
         <img src="https://i.postimg.cc/1XzWsj5g/service.webp" alt="AC service" />
       </div>
@@ -1035,7 +1035,7 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Cleaning
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1210,7 +1210,7 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Pest Control
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1387,7 +1387,7 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Repairs
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1551,7 +1551,7 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Installations & other services
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1915,7 +1915,7 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 {groupName}
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '16px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
                 {items.map((item) => (
                   <div
                     key={item.key}
@@ -2046,50 +2046,14 @@ export default function Home() {
 )}
 
 {/* PROMOTIONAL SLIDER SECTION */}
-<section className="container slide-up" style={{ marginTop: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "16px" }}>
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => {
-        const promoScroll = document.querySelector('.promo-slider');
-        if (promoScroll) promoScroll.scrollBy({ left: -340, behavior: 'smooth' });
-      }}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="promo-slider"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -2128,10 +2092,10 @@ export default function Home() {
           <div 
             key={promo.id}
             style={{
-              flex: '0 0 calc(25% - 12px)',
-              minWidth: '320px',
+              flex: '0 0 clamp(280px, 85vw, 360px)',
+              minWidth: 'clamp(280px, 85vw, 360px)',
               scrollSnapAlign: 'start',
-              height: '220px',
+              height: 'clamp(180px, 40vw, 220px)',
               borderRadius: '16px',
               overflow: 'hidden',
               boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
@@ -2158,100 +2122,28 @@ export default function Home() {
                 objectFit: 'cover'
               }}
               onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/320x220?text=Service+Image';
+                e.target.src = 'https://via.placeholder.com/360x220?text=Service+Image';
               }}
             />
           </div>
         ))}
       </div>
     </div>
-
-    <button 
-      className="carousel-arrow"
-      onClick={() => {
-        const promoScroll = document.querySelector('.promo-slider');
-        if (promoScroll) promoScroll.scrollBy({ left: 340, behavior: 'smooth' });
-      }}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* FEATURED SERVICES CARDS - SLIDER */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Popular Services</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Highly-rated services from verified professionals</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Highly-rated services from verified professionals</p>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => {
-        const servicesScroll = document.querySelector('.services-slider');
-        if (servicesScroll) servicesScroll.scrollBy({ left: -280, behavior: 'smooth' });
-      }}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="services-slider"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -2264,7 +2156,7 @@ export default function Home() {
           <div 
             key={service.id}
             style={{
-              flex: '0 0 calc(25% - 12px)',
+              flex: '0 0 calc(20% - 9.6px)',
               minWidth: '240px',
               scrollSnapAlign: 'start',
               display: 'flex',
@@ -2384,83 +2276,15 @@ export default function Home() {
       </div>
     </div>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => {
-        const servicesScroll = document.querySelector('.services-slider');
-        if (servicesScroll) servicesScroll.scrollBy({ left: 280, behavior: 'smooth' });
-      }}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* GET QUOTE - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Get Quote</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grab limited-time deals and curated packages</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => getQuoteRef.current?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="offers-scroll" 
@@ -2468,7 +2292,7 @@ export default function Home() {
         ref={getQuoteRef}
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -2482,8 +2306,8 @@ export default function Home() {
             key={offer.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
-              minWidth: '220px',
+              flex: '0 0 clamp(200px, 85vw, 260px)',
+              minWidth: 'clamp(200px, 85vw, 260px)',
               scrollSnapAlign: 'start'
             }}
           >
@@ -2505,7 +2329,7 @@ export default function Home() {
                 alt={offer.title}
                 style={{
                   width: '100%',
-                  height: '240px',
+                  height: 'clamp(180px, 40vw, 240px)',
                   objectFit: 'cover',
                   borderRadius: '12px',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
@@ -2513,7 +2337,7 @@ export default function Home() {
               />
               <p style={{
                 margin: '0',
-                fontSize: '14px',
+                fontSize: 'clamp(12px, 3vw, 14px)',
                 fontWeight: '600',
                 color: '#0f172a',
                 textAlign: 'center',
@@ -2526,81 +2350,15 @@ export default function Home() {
         ))}
       </div>
     </div>
-
-    <button 
-      className="carousel-arrow"
-      onClick={() => getQuoteRef.current?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* OFFERS & DISCOUNTS - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Offers & discounts</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grab limited-time deals and curated packages</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => offersRef.current?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="offers-scroll" 
@@ -2608,7 +2366,7 @@ export default function Home() {
         ref={offersRef}
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -2622,8 +2380,8 @@ export default function Home() {
             key={offer.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
-              minWidth: '220px',
+              flex: '0 0 clamp(200px, 85vw, 260px)',
+              minWidth: 'clamp(200px, 85vw, 260px)',
               scrollSnapAlign: 'start'
             }}
           >
@@ -2645,7 +2403,7 @@ export default function Home() {
                 alt={offer.title}
                 style={{
                   width: '100%',
-                  height: '240px',
+                  height: 'clamp(180px, 40vw, 240px)',
                   objectFit: 'cover',
                   borderRadius: '12px',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
@@ -2653,7 +2411,7 @@ export default function Home() {
               />
               <p style={{
                 margin: '0',
-                fontSize: '14px',
+                fontSize: 'clamp(12px, 3vw, 14px)',
                 fontWeight: '600',
                 color: '#0f172a',
                 textAlign: 'center',
@@ -2667,87 +2425,22 @@ export default function Home() {
       </div>
     </div>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => offersRef.current?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* SALON FOR MEN - GROOMING ESSENTIALS */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Salon for men</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Grooming essentials</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grooming essentials</p>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.salon-men-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="salon-men-scroll" 
         role="list"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -2767,7 +2460,7 @@ export default function Home() {
             key={service.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
+              flex: '0 0 calc(20% - 9.6px)',
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
@@ -2823,86 +2516,21 @@ export default function Home() {
       </div>
     </div>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.salon-men-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* MASSAGE FOR MEN */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Massage for Men</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.massage-men-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="massage-men-scroll" 
         role="list"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -2922,7 +2550,7 @@ export default function Home() {
             key={service.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
+              flex: '0 0 calc(20% - 9.6px)',
               minWidth: '220px',
               scrollSnapAlign: 'start',
               position: 'relative'
@@ -2995,86 +2623,67 @@ export default function Home() {
       </div>
     </div>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.massage-men-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
+  </div>
+</section>
+
+{/* ADS BANNER - After Massage for Men */}
+<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
+  <div style={{
+    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    borderRadius: '16px',
+    padding: 'clamp(24px, 5vw, 40px)',
+    color: '#ffffff',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 90vw, 400px), 1fr))',
+    gap: '24px',
+    alignItems: 'center',
+    boxShadow: '0 12px 32px rgba(102, 126, 234, 0.2)'
+  }}>
+    <div>
+      <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Premium Wellness Package</h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.95, lineHeight: '1.6' }}>Book 4 sessions and get 15% off. Expert therapists, verified & insured. Your wellness journey starts here.</p>
+      <button onClick={() => navigate('/services?category=Beauty')} style={{
+        background: '#fbbf24',
+        color: '#667eea',
+        border: 'none',
+        padding: 'clamp(10px, 2vw, 14px) clamp(20px, 3vw, 28px)',
+        borderRadius: '8px',
+        fontSize: 'clamp(12px, 2.5vw, 14px)',
+        fontWeight: '700',
         cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
         transition: 'all 0.3s ease'
       }}
       onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
+        e.target.style.background = '#f59e0b';
+        e.target.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
+        e.target.style.background = '#fbbf24';
+        e.target.style.transform = 'translateY(0)';
+      }}>Book Now →</button>
+    </div>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontSize: 'clamp(60px, 10vw, 80px)',
+      opacity: 0.9
+    }}>💆</div>
   </div>
 </section>
 
 {/* HOME REPAIR & INSTALLATION */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Home repair & installation</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.repair-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="repair-scroll" 
         role="list"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -3094,7 +2703,7 @@ export default function Home() {
             key={service.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
+              flex: '0 0 calc(20% - 9.6px)',
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
@@ -3150,86 +2759,21 @@ export default function Home() {
       </div>
     </div>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.repair-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* APPLIANCE SERVICE & REPAIR */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Appliance Service & Repair</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.appliance-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="appliance-scroll" 
         role="list"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -3249,7 +2793,7 @@ export default function Home() {
             key={service.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
+              flex: '0 0 calc(20% - 9.6px)',
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
@@ -3305,87 +2849,22 @@ export default function Home() {
       </div>
     </div>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.appliance-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* CLEANING ESSENTIALS */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Cleaning Essentials</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Monthly cleaning essential services</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Monthly cleaning essential services</p>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.cleaning-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="cleaning-scroll" 
         role="list"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -3405,7 +2884,7 @@ export default function Home() {
             key={service.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
+              flex: '0 0 calc(20% - 9.6px)',
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
@@ -3461,86 +2940,67 @@ export default function Home() {
       </div>
     </div>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.cleaning-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
+  </div>
+</section>
+
+{/* ADS BANNER - After Appliance Service & Repair */}
+<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
+  <div style={{
+    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    borderRadius: '16px',
+    padding: 'clamp(24px, 5vw, 40px)',
+    color: '#ffffff',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 90vw, 400px), 1fr))',
+    gap: '24px',
+    alignItems: 'center',
+    boxShadow: '0 12px 32px rgba(245, 87, 108, 0.2)'
+  }}>
+    <div>
+      <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Expert Appliance Care</h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.95, lineHeight: '1.6' }}>Professional repair & maintenance. Same-day service available. Extend your appliance life with preventive care.</p>
+      <button onClick={() => navigate('/services?category=Appliances')} style={{
+        background: '#fbbf24',
+        color: '#f5576c',
+        border: 'none',
+        padding: 'clamp(10px, 2vw, 14px) clamp(20px, 3vw, 28px)',
+        borderRadius: '8px',
+        fontSize: 'clamp(12px, 2.5vw, 14px)',
+        fontWeight: '700',
         cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
         transition: 'all 0.3s ease'
       }}
       onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
+        e.target.style.background = '#f59e0b';
+        e.target.style.transform = 'translateY(-2px)';
       }}
       onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
+        e.target.style.background = '#fbbf24';
+        e.target.style.transform = 'translateY(0)';
+      }}>Book Service →</button>
+    </div>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontSize: 'clamp(60px, 10vw, 80px)',
+      opacity: 0.9
+    }}>🔧</div>
   </div>
 </section>
 
 {/* SPA FOR WOMEN */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Spa for Women</h2>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.spa-women-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="spa-women-scroll" 
         role="list"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -3560,8 +3020,8 @@ export default function Home() {
             key={service.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
-              minWidth: '220px',
+              flex: '0 0 clamp(200px, 85vw, 260px)',
+              minWidth: 'clamp(200px, 85vw, 260px)',
               scrollSnapAlign: 'start',
               position: 'relative'
             }}
@@ -3601,7 +3061,7 @@ export default function Home() {
                 alt={service.title}
                 style={{
                   width: '100%',
-                  height: '220px',
+                  height: 'clamp(180px, 40vw, 220px)',
                   objectFit: 'cover',
                   borderRadius: '12px',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
@@ -3609,7 +3069,7 @@ export default function Home() {
               />
               <p style={{
                 margin: '0',
-                fontSize: '14px',
+                fontSize: 'clamp(12px, 3vw, 14px)',
                 fontWeight: '600',
                 color: '#0f172a'
               }}>
@@ -3632,88 +3092,22 @@ export default function Home() {
         ))}
       </div>
     </div>
-
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.spa-women-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
   </div>
 </section>
 
 {/* SALON FOR WOMEN */}
-<section className="container slide-up" style={{ marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Salon for Women</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "24px" }}>Pamper yourself at home</p>
+  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Pamper yourself at home</p>
 
   <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.salon-women-scroll')?.scrollBy({ left: -268, behavior: 'smooth' })}
-      aria-label="Scroll left"
-      style={{
-        position: 'absolute',
-        left: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
-        cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ‹
-    </button>
-
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
         className="salon-women-scroll" 
         role="list"
         style={{ 
           display: 'flex',
-          gap: '16px',
+          gap: '12px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -3732,8 +3126,8 @@ export default function Home() {
             key={service.id} 
             role="listitem"
             style={{
-              flex: '0 0 calc(25% - 12px)',
-              minWidth: '220px',
+              flex: '0 0 clamp(200px, 85vw, 260px)',
+              minWidth: 'clamp(200px, 85vw, 260px)',
               scrollSnapAlign: 'start',
               position: 'relative'
             }}
@@ -3773,7 +3167,7 @@ export default function Home() {
                 alt={service.title}
                 style={{
                   width: '100%',
-                  height: '220px',
+                  height: 'clamp(180px, 40vw, 220px)',
                   objectFit: 'cover',
                   borderRadius: '12px',
                   boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
@@ -3781,7 +3175,7 @@ export default function Home() {
               />
               <p style={{
                 margin: '0',
-                fontSize: '14px',
+                fontSize: 'clamp(12px, 3vw, 14px)',
                 fontWeight: '600',
                 color: '#0f172a'
               }}>
@@ -3804,55 +3198,68 @@ export default function Home() {
         ))}
       </div>
     </div>
+  </div>
+</section>
 
-    <button 
-      className="carousel-arrow"
-      onClick={() => document.querySelector('.salon-women-scroll')?.scrollBy({ left: 268, behavior: 'smooth' })}
-      aria-label="Scroll right"
-      style={{
-        position: 'absolute',
-        right: '-50px',
-        zIndex: 10,
-        width: '40px',
-        height: '40px',
-        borderRadius: '50%',
-        border: '2px solid #e5e7eb',
-        background: 'white',
+{/* ADS BANNER - After Salon for Women */}
+<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
+  <div style={{
+    background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    borderRadius: '16px',
+    padding: 'clamp(24px, 5vw, 40px)',
+    color: '#1e293b',
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 90vw, 400px), 1fr))',
+    gap: '24px',
+    alignItems: 'center',
+    boxShadow: '0 12px 32px rgba(250, 112, 154, 0.2)'
+  }}>
+    <div>
+      <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Pamper Yourself Today</h3>
+      <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.9, lineHeight: '1.6', color: '#1e293b' }}>Premium beauty & wellness services at home. Professional therapists, hygienic practices. Book your personal spa session now.</p>
+      <button onClick={() => navigate('/services?category=Beauty')} style={{
+        background: '#ffffff',
+        color: '#fa709a',
+        border: 'none',
+        padding: 'clamp(10px, 2vw, 14px) clamp(20px, 3vw, 28px)',
+        borderRadius: '8px',
+        fontSize: 'clamp(12px, 2.5vw, 14px)',
+        fontWeight: '700',
         cursor: 'pointer',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        fontSize: '20px',
-        color: '#0f172a',
         transition: 'all 0.3s ease'
       }}
       onMouseEnter={(e) => {
-        e.target.style.background = '#f3f4f6';
-        e.target.style.borderColor = '#d1d5db';
+        e.target.style.transform = 'translateY(-2px)';
+        e.target.style.boxShadow = '0 6px 12px rgba(250, 112, 154, 0.3)';
       }}
       onMouseLeave={(e) => {
-        e.target.style.background = 'white';
-        e.target.style.borderColor = '#e5e7eb';
-      }}
-    >
-      ›
-    </button>
+        e.target.style.transform = 'translateY(0)';
+        e.target.style.boxShadow = 'none';
+      }}>Book Appointment →</button>
+    </div>
+    <div style={{
+      display: 'flex',
+      justifyContent: 'center',
+      alignItems: 'center',
+      fontSize: 'clamp(60px, 10vw, 80px)',
+      opacity: 0.9
+    }}>💅</div>
   </div>
 </section>
 
 {/* HOW IT WORKS */}
-<section className="container slide-up" style={{ marginTop: "24px", marginBottom: "24px" }}>
-  <div style={{ marginBottom: "60px", textAlign: "center" }}>
-    <h2 className="section-title" style={{ fontSize: "32px", marginBottom: "12px", fontWeight: "700" }}>How HomeService99 Works</h2>
-    <p style={{ fontSize: "16px", color: "#6b7280", maxWidth: "600px", margin: "0 auto" }}>
+<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
+  <div style={{ marginBottom: "48px", textAlign: "center", padding: "0 12px" }}>
+    <h2 className="section-title" style={{ fontSize: "clamp(24px, 5vw, 32px)", marginBottom: "12px", fontWeight: "700" }}>How HomeService99 Works</h2>
+    <p style={{ fontSize: "clamp(13px, 4vw, 16px)", color: "#6b7280", maxWidth: "600px", margin: "0 auto", lineHeight: "1.6" }}>
       Simple, transparent, and secure. Book your service in just 6 easy steps.
     </p>
   </div>
   
   <div style={{
     display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))",
-    gap: "32px",
+    gridTemplateColumns: "repeat(auto-fit, minmax(clamp(280px, 90vw, 360px), 1fr))",
+    gap: "clamp(20px, 4vw, 32px)",
     maxWidth: "1400px",
     margin: "0 auto"
   }}>
@@ -3898,12 +3305,15 @@ export default function Home() {
         key={idx} 
         style={{
           position: "relative",
-          padding: "36px 28px",
+          padding: "clamp(24px, 5vw, 36px) clamp(18px, 4vw, 28px)",
           borderRadius: "16px",
           background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
           border: "2px solid #e2e8f0",
           transition: "all 0.3s ease",
-          cursor: "pointer"
+          cursor: "pointer",
+          minHeight: "fit-content",
+          display: "flex",
+          flexDirection: "column"
         }}
         onMouseEnter={(e) => {
           e.currentTarget.style.transform = "translateY(-8px)";
@@ -3922,10 +3332,10 @@ export default function Home() {
         <div
           style={{
             position: "absolute",
-            top: "20px",
-            right: "20px",
-            width: "48px",
-            height: "48px",
+            top: "clamp(12px, 3vw, 20px)",
+            right: "clamp(12px, 3vw, 20px)",
+            width: "clamp(40px, 8vw, 48px)",
+            height: "clamp(40px, 8vw, 48px)",
             borderRadius: "50%",
             background: "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
             color: "white",
@@ -3933,8 +3343,9 @@ export default function Home() {
             alignItems: "center",
             justifyContent: "center",
             fontWeight: "700",
-            fontSize: "20px",
-            boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)"
+            fontSize: "clamp(16px, 4vw, 20px)",
+            boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)",
+            flexShrink: 0
           }}
         >
           {item.step}
@@ -3942,18 +3353,20 @@ export default function Home() {
 
         {/* Icon */}
         <div style={{
-          fontSize: "56px",
-          marginBottom: "16px",
+          fontSize: "clamp(40px, 8vw, 56px)",
+          marginBottom: "clamp(12px, 3vw, 16px)",
+          marginTop: "clamp(8px, 2vw, 12px)",
           display: "inline-block",
-          animation: "float 3s ease-in-out infinite"
+          animation: "float 3s ease-in-out infinite",
+          lineHeight: "1"
         }}>
           {item.icon}
         </div>
 
         {/* Title */}
         <h3 style={{
-          margin: "0 0 12px 0",
-          fontSize: "20px",
+          margin: "0 0 clamp(8px, 2vw, 12px) 0",
+          fontSize: "clamp(16px, 4vw, 20px)",
           fontWeight: "700",
           color: "#0f172a",
           lineHeight: "1.4"
@@ -3964,7 +3377,7 @@ export default function Home() {
         {/* Description */}
         <p style={{
           margin: "0",
-          fontSize: "14px",
+          fontSize: "clamp(12px, 3vw, 14px)",
           color: "#64748b",
           lineHeight: "1.6",
           fontWeight: "500"
@@ -3987,7 +3400,7 @@ export default function Home() {
 
 
 {/* FAQ SECTION */}
-<section className="container slide-up" style={{ marginTop: "24px", marginBottom: "40px" }}>
+<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "20px" }}>
   <h2 className="section-title">Frequently Asked Questions</h2>
   <div className="faq-container">
     {[
@@ -4029,7 +3442,7 @@ export default function Home() {
 </section>
 
 {/* CTA SECTION - VENDOR SIGNUP */}
-<section className="container slide-up" style={{ marginBottom: "24px", marginTop: "24px" }}>
+<section className="container slide-up" style={{ marginBottom: "12px", marginTop: "12px" }}>
   <div style={{
     background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
     borderRadius: "16px",
@@ -4112,3 +3525,4 @@ export default function Home() {
     </div>
   );
 }
+
