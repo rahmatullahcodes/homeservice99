@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
+import { API_ENDPOINTS } from "../config/api.js";
 
 export default function Login() {
   const navigate = useNavigate();
@@ -10,26 +11,53 @@ export default function Login() {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
 
   // ✅ SAFE redirect after render
   useEffect(() => {
-    if (localStorage.getItem("auth") === "true") {
+    if (localStorage.getItem("token")) {
       navigate("/");
     }
   }, [navigate]);
 
-  function handleLogin() {
+  async function handleLogin() {
     if (!email || !pass) {
       setError("All fields are required");
       return;
     }
 
-    // DEMO AUTH
-    if (email === "demo@user.com" && pass === "123456") {
-      localStorage.setItem("auth", "true");
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(API_ENDPOINTS.AUTH.LOGIN, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          email,
+          password: pass,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Login failed. Please try again.");
+        return;
+      }
+
+      // Store token and user info
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
       navigate(redirectTo);
-    } else {
-      setError("Invalid email or password");
+    } catch (err) {
+      setError("Connection error. Please check if backend is running on port 5000.");
+      console.error("Login error:", err);
+    } finally {
+      setLoading(false);
     }
   }
 
@@ -53,6 +81,7 @@ export default function Login() {
                 value={email} 
                 onChange={e => setEmail(e.target.value)} 
                 placeholder="you@example.com"
+                disabled={loading}
                 required
               />
             </div>
@@ -65,12 +94,13 @@ export default function Login() {
                 value={pass} 
                 onChange={e => setPass(e.target.value)} 
                 placeholder="••••••••"
+                disabled={loading}
                 required
               />
             </div>
 
-            <button type="submit" className="btn-primary auth-btn" aria-label="Login">
-              Login
+            <button type="submit" className="btn-primary auth-btn" aria-label="Login" disabled={loading}>
+              {loading ? "Logging in..." : "Login"}
             </button>
           </form>
 

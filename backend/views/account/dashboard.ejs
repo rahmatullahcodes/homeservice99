@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= title %> - Home Service</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif; background: #f5f5f5; }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+    .dashboard-wrapper { padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+    .dashboard-title { font-size: 24px; margin-bottom: 8px; }
+    .dashboard-subtitle { color: #666; margin-bottom: 24px; }
+    .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .dash-card { padding: 20px; border-radius: 8px; color: white; display: flex; align-items: center; gap: 12px; }
+    .dash-card.blue { background: #3b82f6; }
+    .dash-card.green { background: #10b981; }
+    .dash-card.yellow { background: #f59e0b; }
+    .dash-card.purple { background: #8b5cf6; }
+    .dash-icon { font-size: 32px; }
+    .dash-label { font-size: 12px; opacity: 0.9; margin-bottom: 4px; }
+    .dash-card h3 { font-size: 20px; margin: 4px 0; }
+    .dash-trend { font-size: 12px; opacity: 0.8; }
+    .dash-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 12px; margin-bottom: 24px; }
+    .dash-action { padding: 16px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; text-align: center; transition: all 0.2s; }
+    .dash-action:hover { border-color: #3b82f6; color: #3b82f6; }
+    .dash-action span { font-size: 24px; display: block; margin-bottom: 8px; }
+    .section-title { font-size: 18px; margin-bottom: 16px; }
+    .booking-list { display: grid; gap: 12px; }
+    .detail-box { padding: 12px; border: 1px solid #ddd; border-radius: 6px; }
+    .account-badge { padding: 4px 8px; border-radius: 4px; font-size: 12px; font-weight: 500; }
+    .account-badge.blue { background: #dbeafe; color: #1e40af; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="dashboard-wrapper">
+      <h2 class="dashboard-title">Dashboard</h2>
+      <p class="dashboard-subtitle">Welcome! Here's your account overview</p>
+
+      <!-- STATS CARDS -->
+      <div class="dashboard-grid">
+        <div class="dash-card blue">
+          <div class="dash-icon">📅</div>
+          <div>
+            <p class="dash-label">Total Bookings</p>
+            <h3><%= stats.totalBookings %></h3>
+            <span class="dash-trend">All time</span>
+          </div>
+        </div>
+
+        <div class="dash-card green">
+          <div class="dash-icon">💰</div>
+          <div>
+            <p class="dash-label">Total Spent</p>
+            <h3>₹<%= stats.totalSpent.toLocaleString() %></h3>
+            <span class="dash-trend">All bookings</span>
+          </div>
+        </div>
+
+        <div class="dash-card yellow">
+          <div class="dash-icon">👛</div>
+          <div>
+            <p class="dash-label">Wallet Balance</p>
+            <h3>₹<%= stats.walletBalance.toLocaleString() %></h3>
+            <span class="dash-trend">Ready to use</span>
+          </div>
+        </div>
+
+        <div class="dash-card purple">
+          <div class="dash-icon">⭐</div>
+          <div>
+            <p class="dash-label">Total Reviews</p>
+            <h3><%= stats.reviews %></h3>
+            <span class="dash-trend">Reviews given</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- QUICK ACTIONS -->
+      <div style="margin-bottom: 16px;">
+        <h3 style="margin: 0; margin-bottom: 12px;">Quick Actions</h3>
+      </div>
+      <div class="dash-actions">
+        <a href="/account/bookings" class="dash-action">
+          <span>📦</span>
+          <p>My Bookings</p>
+        </a>
+        <a href="/account/profile" class="dash-action">
+          <span>✏️</span>
+          <p>Edit Profile</p>
+        </a>
+        <a href="/account/payments" class="dash-action">
+          <span>🧾</span>
+          <p>Payment Methods</p>
+        </a>
+        <a href="/account/coupons" class="dash-action">
+          <span>🎁</span>
+          <p>Coupons</p>
+        </a>
+        <a href="/account/wallet" class="dash-action">
+          <span>💳</span>
+          <p>My Wallet</p>
+        </a>
+        <a href="/account/reviews" class="dash-action">
+          <span>⭐</span>
+          <p>My Reviews</p>
+        </a>
+      </div>
+
+      <!-- Recent Bookings -->
+      <div style="margin-top: 32px;">
+        <h3 class="section-title">Recent Bookings</h3>
+        <div class="booking-list">
+          <% recentBookings.forEach(booking => { %>
+            <div class="detail-box">
+              <strong><%= booking.serviceName %></strong>
+              <p style="margin: 0; color: #6b7280;">
+                <%= new Date(booking.date).toLocaleDateString() %> • <%= booking.price ? '₹' + booking.price : 'N/A' %>
+              </p>
+              <p style="margin: 4px 0 0 0; font-size: 12px;">
+                <span class="account-badge blue"><%= booking.status %></span>
+              </p>
+            </div>
+          <% }); %>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

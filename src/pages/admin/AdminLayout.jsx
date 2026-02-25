@@ -1,13 +1,43 @@
 import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { API_ENDPOINTS } from "../../config/api";
 import "../../styles/admin.css";
 
 export default function AdminLayout() {
   const navigate = useNavigate();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [stats, setStats] = useState(null);
+  const [userDropdownOpen, setUserDropdownOpen] = useState(false);
+  const adminUser = JSON.parse(localStorage.getItem("adminUser") || "{}");
+
+  useEffect(() => {
+    fetchDashboardStats();
+  }, []);
+
+  async function fetchDashboardStats() {
+    try {
+      const token = localStorage.getItem("adminToken");
+      if (!token) return;
+
+      const response = await fetch(API_ENDPOINTS.ADMIN.GET_DASHBOARD, {
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        setStats(data);
+      }
+    } catch (err) {
+      console.error("Error fetching dashboard stats:", err);
+    }
+  }
 
   function logout() {
-    localStorage.removeItem("admin");
+    localStorage.removeItem("adminToken");
+    localStorage.removeItem("adminUser");
     navigate("/admin-login");
   }
 
@@ -27,22 +57,100 @@ export default function AdminLayout() {
               <path d="M3 6H21M3 12H21M3 18H21" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"/>
             </svg>
           </button>
-          <div className="admin-top-title">Admin Dashboard</div>
+          <div className="admin-top-title">
+            <h1>Admin Dashboard</h1>
+            <span className="breadcrumb-separator">•</span>
+            <span className="admin-status">Platform Status: <span className="status-online">🟢 Online</span></span>
+          </div>
         </div>
 
         <div className="topbar-right">
-          <span className="admin-role">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Super Admin
-          </span>
-          <button className="btn-logout" onClick={logout} aria-label="Logout">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
-            </svg>
-            Logout
-          </button>
+          {/* QUICK STATS */}
+          <div className="topbar-stats">
+            {stats && (
+              <>
+                <div className="stat-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div className="stat-content">
+                    <span className="stat-label">Users</span>
+                    <span className="stat-value">{stats.totalUsers?.toLocaleString() || 0}</span>
+                  </div>
+                </div>
+                <div className="stat-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div className="stat-content">
+                    <span className="stat-label">Vendors</span>
+                    <span className="stat-value">{stats.totalVendors?.toLocaleString() || 0}</span>
+                  </div>
+                </div>
+                <div className="stat-item">
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H4a4 4 0 0 0-4 4v2M10 8a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM18 9h-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  <div className="stat-content">
+                    <span className="stat-label">Bookings</span>
+                    <span className="stat-value">{stats.totalBookings?.toLocaleString() || 0}</span>
+                  </div>
+                </div>
+              </>
+            )}
+          </div>
+
+          {/* USER PROFILE DROPDOWN */}
+          <div className="topbar-profile">
+            <button
+              className="profile-button"
+              onClick={() => setUserDropdownOpen(!userDropdownOpen)}
+              title={adminUser.email}
+            >
+              <div className="profile-avatar">
+                {adminUser.email ? adminUser.email.charAt(0).toUpperCase() : "A"}
+              </div>
+              <span className="profile-name">{adminUser.email?.split("@")[0] || "Admin"}</span>
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M6 9l6 6 6-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+              </svg>
+            </button>
+
+            {userDropdownOpen && (
+              <div className="profile-dropdown">
+                <div className="dropdown-header">
+                  <div className="dropdown-avatar">
+                    {adminUser.email ? adminUser.email.charAt(0).toUpperCase() : "A"}
+                  </div>
+                  <div>
+                    <p className="dropdown-name">{adminUser.email?.split("@")[0] || "Admin"}</p>
+                    <p className="dropdown-email">{adminUser.email}</p>
+                  </div>
+                </div>
+                <div className="dropdown-divider"></div>
+                <a href="/admin/settings" className="dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <circle cx="12" cy="12" r="3" stroke="currentColor" strokeWidth="2"/>
+                    <path d="M12 1v6m8 5h-6m-4 8v-6M1 12h6" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
+                  </svg>
+                  Settings
+                </a>
+                <a href="/admin" className="dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M3 12h8V3H3v9zm10 0h8V3h-8v9zm-10 10h8v-8H3v8zm10 0h8v-8h-8v8z" fill="currentColor"/>
+                  </svg>
+                  Dashboard
+                </a>
+                <div className="dropdown-divider"></div>
+                <button className="dropdown-item logout-item" onClick={() => { logout(); setUserDropdownOpen(false); }}>
+                  <svg width="16" height="16" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M19 12H5m7-7l-7 7 7 7" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+                  </svg>
+                  Logout
+                </button>
+              </div>
+            )}
+          </div>
         </div>
       </header>
 
@@ -121,6 +229,10 @@ export default function AdminLayout() {
               <NavLink to="/admin/cms" onClick={() => setSidebarOpen(false)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 5a2 2 0 012-2h3.28a1 1 0 00.948-.684l1.498-4.493a1 1 0 011.502 0l1.498 4.493a1 1 0 00.948.684H19a2 2 0 012 2v1a2 2 0 00-2 2v3a2 2 0 002 2v1a2 2 0 01-2 2h-2.28a1 1 0 00-.948.684l-1.498 4.493a1 1 0 01-1.502 0l-1.498-4.493a1 1 0 00-.948-.684H5a2 2 0 01-2-2v-1a2 2 0 00-2-2V7a2 2 0 002-2V5z" stroke="currentColor" strokeWidth="2"/></svg>
                 CMS
+              </NavLink>
+              <NavLink to="/admin/contacts" onClick={() => setSidebarOpen(false)}>
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
+                Contacts
               </NavLink>
               <NavLink to="/admin/reports" onClick={() => setSidebarOpen(false)}>
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M3 3v18h18" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/><path d="M18 5l-5 5-4-4-6 6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>

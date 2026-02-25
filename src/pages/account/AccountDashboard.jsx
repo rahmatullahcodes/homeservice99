@@ -1,9 +1,11 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import "../../styles/account.css";
 
 export default function AccountDashboard() {
+  const navigate = useNavigate();
   const [stats] = useState({
-    upcomingBookings: 2,
+    totalBookings: 10,
     totalSpent: 5499,
     walletBalance: 1250,
     completedBookings: 8,
@@ -28,8 +30,8 @@ export default function AccountDashboard() {
         <div className="dash-card blue">
           <div className="dash-icon">📅</div>
           <div>
-            <p className="dash-label">Upcoming Bookings</p>
-            <h3>{stats.upcomingBookings}</h3>
+            <p className="dash-label">Total Bookings</p>
+            <h3>{stats.totalBookings}</h3>
             <span className="dash-trend">Next booking in 2 days</span>
           </div>
         </div>
@@ -67,32 +69,32 @@ export default function AccountDashboard() {
       <div className="dash-actions-header"><h3 style={{ margin: 0 }}>Quick Actions</h3></div>
       <div className="dash-actions">
 
-        <button className="dash-action">
+        <button className="dash-action" onClick={() => navigate('/account/bookings')}>
           <span>📦</span>
           <p>My Bookings</p>
         </button>
 
-        <button className="dash-action">
+        <button className="dash-action" onClick={() => navigate('/account/profile')}>
           <span>✏️</span>
           <p>Edit Profile</p>
         </button>
 
-        <button className="dash-action">
+        <button className="dash-action" onClick={() => navigate('/account/payment-methods')}>
           <span>🧾</span>
           <p>Payment Methods</p>
         </button>
 
-        <button className="dash-action">
+        <button className="dash-action" onClick={() => navigate('/account/coupons')}>
           <span>🎁</span>
           <p>Coupons</p>
         </button>
 
-        <button className="dash-action">
+        <button className="dash-action" onClick={() => navigate('/account/wallet')}>
           <span>💳</span>
           <p>My Wallet</p>
         </button>
 
-        <button className="dash-action">
+        <button className="dash-action" onClick={() => navigate('/account/reviews')}>
           <span>⭐</span>
           <p>My Reviews</p>
         </button>

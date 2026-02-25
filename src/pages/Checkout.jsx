@@ -3,6 +3,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
 
+const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+
 export default function Checkout() {
   const { cart, clearCart } = useCart();
   const navigate = useNavigate();
@@ -16,6 +18,7 @@ export default function Checkout() {
   const [phone, setPhone] = useState("");
   const [address, setAddress] = useState("");
   const [method, setMethod] = useState("cod");
+  const [appliedCoupon, setAppliedCoupon] = useState(null);
 
   const subtotal = cart.reduce((sum, i) => sum + i.price * (i.quantity || 1), 0);
   const serviceFee = 49;
@@ -195,7 +198,11 @@ export default function Checkout() {
               cart={cart} 
               subtotal={subtotal} 
               serviceFee={serviceFee} 
-              total={total} 
+              total={total}
+              appliedCoupon={appliedCoupon}
+              setAppliedCoupon={setAppliedCoupon}
+              addToast={addToast}
+              apiBaseUrl={API_BASE_URL}
             />
           </div>
         </aside>
@@ -208,7 +215,61 @@ export default function Checkout() {
 
 /* ============================= */
 
-function OrderSummary({ cart, subtotal, serviceFee, total }) {
+function OrderSummary({ cart, subtotal, serviceFee, total, appliedCoupon, setAppliedCoupon, addToast, apiBaseUrl }) {
+  const [couponCode, setCouponCode] = useState("");
+  const [loadingCoupon, setLoadingCoupon] = useState(false);
+
+  async function applyCoupon() {
+    if (!couponCode.trim()) {
+      addToast("Please enter a coupon code", "warning");
+      return;
+    }
+
+    try {
+      setLoadingCoupon(true);
+      const response = await fetch(`${apiBaseUrl}/admin/validate-coupon`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ code: couponCode })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || "Invalid coupon code");
+      }
+
+      const coupon = await response.json();
+      setAppliedCoupon(coupon);
+      addToast(`Coupon applied! ${coupon.type === "Flat" ? `₹${coupon.value}` : `${coupon.value}%`} discount`, "success");
+      setCouponCode("");
+    } catch (err) {
+      addToast(err.message, "error");
+      console.error("Coupon validation error:", err);
+    } finally {
+      setLoadingCoupon(false);
+    }
+  }
+
+  function removeCoupon() {
+    setAppliedCoupon(null);
+    setCouponCode("");
+    addToast("Coupon removed", "info");
+  }
+
+  // Calculate discount
+  let discount = 0;
+  if (appliedCoupon) {
+    if (appliedCoupon.type === "Flat") {
+      discount = appliedCoupon.value;
+    } else if (appliedCoupon.type === "Percent") {
+      discount = (subtotal * appliedCoupon.value) / 100;
+    }
+  }
+
+  const finalTotal = subtotal + serviceFee - discount;
+
   return (
     <div className="order-summary-card">
       <h3>📦 Order Summary</h3>
@@ -227,6 +288,70 @@ function OrderSummary({ cart, subtotal, serviceFee, total }) {
 
       <div className="summary-divider"></div>
 
+      {/* Coupon Section */}
+      <div style={{ marginBottom: "15px", padding: "10px 0" }}>
+        {appliedCoupon ? (
+          <div style={{ 
+            backgroundColor: "#d4edda", 
+            padding: "8px", 
+            borderRadius: "4px", 
+            marginBottom: "10px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center"
+          }}>
+            <span style={{ fontSize: "0.9em", color: "#155724" }}>
+              ✓ Coupon: {appliedCoupon.code}
+            </span>
+            <button 
+              onClick={removeCoupon}
+              style={{
+                background: "none",
+                border: "none",
+                color: "#155724",
+                cursor: "pointer",
+                fontSize: "0.9em",
+                textDecoration: "underline"
+              }}
+            >
+              Remove
+            </button>
+          </div>
+        ) : (
+          <div style={{ display: "flex", gap: "5px" }}>
+            <input
+              type="text"
+              placeholder="Enter coupon code"
+              value={couponCode}
+              onChange={e => setCouponCode(e.target.value)}
+              style={{
+                flex: 1,
+                padding: "6px 10px",
+                border: "1px solid #ddd",
+                borderRadius: "4px",
+                fontSize: "0.9em"
+              }}
+            />
+            <button
+              onClick={applyCoupon}
+              disabled={loadingCoupon}
+              style={{
+                padding: "6px 12px",
+                backgroundColor: "#007bff",
+                color: "white",
+                border: "none",
+                borderRadius: "4px",
+                cursor: loadingCoupon ? "not-allowed" : "pointer",
+                fontSize: "0.9em",
+                opacity: loadingCoupon ? 0.6 : 1
+              }}
+            >
+              {loadingCoupon ? "..." : "Apply"}
+            </button>
+          </div>
+        )}
+      </div>
+
       <div className="price-breakdown">
         <div className="price-row">
           <span>Subtotal</span>
@@ -236,11 +361,17 @@ function OrderSummary({ cart, subtotal, serviceFee, total }) {
           <span>Service Fee</span>
           <span>₹{serviceFee}</span>
         </div>
+        {discount > 0 && (
+          <div className="price-row" style={{ color: "#28a745" }}>
+            <span>Discount</span>
+            <span>-₹{discount.toFixed(0)}</span>
+          </div>
+        )}
       </div>
 
       <div className="price-row total">
         <span>Total Amount</span>
-        <span>₹{total}</span>
+        <span>₹{finalTotal.toFixed(0)}</span>
       </div>
     </div>
   );

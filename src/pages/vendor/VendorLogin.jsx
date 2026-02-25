@@ -1,35 +1,36 @@
 import { useState, useEffect } from "react";
-import { useNavigate, Link } from "react-router-dom";   // ✅ FIXED
+import { useNavigate, Link } from "react-router-dom";
+import { useVendor } from "../../context/VendorContext";
 
 export default function VendorLogin() {
 
   const navigate = useNavigate();
+  const { login: vendorLogin, isLoggedIn, loading, error: contextError } = useVendor();
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
 
   // Auto redirect if vendor already logged in
   useEffect(() => {
-    if (localStorage.getItem("vendor") === "true") {
+    if (isLoggedIn) {
       navigate("/vendor");
     }
-  }, [navigate]);
+  }, [isLoggedIn, navigate]);
 
-  function login() {
+  async function login() {
 
     if (!email || !pass) {
       setError("All fields required");
       return;
     }
 
-    // DEMO vendor credentials
-    if (email === "vendor@demo.com" && pass === "123456") {
-      localStorage.setItem("vendor", "true");
-      localStorage.setItem("auth", "true");   // ✅ Sync with user auth
+    setError("");
+    const result = await vendorLogin(email, pass);
+    
+    if (result.success) {
       navigate("/vendor");
-    } 
-    else {
-      setError("Invalid vendor credentials");
+    } else {
+      setError(result.error || "Login failed");
     }
   }
 
@@ -40,11 +41,13 @@ export default function VendorLogin() {
         <h1>Partner Login</h1>
 
         {error && <p className="form-error">{error}</p>}
+        {contextError && <p className="form-error">{contextError}</p>}
 
         <input
           placeholder="Vendor email"
           value={email}
           onChange={e => setEmail(e.target.value)}
+          disabled={loading}
         />
 
         <input
@@ -52,19 +55,20 @@ export default function VendorLogin() {
           placeholder="Password"
           value={pass}
           onChange={e => setPass(e.target.value)}
+          disabled={loading}
         />
 
-        <button className="btn-primary full" onClick={login}>
-          Login as Partner
+        <button 
+          className="btn-primary full" 
+          onClick={login}
+          disabled={loading}
+        >
+          {loading ? "Logging in..." : "Login as Partner"}
         </button>
 
         <p className="form-note">
           New Partner? <Link to="/vendor-signup">Register here</Link>
         </p>
-
-        <div className="form-note">
-          Demo: <strong>vendor@demo.com</strong> / <strong>123456</strong>
-        </div>
 
       </div>
     </div>

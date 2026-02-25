@@ -294,6 +294,16 @@
   box-shadow: 0 6px 16px rgba(37, 99, 235, 0.4);
 }
 
+.logout-btn {
+  background: #fee2e2;
+  color: #dc2626;
+}
+
+.logout-btn:hover {
+  background: #fecaca;
+  color: #991b1b;
+}
+
 /* ===== MOBILE HAMBURGER ===== */
 .mobile-hamburger {
   display: none;
@@ -310,8 +320,11 @@
   padding: 0;
 }
 
-.mobile-hamburger {
-  display: none;
+.mobile-hamburger:hover {
+  background: #f1f5f9;
+  border-color: #2563eb;
+  color: #2563eb;
+  transform: scale(1.05);
 }
 
 /* ===== MOBILE MENU ===== */
@@ -405,29 +418,15 @@
   padding: 0;
 }
 
-.mobile-menu-close:active {
+.mobile-menu-close:hover {
   background: #e2e8f0;
-  transform: scale(0.95);
-}
-
-.mobile-menu-close {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  border: none;
-  background: #f1f5f9;
-  border-radius: 8px;
-  cursor: pointer;
-  color: #1e293b;
-  transition: all 0.2s ease;
-  padding: 0;
+  color: #2563eb;
+  transform: scale(1.08) rotate(90deg);
 }
 
 .mobile-menu-close:active {
-  background: #e2e8f0;
-  transform: scale(0.95);
+  background: #cbd5e1;
+  transform: scale(0.95) rotate(90deg);
 }
 
 .mobile-menu-divider {
@@ -490,6 +489,12 @@
   font-size: 0;
   text-decoration: none;
   color: #475569;
+}
+
+.mobile-category-chip:hover {
+  border-color: #2563eb;
+  background: linear-gradient(135deg, #2563eb08 0%, #0ea5a408 100%);
+  transform: translateY(-2px);
 }
 
 .mobile-category-chip:active {
@@ -925,5 +930,70 @@
 
   .uc-actions {
     gap: 20px;
+  }
+}
+
+/* ===== LOCATION MODAL STYLES ===== */
+.location-modal-backdrop {
+  animation: fadeIn 0.3s ease-in-out !important;
+}
+
+.location-modal-content {
+  animation: slideUp 0.3s ease-in-out !important;
+  position: relative;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(20px);
+    opacity: 0;
+  }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+.location-text {
+  font-size: 14px;
+  font-weight: 500;
+  color: #1f2937;
+  max-width: 150px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* ===== RESPONSIVE LOCATION MODAL ===== */
+@media (max-width: 768px) {
+  .location-modal-content {
+    max-width: 90vw !important;
+    max-height: 80vh !important;
+  }
+
+  .location-text {
+    max-width: 100px;
+    font-size: 12px;
+  }
+}
+
+@media (max-width: 480px) {
+  .location-modal-content {
+    max-width: 95vw !important;
+    padding: 20px !important;
+  }
+
+  .location-text {
+    max-width: 80px;
+    font-size: 11px;
   }
 }

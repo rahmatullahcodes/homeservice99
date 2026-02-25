@@ -17,6 +17,7 @@ import Checkout from "./pages/Checkout.jsx";
 import Compare from "./pages/Compare.jsx";
 import BlogList from "./pages/BlogList.jsx";
 import BlogPost from "./pages/BlogPost.jsx";
+import CMSPage from "./pages/CMSPage.jsx";
 import ServiceDetail from "./pages/ServiceDetail.jsx";
 import Disclaimer from "./pages/Disclaimer.jsx";
 import CancellationRefund from "./pages/CancellationRefund.jsx";
@@ -67,6 +68,7 @@ import AdminReports from "./pages/admin/AdminReports.jsx";
 import AdminSettings from "./pages/admin/AdminSettings.jsx";
 import AdminSupport from "./pages/admin/AdminSupport.jsx";
 import AdminNotifications from "./pages/admin/AdminNotifications.jsx";
+import AdminContacts from "./pages/admin/AdminContacts.jsx";
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx";
 
@@ -88,11 +90,14 @@ export default function App() {
           <Route path="/about" element={<About />} />
           <Route path="/contact" element={<Contact />} />
           <Route path="/blog" element={<BlogList />} />
-          <Route path="/blog/:id" element={<BlogPost />} />
+          <Route path="/blog/:slug" element={<BlogPost />} />
           <Route path="/disclaimer" element={<Disclaimer />} />
           <Route path="/cancellation-refund" element={<CancellationRefund />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          
+          {/* CMS Pages (Catchall for dynamic pages) */}
+          <Route path="/:slug" element={<CMSPage />} />
 
           {/* USER AUTH */}
           <Route path="/login" element={<Login />} />
@@ -174,6 +179,7 @@ export default function App() {
             <Route path="settings" element={<AdminSettings />} />
             <Route path="support" element={<AdminSupport />} />
             <Route path="notifications" element={<AdminNotifications />} />
+            <Route path="contacts" element={<AdminContacts />} />
           </Route>
 
         </Routes>

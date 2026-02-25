@@ -53,7 +53,9 @@ export default function AccountLayout() {
   function toggleTheme(){ setTheme(t => (t === 'dark' ? 'light' : 'dark')); }
 
   function logout(){
-    localStorage.removeItem('auth');
+    localStorage.removeItem('token');
+    localStorage.removeItem('user');
+    localStorage.removeItem('cart');
     navigate('/login');
   }
 

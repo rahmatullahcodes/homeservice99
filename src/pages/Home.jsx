@@ -2,6 +2,10 @@ import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
+import { buildServicesUrl } from "../utils/serviceRouting";
+import CMSBanners from "../components/CMSBanners";
+
+
 
 export default function Home() {
   const [location, setLocation] = useState("india");
@@ -11,6 +15,53 @@ export default function Home() {
   const [modalOpen, setModalOpen] = useState(false);
   const [modalCategory, setModalCategory] = useState(null);
   const [selectedSubcategory, setSelectedSubcategory] = useState(null);
+  
+const BEAUTY_SUBCATEGORIES = [
+  {
+    key: "salon-for-women",
+    label: "Salon for Women",
+    subcategory: "Waxing",
+    icon: "src/assets/images/salonicon.png"
+  },
+  {
+    key: "spa-for-women",
+    label: "Spa for Women",
+    subcategory: "Super saver packs",
+    icon: "src/assets/images/Spa for Womenicon.png"
+  },
+  {
+    key: "hair-studio-for-women",
+    label: "Hair Studio for Women",
+    subcategory: "Korean facial",
+    icon: "src/assets/images/Hair Studio for Women.png"
+  },
+  {
+    key: "makeup-styling-studio",
+    label: "Makeup & Styling Studio",
+    subcategory: "Makeup & Styling",
+    icon: "src/assets/images/Makeup & Styling Studio.png"
+  }
+];
+
+
+
+  // Carousel refs for all horizontal scroll sections
+  const popularServicesRef = useRef(null);
+  const salonMenRef = useRef(null);
+  const massageMenRef = useRef(null);
+  const homeRepairRef = useRef(null);
+  const applianceRef = useRef(null);
+  const cleaningEssentialsRef = useRef(null);
+  const spaWomenRef = useRef(null);
+  const salonWomenRef = useRef(null);
+
+  // Helper function to scroll carousel
+  const scrollCarousel = (ref, direction = 'right') => {
+    if (ref?.current) {
+      const scrollAmount = 280; // Scroll by one item width
+      ref.current.scrollLeft += direction === 'right' ? scrollAmount : -scrollAmount;
+    }
+  };
 
   const categories = [
     { title: "Home Cleaning", key: "Cleaning", img: "https://images.unsplash.com/photo-1581578731548-c64695cc6952" },
@@ -76,7 +127,7 @@ export default function Home() {
   // Add function to get featured services with ratings
   const getFeaturedServices = () => {
     return [
-      { id: 'cl1', title: 'Full Home Deep Cleaning', category: 'Cleaning', price: 1999, image: 'src/assets/images/Full Home Deep Cleaning.png', rating: 4.8, reviews: 2340, desc: 'Professional deep cleaning with eco-friendly products' },
+      { id: 'cl1', title: 'Full Home Deep Cleaning', price: 299, image: 'src/assets/images/Full Home Deep Cleaning.png', rating: 4.8, reviews: 2340, desc: 'Professional deep cleaning with eco-friendly products' },
       { id: 'el2', title: 'Fan Installation / Repair ', category: 'Electrician', price: 299, image: 'src/assets/images/Fan Installation  Repair.png', rating: 4.7, reviews: 1856, desc: 'Expert fan installation and repair services' },
       { id: 'pl1', title: 'Tap & Mixer Repair', category: 'Plumber', price: 199, image: 'src/assets/images/Tap & Mixer Repair.png', rating: 4.9, reviews: 3120, desc: 'Professional tap and mixer repair solutions' },
       { id: 'el5', title: 'Inverter & UPS Installation', category: 'Electrician', price: 799, image: 'src/assets/images/Inverter & UPS Installation.png', rating: 4.6, reviews: 1540, desc: 'Expert inverter and UPS installation service' },
@@ -226,7 +277,7 @@ export default function Home() {
           key: 'Air Purifier',
           label: 'Air Purifier',
           instant: false,
-          icon: 'https://img.icons8.com/fluency/96/air-purifier.png'
+          icon: 'src/assets/images/Air Purifier.png'
         },
         {
           key: 'Air Cooler',
@@ -238,7 +289,7 @@ export default function Home() {
           key: 'Geyser',
           label: 'Geyser',
           instant: true,
-          icon: 'https://img.icons8.com/fluency/96/geyser.png'
+          icon: 'src/assets/images/Geysericon.png'
         }
       ],
       'Kitchen appliances': [
@@ -246,7 +297,7 @@ export default function Home() {
           key: 'Water Purifier',
           label: 'Water Purifier Repair',
           instant: false,
-          icon: 'https://img.icons8.com/fluency/96/water-purifier.png'
+          icon: 'src/assets/images/Water Purifier Repair.png'
         },
         {
           key: 'Refrigerator',
@@ -264,13 +315,13 @@ export default function Home() {
           key: 'Chimney',
           label: 'Chimney',
           instant: false,
-          icon: 'https://img.icons8.com/fluency/96/chimney.png'
+          icon: 'src/assets/images/Chimney.png'
         },
         {
           key: 'Stove',
           label: 'Stove / Hob',
           instant: false,
-          icon: 'https://img.icons8.com/fluency/96/gas-stove.png'
+          icon: 'src/assets/images/StoveHob.png'
         }
       ]
     },
@@ -319,7 +370,7 @@ export default function Home() {
     { id: 3, title: 'Salon Services for Women', subtitle: 'Hair, makeup, spa - all under one app', discount: 'Starting ₹199', cta: 'Get Quote', img: 'https://i.postimg.cc/CKRk9bhM/s1.webp' },
     { id: 4, title: 'AC Maintenance & Service', subtitle: 'Avoid summer breakdowns - preventive care', discount: 'Full inspection ₹599', cta: 'Get Quote', img: 'https://i.postimg.cc/BnkfJCCH/ac-maintenance.jpg' },
     { id: 5, title: 'Complete Kitchen Deep Clean', subtitle: 'Hygienic, sparkling, and organized', discount: 'Starting ₹899', cta: 'Get Quote', img: 'https://i.postimg.cc/C1tvWFTQ/professional-kitchen-cleaning-hometriangle-blog.jpg' },
-    { id: 6, title: 'Home Painting Services', subtitle: 'Interior & exterior - professional quality', discount: 'Free quote', cta: 'Get Quote', img: 'https://i.postimg.cc/PrvMBzPf/wall-painting-service.jpg' }
+    // { id: 6, title: 'Home Painting Services', subtitle: 'Interior & exterior - professional quality', discount: 'Free quote', cta: 'Get Quote', img: 'https://i.postimg.cc/PrvMBzPf/wall-painting-service.jpg' }
   ];
 
   async function getLocation() {
@@ -366,6 +417,25 @@ export default function Home() {
   const { addToast } = useToast();
   const navigate = useNavigate();
 
+  function goToCategory(category, subcategory = null, extraParams = {}) {
+    const baseUrl = buildServicesUrl(category, subcategory);
+    const [path, query = ""] = baseUrl.split("?");
+    const params = new URLSearchParams(query);
+
+    Object.entries(extraParams).forEach(([key, value]) => {
+      if (value !== undefined && value !== null && value !== "") {
+        params.set(key, value);
+      }
+    });
+
+    const nextQuery = params.toString();
+    navigate(nextQuery ? `${path}?${nextQuery}` : path);
+  }
+
+  function goToBeautyType(subcategory, serviceType) {
+    goToCategory("Beauty", subcategory, { serviceType });
+  }
+
   function openCategoryModal(catKey) {
     setModalCategory(catKey);
     setSelectedSubcategory(null);
@@ -374,7 +444,7 @@ export default function Home() {
 
   function selectSubcategory(subcat) {
     setModalOpen(false);
-    navigate(`/services?category=${encodeURIComponent(modalCategory)}&subcategory=${encodeURIComponent(subcat)}`);
+    goToCategory(modalCategory, subcat);
   }
 
   function backToCategory() {
@@ -384,7 +454,7 @@ export default function Home() {
   function viewAllCategory(catKey) {
     setModalOpen(false);
     setSelectedSubcategory(null);
-    navigate(`/services?category=${encodeURIComponent(catKey)}`);
+    goToCategory(catKey);
   }
 
   function handleAddToCart(service) {
@@ -514,6 +584,7 @@ export default function Home() {
 
   return (
     <div>
+      <CMSBanners />
 
 {/* HERO SECTION */}
 <section className="container hero fade-in">
@@ -521,7 +592,7 @@ export default function Home() {
 
     {/* <span className="hero-badge">⭐ 50,000+ Happy Customers in {location}</span> */}
 
-    <h5 className="hero-title">Trusted Home Services at Your Doorstep</h5>
+    <h2 className="hero-title">Trusted Home Services at Your Doorstep</h2>
 
     {/* <p className="hero-subtitle">
       Book verified professionals for cleaning, repairs, beauty, and maintenance in minutes. Transparent pricing, quality guaranteed, and payment after service completion.
@@ -797,49 +868,55 @@ export default function Home() {
       {/* Service Cards Grid View - Category Wise */}
       <div className="modal-body">
         {modalCategory === 'Beauty' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '20px' }}>
-            <div
-              onClick={() => {
-                setModalOpen(false);
-                navigate(`/services?category=Beauty`);
-              }}
-              style={{
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: '0.3s',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '12px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <div style={{
-                width: '90px',
-                height: '90px',
-                background: '#fce7f3',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
-              }}>
-                <img src="https://img.icons8.com/fluency/96/woman-face.png" alt="Salon for Women" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
-              </div>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
-                Salon for Women
-              </p>
-            </div>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+    {BEAUTY_SUBCATEGORIES.map((item) => (
+      <div
+        key={item.label}
+        onClick={() => {
+          setModalOpen(false);
+          goToCategory("Beauty", item.subcategory, { serviceType: item.key });
+        }}
+        style={{
+          textAlign: 'center',
+          cursor: 'pointer',
+          transition: '0.3s',
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          gap: '8px'
+        }}
+      >
+        <div style={{
+          width: '65px',
+          height: '65px',
+          background: '#fce7f3',
+          borderRadius: '12px',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          overflow: 'hidden'
+        }}>
+          <img
+            src={item.icon}
+            alt={item.label}
+            style={{ width: '50px', height: '50px', objectFit: 'contain' }}
+          />
+        </div>
 
+        <p style={{ fontSize: '11px', fontWeight: '600', color: '#0f172a', margin: 0 }}>
+          {item.label}
+        </p>
+      </div>
+    ))}
+  </div>
+) 
+ 
+        : modalCategory === 'Men' ? (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
             <div
               onClick={() => {
                 setModalOpen(false);
-                navigate(`/services?category=Beauty`);
+                goToCategory("Men", "Pedicure", { serviceType: "salon-for-men" });
               }}
               style={{
                 textAlign: 'center',
@@ -848,144 +925,29 @@ export default function Home() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '12px'
+                gap: '8px'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
               <div style={{
-                width: '90px',
-                height: '90px',
-                background: '#fce7f3',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
-              }}>
-                <img src="https://img.icons8.com/fluency/96/spa.png" alt="Spa for Women" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
-              </div>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
-                Spa for Women
-              </p>
-            </div>
-
-            <div
-              onClick={() => {
-                setModalOpen(false);
-                navigate(`/services?category=Beauty`);
-              }}
-              style={{
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: '0.3s',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '12px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <div style={{
-                width: '90px',
-                height: '90px',
-                background: '#fce7f3',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
-              }}>
-                <img src="https://img.icons8.com/fluency/96/hair.png" alt="Hair Studio for Women" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
-              </div>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
-                Hair Studio for Women
-              </p>
-            </div>
-
-            <div
-              onClick={() => {
-                setModalOpen(false);
-                navigate(`/services?category=Beauty`);
-              }}
-              style={{
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: '0.3s',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '12px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <div style={{
-                width: '90px',
-                height: '90px',
-                background: '#fce7f3',
-                borderRadius: '12px',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                overflow: 'hidden'
-              }}>
-                <img src="https://img.icons8.com/fluency/96/makeup.png" alt="Makeup & Styling Studio" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
-              </div>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
-                Makeup & Styling Studio
-              </p>
-            </div>
-          </div>
-        ) : modalCategory === 'Men' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
-            <div
-              onClick={() => {
-                setModalOpen(false);
-                navigate(`/services?category=Men`);
-              }}
-              style={{
-                textAlign: 'center',
-                cursor: 'pointer',
-                transition: '0.3s',
-                display: 'flex',
-                flexDirection: 'column',
-                alignItems: 'center',
-                gap: '12px'
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'translateY(0)';
-              }}
-            >
-              <div style={{
-                width: '90px',
-                height: '90px',
+                width: '65px',
+                height: '65px',
                 background: '#e3f2fd',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
               }}>
-                <img src="https://img.icons8.com/fluency/96/barber.png" alt="Salon for Men" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+                <img src="src/assets/images/Salon for Men.png" alt="Salon for Men" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
               </div>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+              <p style={{ fontSize: '11px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                 Salon for Men
               </p>
             </div>
@@ -993,7 +955,7 @@ export default function Home() {
             <div
               onClick={() => {
                 setModalOpen(false);
-                navigate(`/services?category=Men`);
+                goToCategory("Men", "Massage", { serviceType: "massage-for-men" });
               }}
               style={{
                 textAlign: 'center',
@@ -1002,44 +964,45 @@ export default function Home() {
                 display: 'flex',
                 flexDirection: 'column',
                 alignItems: 'center',
-                gap: '12px'
+                gap: '8px'
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-6px)';
+                e.currentTarget.style.transform = 'translateY(-4px)';
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.transform = 'translateY(0)';
               }}
             >
               <div style={{
-                width: '90px',
-                height: '90px',
+                width: '65px',
+                height: '65px',
                 background: '#e3f2fd',
                 borderRadius: '12px',
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                overflow: 'hidden'
+                overflow: 'hidden',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
               }}>
-                <img src="https://img.icons8.com/fluency/96/massage.png" alt="Massage for Men" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+                <img src="src/assets/images/Massage for Men.png" alt="Massage for Men" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
               </div>
-              <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
+              <p style={{ fontSize: '11px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                 Massage for Men
               </p>
             </div>
           </div>
         ) : modalCategory === 'Cleaning' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
             {/* Cleaning Section */}
             <div>
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Cleaning
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Cleaning`);
+                    goToCategory("Cleaning", "Home Cleaning", { serviceType: "bathroom-cleaning" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1058,8 +1021,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '60px',
+                    height: '60px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1067,7 +1030,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/bathtub.png" alt="Bathroom Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Bathroom Cleaning.png" alt="Bathroom Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Bathroom Cleaning
@@ -1077,7 +1040,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Cleaning`);
+                    goToCategory("Cleaning", "Home Cleaning", { serviceType: "kitchen-cleaning" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1096,8 +1059,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1105,7 +1068,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/kitchenware.png" alt="Kitchen Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Kitchen Cleaning.png" alt="Kitchen Cleaning" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Kitchen Cleaning
@@ -1115,7 +1078,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Cleaning`);
+                    goToCategory("Cleaning", "Home Cleaning", { serviceType: "living-bedroom-cleaning" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1135,8 +1098,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1145,7 +1108,7 @@ export default function Home() {
                     overflow: 'hidden',
                     position: 'relative'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/comfortable-sofa.png" alt="Living & Bedroom Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Living & Bedroom Cleaning.png" alt="Living & Bedroom Cleaning" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                     <span style={{
                       position: 'absolute',
                       top: '4px',
@@ -1168,7 +1131,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Cleaning`);
+                    goToCategory("Cleaning", "Home Cleaning", { serviceType: "full-home-movein-cleaning" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1187,8 +1150,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1196,7 +1159,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/cardboard-box.png" alt="Full Home / Move-in Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="https://img.icons8.com/fluency/96/cardboard-box.png" alt="Full Home / Move-in Cleaning" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Full Home / Move-in Cleaning
@@ -1210,11 +1173,11 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Pest Control
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Pest`);
+                    goToCategory("Pest", "General Pest Control", { serviceType: "cockroach-control" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1233,8 +1196,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#ffebee',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1242,7 +1205,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/cockroach.png" alt="Cockroach Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="https://img.icons8.com/fluency/96/cockroach.png" alt="Cockroach Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Cockroach Control
@@ -1252,7 +1215,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Pest`);
+                    goToCategory("Pest", "Specialized Services", { serviceType: "termite-control" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1271,8 +1234,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#ffebee',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1280,7 +1243,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/termite.png" alt="Termite Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Termite Control.png" alt="Termite Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Termite Control
@@ -1290,7 +1253,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Pest`);
+                    goToCategory("Pest", "Specialized Services", { serviceType: "bed-bugs-control" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1309,8 +1272,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#ffebee',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1318,7 +1281,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/bed-bug.png" alt="Bed Bugs Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Bed Bugs Control.png" alt="Bed Bugs Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Bed Bugs Control
@@ -1328,7 +1291,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Pest`);
+                    goToCategory("Pest", "General Pest Control", { serviceType: "ant-control" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1348,8 +1311,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#ffebee',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1358,7 +1321,7 @@ export default function Home() {
                     overflow: 'hidden',
                     position: 'relative'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/ant.png" alt="Ant Control" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="https://img.icons8.com/fluency/96/ant.png" alt="Ant Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                     <span style={{
                       position: 'absolute',
                       top: '4px',
@@ -1381,17 +1344,17 @@ export default function Home() {
             </div>
           </div>
         ) : modalCategory === 'Electrician' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '32px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
             {/* Repairs Section */}
             <div>
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Repairs
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Electrician`);
+                    goToCategory("Electrician", "Switch & Socket", { serviceType: "electrician-repair" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1410,8 +1373,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#e3f2fd',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1419,7 +1382,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/electrician.png" alt="Electrician" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Electrician.png" alt="Electrician" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Electrician
@@ -1430,7 +1393,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Plumber`);
+                    goToCategory("Plumber", "Plumbing Repairs", { serviceType: "plumber-repair" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1449,8 +1412,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#ffebee',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1458,7 +1421,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/plumber.png" alt="Plumber" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Plumber.png" alt="Plumber" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Plumber
@@ -1469,7 +1432,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Carpentry`);
+                    goToCategory("Carpentry", "Furniture", { serviceType: "carpenter-general" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1488,8 +1451,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1497,7 +1460,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/hammer.png" alt="Carpenter" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="https://img.icons8.com/fluency/96/hammer.png" alt="Carpenter" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Carpenter
@@ -1508,7 +1471,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Electrician`);
+                    goToCategory("Electrician", "Light", { serviceType: "festival-lights" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1527,8 +1490,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#f3e5f5',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1536,7 +1499,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/light-on.png" alt="Festival Lights" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="https://img.icons8.com/fluency/96/light-on.png" alt="Festival Lights" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Festival Lights
@@ -1551,11 +1514,11 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Installations & other services
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Electrician`);
+                    goToCategory("Electrician", "Fan", { serviceType: "fan-installation" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1574,8 +1537,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#e3f2fd',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1583,7 +1546,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/ceiling-fan.png" alt="Fan Installation" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Fan Installation.png" alt="Fan Installation" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Fan Installation
@@ -1594,7 +1557,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Carpentry`);
+                    goToCategory("Carpentry", "Furniture", { serviceType: "furniture-assembly" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1613,8 +1576,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1622,7 +1585,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/sofa.png" alt="Furniture Assembly" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="https://img.icons8.com/fluency/96/sofa.png" alt="Furniture Assembly" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Furniture Assembly
@@ -1633,7 +1596,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Appliances`);
+                    goToCategory("Appliances", "Repair & Gas Refill", { serviceType: "geyser", appliance: "Geyser" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1652,8 +1615,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#e0f2f1',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1661,7 +1624,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/geyser.png" alt="Geyser" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Geyser.png" alt="Geyser" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Geyser
@@ -1672,7 +1635,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Carpentry`);
+                    goToCategory("Carpentry", "Furniture", { serviceType: "ikea-furniture-assembly" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1691,8 +1654,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1700,7 +1663,7 @@ export default function Home() {
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/furniture.png" alt="IKEA Furniture Assembly" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/IKEA Furniture Assembly.png" alt="IKEA Furniture Assembly" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     IKEA Furniture Assembly
@@ -1711,7 +1674,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Painting`);
+                    goToCategory("Painting", "Protective Services", { serviceType: "tile-grouting" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1731,8 +1694,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#f3e5f5',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1741,7 +1704,7 @@ export default function Home() {
                     overflow: 'hidden',
                     position: 'relative'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/tile.png" alt="Tile Grouting" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="src/assets/images/Tile Grouting.png" alt="Tile Grouting" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                     <span style={{
                       position: 'absolute',
                       top: '4px',
@@ -1764,7 +1727,7 @@ export default function Home() {
                 <div
                   onClick={() => {
                     setModalOpen(false);
-                    navigate(`/services?category=Carpentry`);
+                    goToCategory("Carpentry", "Furniture", { serviceType: "wood-polish" });
                   }}
                   style={{
                     textAlign: 'center',
@@ -1784,8 +1747,8 @@ export default function Home() {
                   }}
                 >
                   <div style={{
-                    width: '80px',
-                    height: '80px',
+                    width: '70px',
+                    height: '70px',
                     background: '#fff3e0',
                     borderRadius: '12px',
                     display: 'flex',
@@ -1794,7 +1757,7 @@ export default function Home() {
                     overflow: 'hidden',
                     position: 'relative'
                   }}>
-                    <img src="https://img.icons8.com/fluency/96/wood.png" alt="Wood Polish" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src="https://img.icons8.com/fluency/96/wood.png" alt="Wood Polish" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                     <span style={{
                       position: 'absolute',
                       top: '4px',
@@ -1816,12 +1779,15 @@ export default function Home() {
               </div>
             </div>
           </div>
+
+
+
         ) : modalCategory === 'Painting' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '20px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
             <div
               onClick={() => {
                 setModalOpen(false);
-                navigate(`/services?category=Painting`);
+                goToCategory("Painting", "Wall Services", { serviceType: "full-home-painting" });
               }}
               style={{
                 textAlign: 'center',
@@ -1874,7 +1840,7 @@ export default function Home() {
             <div
               onClick={() => {
                 setModalOpen(false);
-                navigate(`/services?category=Painting`);
+                goToCategory("Painting", "Wall Services", { serviceType: "walls-rooms-painting" });
               }}
               style={{
                 textAlign: 'center',
@@ -1902,7 +1868,7 @@ export default function Home() {
                 justifyContent: 'center',
                 overflow: 'hidden'
               }}>
-                <img src="https://img.icons8.com/fluency/96/paint-roller.png" alt="Walls & Rooms Painting" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+                <img src="src/assets/images/Walls & Rooms Painting.png" alt="Walls & Rooms Painting" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
               </div>
               <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                 Walls & Rooms Painting
@@ -1915,13 +1881,13 @@ export default function Home() {
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 {groupName}
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
                 {items.map((item) => (
                   <div
                     key={item.key}
                     onClick={() => {
                       setModalOpen(false);
-                      navigate(`/services?category=Appliances&appliance=${encodeURIComponent(item.key)}`);
+                      goToCategory("Appliances", null, { serviceType: item.key, appliance: item.key });
                     }}
                     style={{
                       textAlign: 'center',
@@ -1940,8 +1906,8 @@ export default function Home() {
                     }}
                   >
                   <div style={{
-                      width: '80px',
-                      height: '80px',
+                      width: '70px',
+                      height: '70px',
                       background: '#f5f5f5',
                       borderRadius: '12px',
                       display: 'flex',
@@ -2008,7 +1974,7 @@ export default function Home() {
                       key={service.id}
                       onClick={() => {
                         setModalOpen(false);
-                        navigate(`/services?category=${encodeURIComponent(modalCategory)}`);
+                        goToCategory(modalCategory);
                       }}
                       style={{
                         display: 'flex',
@@ -2110,7 +2076,7 @@ export default function Home() {
               e.currentTarget.style.transform = 'translateY(0)';
               e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
             }}
-            onClick={() => navigate(`/services?category=${encodeURIComponent(promo.category)}`)}
+            onClick={() => goToCategory(promo.category)}
           >
             {/* Image Only */}
             <img 
@@ -2132,150 +2098,174 @@ export default function Home() {
   </div>
 </section>
 
-{/* FEATURED SERVICES CARDS - SLIDER */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
+{/* FEATURED SERVICES CARDS - HORIZONTAL CAROUSEL */}
+<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "20px" }}>
   <h2 className="section-title">Popular Services</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Highly-rated services from verified professionals</p>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        className="services-slider"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {getFeaturedServices().map((service) => (
-          <div 
-            key={service.id}
-            style={{
-              flex: '0 0 calc(20% - 9.6px)',
-              minWidth: '240px',
-              scrollSnapAlign: 'start',
-              display: 'flex',
-              flexDirection: 'column',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}
-            onClick={() => {
-              navigate(`/services?category=${encodeURIComponent(service.category)}`);
-            }}
-          >
-            {/* Service Image */}
-            <div style={{
-              width: '100%',
-              height: '160px',
-              borderRadius: '12px 12px 0 0',
-              overflow: 'hidden',
-              background: '#f1f5f9'
+  <div style={{
+    position: 'relative',
+    paddingRight: '50px'
+  }}>
+    <div 
+      ref={popularServicesRef}
+      style={{
+        display: 'flex',
+        gap: '10px',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none',
+        paddingBottom: '8px'
+      }}
+    >
+      {getFeaturedServices().map((service, index) => (
+        <div 
+          key={`${service.id}-${index}`}
+          style={{
+            flex: '0 0 240px',
+            display: 'flex',
+            flexDirection: 'column',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease',
+            borderRadius: '12px',
+            overflow: 'hidden',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+            background: '#fff'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-4px)';
+            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.12)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+          }}
+          onClick={() => {
+            goToCategory(service.category);
+          }}
+        >
+          {/* Service Image */}
+          <div style={{
+            width: '100%',
+            height: '140px',
+            overflow: 'hidden',
+            background: '#f1f5f9',
+            position: 'relative'
+          }}>
+            <img 
+              src={service.image} 
+              alt={service.title}
+              style={{
+                width: '100%',
+                height: '100%',
+                objectFit: 'cover'
+              }}
+              onError={(e) => {
+                e.target.src = 'https://via.placeholder.com/240x140?text=' + service.category;
+              }}
+            />
+          </div>
+          
+          {/* Service Body */}
+          <div style={{
+            padding: '10px',
+            flex: 1,
+            display: 'flex',
+            flexDirection: 'column'
+          }}>
+            {/* Title */}
+            <h3 style={{
+              margin: '0 0 5px 0',
+              fontSize: '12px',
+              fontWeight: '600',
+              color: '#0f172a',
+              lineHeight: '1.4'
             }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover'
-                }}
-                onError={(e) => {
-                  e.target.src = 'https://via.placeholder.com/240x160?text=' + service.category;
-                }}
-              />
+              {service.title}
+            </h3>
+            
+            {/* Rating & Instant Badge */}
+            <div style={{ 
+              display: 'flex',
+              alignItems: 'center',
+              gap: '4px',
+              marginBottom: '5px',
+              fontSize: '10px'
+            }}>
+              <span style={{ color: '#0f172a', fontWeight: '500' }}>
+                ⭐ {service.rating}
+              </span>
+              <span style={{ color: '#6b7280' }}>
+                • Instant
+              </span>
             </div>
             
-            {/* Service Body */}
+            {/* Price */}
             <div style={{
-              padding: '12px',
-              background: '#fff',
-              borderRadius: '0 0 12px 12px',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-              flex: 1,
-              display: 'flex',
-              flexDirection: 'column'
+              marginTop: 'auto',
+              paddingTop: '5px',
+              borderTop: '1px solid #e5e7eb'
             }}>
-              {/* Title */}
-              <h3 style={{
-                margin: '0 0 6px 0',
-                fontSize: '13px',
-                fontWeight: '600',
-                color: '#0f172a',
-                lineHeight: '1.3'
-              }}>
-                {service.title}
-              </h3>
-              
-              {/* Category Badge */}
-              <span style={{
-                display: 'inline-block',
-                background: '#e0e7ff',
-                color: '#2563eb',
-                padding: '3px 8px',
-                borderRadius: '4px',
-                fontSize: '11px',
-                fontWeight: '500',
-                marginBottom: '6px',
-                width: 'fit-content'
-              }}>
-                {service.category}
-              </span>
-              
-              {/* Rating */}
-              <div style={{ marginBottom: '6px' }}>
-                <span style={{
-                  fontSize: '11px',
-                  color: '#0f172a',
-                  fontWeight: '500'
-                }}>
-                  ⭐ {service.rating}
-                </span>
-                <span style={{
-                  fontSize: '10px',
-                  color: '#6b7280',
-                  marginLeft: '4px'
-                }}>
-                  ({service.reviews})
-                </span>
-              </div>
-              
-              {/* Price */}
               <div style={{
-                marginTop: 'auto',
-                paddingTop: '6px',
-                borderTop: '1px solid #e5e7eb'
+                display: 'flex',
+                alignItems: 'center',
+                gap: '6px'
               }}>
-                <div style={{
-                  fontSize: '12px',
-                  color: '#6b7280',
-                  marginBottom: '4px'
-                }}>
-                  From
-                </div>
                 <strong style={{
-                  fontSize: '16px',
-                  color: '#2563eb'
+                  fontSize: '13px',
+                  color: '#0f172a'
                 }}>
                   ₹{service.price}
                 </strong>
+                <span style={{
+                  fontSize: '10px',
+                  color: '#6b7280',
+                  textDecoration: 'line-through'
+                }}>
+                  ₹{Math.round(service.price * 1.3)}
+                </span>
               </div>
             </div>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
-
+    <button
+      onClick={() => scrollCarousel(popularServicesRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2284,72 +2274,46 @@ export default function Home() {
   <h2 className="section-title">Get Quote</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+    {OFFERS.map((offer) => (
       <div 
-        className="offers-scroll" 
-        role="list" 
-        ref={getQuoteRef}
-        style={{ 
+        key={offer.id}
+        style={{
           display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
+          flexDirection: 'column',
+          gap: '8px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease'
         }}
-      >
-        {OFFERS.map((offer) => (
-          <div 
-            key={offer.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 clamp(200px, 85vw, 260px)',
-              minWidth: 'clamp(200px, 85vw, 260px)',
-              scrollSnapAlign: 'start'
-            }}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={offer.img} 
-                alt={offer.title}
-                style={{
-                  width: '100%',
-                  height: 'clamp(180px, 40vw, 240px)',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: 'clamp(12px, 3vw, 14px)',
-                fontWeight: '600',
-                color: '#0f172a',
-                textAlign: 'center',
-                lineHeight: '1.4'
-              }}>
-                {offer.title}
-              </p>
-            </div>
-          </div>
-        ))}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}>
+        <img 
+          src={offer.img} 
+          alt={offer.title}
+          style={{
+            width: '100%',
+            height: '140px',
+            objectFit: 'cover',
+            borderRadius: '10px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          }}
+        />
+        <p style={{
+          margin: '0',
+          fontSize: '10px',
+          fontWeight: '600',
+          color: '#0f172a',
+          textAlign: 'center',
+          lineHeight: '1.3'
+        }}>
+          {offer.title}
+        </p>
       </div>
-    </div>
+    ))}
   </div>
 </section>
 
@@ -2358,73 +2322,46 @@ export default function Home() {
   <h2 className="section-title">Offers & discounts</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+    {OFFERS.map((offer) => (
       <div 
-        className="offers-scroll" 
-        role="list"
-        ref={offersRef}
-        style={{ 
+        key={offer.id}
+        style={{
           display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
+          flexDirection: 'column',
+          gap: '8px',
+          cursor: 'pointer',
+          transition: 'all 0.3s ease'
         }}
-      >
-        {OFFERS.map((offer) => (
-          <div 
-            key={offer.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 clamp(200px, 85vw, 260px)',
-              minWidth: 'clamp(200px, 85vw, 260px)',
-              scrollSnapAlign: 'start'
-            }}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '12px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={offer.img} 
-                alt={offer.title}
-                style={{
-                  width: '100%',
-                  height: 'clamp(180px, 40vw, 240px)',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: 'clamp(12px, 3vw, 14px)',
-                fontWeight: '600',
-                color: '#0f172a',
-                textAlign: 'center',
-                lineHeight: '1.4'
-              }}>
-                {offer.title}
-              </p>
-            </div>
-          </div>
-        ))}
+        onMouseEnter={(e) => {
+          e.currentTarget.style.transform = 'translateY(-4px)';
+        }}
+        onMouseLeave={(e) => {
+          e.currentTarget.style.transform = 'translateY(0)';
+        }}>
+        <img 
+          src={offer.img} 
+          alt={offer.title}
+          style={{
+            width: '100%',
+            height: '140px',
+            objectFit: 'cover',
+            borderRadius: '10px',
+            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+          }}
+        />
+        <p style={{
+          margin: '0',
+          fontSize: '10px',
+          fontWeight: '600',
+          color: '#0f172a',
+          textAlign: 'center',
+          lineHeight: '1.3'
+        }}>
+          {offer.title}
+        </p>
       </div>
-    </div>
-
+    ))}
   </div>
 </section>
 
@@ -2433,89 +2370,121 @@ export default function Home() {
   <h2 className="section-title">Salon for men</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grooming essentials</p>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        className="salon-men-scroll" 
-        role="list"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { id: 'm1', title: 'Haircut', rating: 4.8, reviews: 470, price: 299, image: 'src/assets/images/Haircut.png' },
-          { id: 'm2', title: 'Beard trim & styling', rating: 4.87, reviews: 139, price: 249, image: 'src/assets/images/Beard Trim & Styling.png' },
-          { id: 'm3', title: 'Haircut for kids', rating: 4.85, reviews: 105, price: 299, image: 'src/assets/images/Haircut for kids.png' },
-          { id: 'm4', title: 'Clean shave', rating: 4.86, reviews: 68, price: 249, image: 'src/assets/images/Shave.png' },
-          { id: 'm5', title: 'Head, neck & shoulder massage', rating: 4.83, reviews: 50, price: 349, image: 'src/assets/images/Head Massage.png' }
-        ].map((service) => (
-          <div 
-            key={service.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 calc(20% - 9.6px)',
-              minWidth: '220px',
-              scrollSnapAlign: 'start'
-            }}
-            onClick={() => navigate(`/services?category=Men`)}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
+  <div style={{ position: 'relative', paddingRight: '50px' }}>
+    <div 
+      ref={salonMenRef}
+      className="salon-men-scroll" 
+      role="list"
+      style={{ 
+        display: 'flex',
+        gap: '12px',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollSnapType: 'x mandatory',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+      {[
+        { id: 'm1', title: 'Haircut', rating: 4.8, reviews: 470, price: 299, image: 'src/assets/images/Haircut.png' },
+        { id: 'm2', title: 'Beard trim & styling', rating: 4.87, reviews: 139, price: 249, image: 'src/assets/images/Beard Trim & Styling.png' },
+        { id: 'm3', title: 'Haircut for kids', rating: 4.85, reviews: 105, price: 299, image: 'src/assets/images/Haircut for kids.png' },
+        { id: 'm4', title: 'Clean shave', rating: 4.86, reviews: 68, price: 249, image: 'src/assets/images/Shave.png' },
+        { id: 'm5', title: 'Head, neck & shoulder massage', rating: 4.83, reviews: 50, price: 349, image: 'src/assets/images/Head Massage.png' }
+      ].map((service) => (
+        <div 
+          key={service.id} 
+          role="listitem"
+          style={{
+            flex: '0 0 calc(20% - 9.6px)',
+            minWidth: '220px',
+            scrollSnapAlign: 'start'
+          }}
+          onClick={() => goToCategory("Men")}
+        >
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-8px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}>
+            <img 
+              src={service.image} 
+              alt={service.title}
+              style={{
+                width: '100%',
+                height: '220px',
+                objectFit: 'cover',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            />
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#0f172a'
             }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: '220px',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#0f172a'
-              }}>
-                {service.title}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-              </div>
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: '#0f172a'
-              }}>
-                ₹{service.price}
-              </p>
+              {service.title}
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
             </div>
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#0f172a'
+            }}>
+              ₹{service.price}
+            </p>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
-
+    <button
+      onClick={() => scrollCarousel(salonMenRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2523,106 +2492,138 @@ export default function Home() {
 <section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Massage for Men</h2>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        className="massage-men-scroll" 
-        role="list"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { id: 'mm1', title: 'Foot massage', rating: 4.87, reviews: 39, price: 549, image: 'src/assets/images/Foot massage.png' },
-          { id: 'mm2', title: 'Head, neck & shoulder massage', rating: 4.87, reviews: 41, price: 649, image: 'src/assets/images/Head, neck & shoulder massage.png' },
-          { id: 'mm3', title: 'Leg pain relief massage for men', rating: 4.87, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for men.png' },
-          { id: 'mm4', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 2, price: 1449, image: 'src/assets/images/Warm deep tissue pain relief massage.png' },
-          { id: 'mm5', title: 'Quick Comfort Therapy', rating: 4.83, reviews: 11, price: 999, image: 'src/assets/images/Quick Comfort Therapy.png', badge: '17% OFF' }
-        ].map((service) => (
-          <div 
-            key={service.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 calc(20% - 9.6px)',
-              minWidth: '220px',
-              scrollSnapAlign: 'start',
-              position: 'relative'
-            }}
-            onClick={() => navigate(`/services?category=Men`)}
-          >
-            {service.badge && (
-              <div style={{
-                position: 'absolute',
-                top: '8px',
-                right: '8px',
-                background: '#059669',
-                color: 'white',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '11px',
-                fontWeight: '700',
-                zIndex: 5
-              }}>
-                {service.badge}
-              </div>
-            )}
+  <div style={{ position: 'relative', paddingRight: '50px' }}>
+    <div 
+      ref={massageMenRef}
+      className="massage-men-scroll" 
+      role="list"
+      style={{ 
+        display: 'flex',
+        gap: '12px',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollSnapType: 'x mandatory',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+      {[
+        { id: 'mm1', title: 'Foot massage', rating: 4.87, reviews: 39, price: 549, image: 'src/assets/images/Foot massage.png' },
+        { id: 'mm2', title: 'Head, neck & shoulder massage', rating: 4.87, reviews: 41, price: 649, image: 'src/assets/images/Head, neck & shoulder massage.png' },
+        { id: 'mm3', title: 'Leg pain relief massage for men', rating: 4.87, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for men.png' },
+        { id: 'mm4', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 2, price: 1449, image: 'src/assets/images/Warm deep tissue pain relief massage.png' },
+        { id: 'mm5', title: 'Quick Comfort Therapy', rating: 4.83, reviews: 11, price: 999, image: 'src/assets/images/Quick Comfort Therapy.png', badge: '17% OFF' }
+      ].map((service) => (
+        <div 
+          key={service.id} 
+          role="listitem"
+          style={{
+            flex: '0 0 calc(20% - 9.6px)',
+            minWidth: '220px',
+            scrollSnapAlign: 'start',
+            position: 'relative'
+          }}
+          onClick={() => goToCategory("Men")}
+        >
+          {service.badge && (
             <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
+              position: 'absolute',
+              top: '8px',
+              right: '8px',
+              background: '#059669',
+              color: 'white',
+              padding: '4px 8px',
+              borderRadius: '4px',
+              fontSize: '11px',
+              fontWeight: '700',
+              zIndex: 5
             }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: '220px',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#0f172a'
-              }}>
-                {service.title}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-              </div>
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: '#0f172a'
-              }}>
-                ₹{service.price}
-              </p>
+              {service.badge}
             </div>
+          )}
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-8px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}>
+            <img 
+              src={service.image} 
+              alt={service.title}
+              style={{
+                width: '100%',
+                height: '220px',
+                objectFit: 'cover',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            />
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#0f172a'
+            }}>
+              {service.title}
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
+            </div>
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#0f172a'
+            }}>
+              ₹{service.price}
+            </p>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
-
+    <button
+      onClick={() => scrollCarousel(massageMenRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2642,7 +2643,7 @@ export default function Home() {
     <div>
       <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Premium Wellness Package</h3>
       <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.95, lineHeight: '1.6' }}>Book 4 sessions and get 15% off. Expert therapists, verified & insured. Your wellness journey starts here.</p>
-      <button onClick={() => navigate('/services?category=Beauty')} style={{
+      <button onClick={() => goToBeautyType("Super saver packs", "spa-for-women")} style={{
         background: '#fbbf24',
         color: '#667eea',
         border: 'none',
@@ -2676,89 +2677,121 @@ export default function Home() {
 <section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Home repair & installation</h2>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        className="repair-scroll" 
-        role="list"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { id: 'r1', title: 'Decor installation', rating: 4.83, reviews: 83, price: 79, image: 'src/assets/images/Decor installation.png' },
-          { id: 'r2', title: 'Plumber consultation', rating: 4.73, reviews: 92, price: 49, image: 'src/assets/images/Plumber consultation.png' },
-          { id: 'r3', title: 'Electrician consultation', rating: 4.74, reviews: 76, price: 49, image: 'src/assets/images/Electrician consultation.png' },
-          { id: 'r4', title: 'Switchboard repair & replacement', rating: 4.82, reviews: 46, price: 99, image: 'src/assets/images/Switchboard repair & replacement.png' },
-          { id: 'r5', title: 'Cupboard repair', rating: 4.77, reviews: 48, price: 89, image: 'src/assets/images/Cupboard repair.png' }
-        ].map((service) => (
-          <div 
-            key={service.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 calc(20% - 9.6px)',
-              minWidth: '220px',
-              scrollSnapAlign: 'start'
-            }}
-            onClick={() => navigate(`/services?category=Maintenance`)}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
+  <div style={{ position: 'relative', paddingRight: '50px' }}>
+    <div 
+      ref={homeRepairRef}
+      className="repair-scroll" 
+      role="list"
+      style={{ 
+        display: 'flex',
+        gap: '12px',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollSnapType: 'x mandatory',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+      {[
+        { id: 'r1', title: 'Decor installation', rating: 4.83, reviews: 83, price: 79, image: 'src/assets/images/Decor installation.png' },
+        { id: 'r2', title: 'Plumber consultation', rating: 4.73, reviews: 92, price: 49, image: 'src/assets/images/Plumber consultation.png' },
+        { id: 'r3', title: 'Electrician consultation', rating: 4.74, reviews: 76, price: 49, image: 'src/assets/images/Electrician consultation.png' },
+        { id: 'r4', title: 'Switchboard repair & replacement', rating: 4.82, reviews: 46, price: 99, image: 'src/assets/images/Switchboard repair & replacement.png' },
+        { id: 'r5', title: 'Cupboard repair', rating: 4.77, reviews: 48, price: 89, image: 'src/assets/images/Cupboard repair.png' }
+      ].map((service) => (
+        <div 
+          key={service.id} 
+          role="listitem"
+          style={{
+            flex: '0 0 calc(20% - 9.6px)',
+            minWidth: '220px',
+            scrollSnapAlign: 'start'
+          }}
+          onClick={() => goToCategory("Maintenance")}
+        >
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-8px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}>
+            <img 
+              src={service.image} 
+              alt={service.title}
+              style={{
+                width: '100%',
+                height: '220px',
+                objectFit: 'cover',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            />
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#0f172a'
             }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: '220px',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#0f172a'
-              }}>
-                {service.title}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-              </div>
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: '#0f172a'
-              }}>
-                ₹{service.price}
-              </p>
+              {service.title}
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
             </div>
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#0f172a'
+            }}>
+              ₹{service.price}
+            </p>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
-
+    <button
+      onClick={() => scrollCarousel(homeRepairRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2766,88 +2799,122 @@ export default function Home() {
 <section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Appliance Service & Repair</h2>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        className="appliance-scroll" 
-        role="list"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { id: 'a1', title: 'Geyser check-up', rating: 4.73, reviews: 99, price: 249, image: 'src/assets/images/Geyser check-up.png' },
-          { id: 'a2', title: 'Automatic top load machine check-up', rating: 4.77, reviews: 346, price: 199, image: 'src/assets/images/Automatic top load machine check-up.png' },
-          { id: 'a3', title: 'TV check-up', rating: 4.77, reviews: 158, price: 249, image: 'src/assets/images/TV check-up.png' },
-          { id: 'a4', title: 'Geyser service', rating: 4.76, reviews: 74, price: 599, image: 'src/assets/images/Geyser service.png' },
-          { id: 'a5', title: 'Geyser installation', rating: 4.78, reviews: 46, price: 499, image: 'src/assets/images/Geyser installation.png' }
-        ].map((service) => (
-          <div 
-            key={service.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 calc(20% - 9.6px)',
-              minWidth: '220px',
-              scrollSnapAlign: 'start'
-            }}
-            onClick={() => navigate(`/services?category=Appliances`)}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
+  <div style={{ position: 'relative', paddingRight: '50px' }}>
+    <div 
+      ref={applianceRef}
+      className="appliance-scroll" 
+      role="list"
+      style={{ 
+        display: 'flex',
+        gap: '12px',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollSnapType: 'x mandatory',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
+      {[
+        { id: 'a1', title: 'Geyser check-up', rating: 4.73, reviews: 99, price: 249, image: 'src/assets/images/Geyser check-up.png' },
+        { id: 'a2', title: 'Automatic top load machine check-up', rating: 4.77, reviews: 346, price: 199, image: 'src/assets/images/Automatic top load machine check-up.png' },
+        { id: 'a3', title: 'TV check-up', rating: 4.77, reviews: 158, price: 249, image: 'src/assets/images/TV check-up.png' },
+        { id: 'a4', title: 'Geyser service', rating: 4.76, reviews: 74, price: 599, image: 'src/assets/images/Geyser service.png' },
+        { id: 'a5', title: 'Geyser installation', rating: 4.78, reviews: 46, price: 499, image: 'src/assets/images/Geyser installation.png' }
+      ].map((service) => (
+        <div 
+          key={service.id} 
+          role="listitem"
+          style={{
+            flex: '0 0 calc(20% - 9.6px)',
+            minWidth: '220px',
+            scrollSnapAlign: 'start'
+          }}
+          onClick={() => goToCategory("Appliances")}
+        >
+          <div style={{
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '8px',
+            cursor: 'pointer',
+            transition: 'all 0.3s ease'
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.transform = 'translateY(-8px)';
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.transform = 'translateY(0)';
+          }}>
+            <img 
+              src={service.image} 
+              alt={service.title}
+              style={{
+                width: '100%',
+                height: '220px',
+                objectFit: 'cover',
+                borderRadius: '12px',
+                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
+              }}
+            />
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '600',
+              color: '#0f172a'
             }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: '220px',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#0f172a'
-              }}>
-                {service.title}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-              </div>
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: '#0f172a'
-              }}>
-                ₹{service.price}
-              </p>
+              {service.title}
+            </p>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
+              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
+              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
             </div>
+            <p style={{
+              margin: '0',
+              fontSize: '14px',
+              fontWeight: '700',
+              color: '#0f172a'
+            }}>
+              ₹{service.price}
+            </p>
           </div>
-        ))}
-      </div>
+        </div>
+      ))}
     </div>
+    <button
+      onClick={() => scrollCarousel(applianceRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
+
 
   </div>
 </section>
@@ -2888,7 +2955,7 @@ export default function Home() {
               minWidth: '220px',
               scrollSnapAlign: 'start'
             }}
-            onClick={() => navigate(`/services?category=Cleaning`)}
+            onClick={() => goToCategory("Cleaning")}
           >
             <div style={{
               display: 'flex',
@@ -2939,7 +3006,40 @@ export default function Home() {
         ))}
       </div>
     </div>
-
+<button
+      onClick={() => scrollCarousel(applianceRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2959,7 +3059,7 @@ export default function Home() {
     <div>
       <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Expert Appliance Care</h3>
       <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.95, lineHeight: '1.6' }}>Professional repair & maintenance. Same-day service available. Extend your appliance life with preventive care.</p>
-      <button onClick={() => navigate('/services?category=Appliances')} style={{
+      <button onClick={() => goToCategory("Appliances")} style={{
         background: '#fbbf24',
         color: '#f5576c',
         border: 'none',
@@ -3010,11 +3110,11 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'sp1', title: 'Warm Swedish stress relief massage', rating: 4.83, reviews: 6, price: 1349, image: 'src/assets/images/Warm Swedish stress relief massage.png', badge: 'Hot bed' },
-          { id: 'sp2', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 6, price: 1499, image: 'src/assets/images/Warm deep tissue pain relief massage.png', badge: 'Hot bed' },
-          { id: 'sp3', title: '4 sessions (Mon-Sat only): Swedish massage', rating: 4.82, reviews: 231, price: 1299, image: 'src/assets/images/4 sessions (Mon-Sat only) Swedish massage.png' },
-          { id: 'sp4', title: '4 sessions (Mon-Sat only): Deep tissue massage', rating: 4.82, reviews: 157, price: 1449, image: 'src/assets/images/4 sessions (Mon-Sat only) Deep tissue massage create image .png', badge: 'Hot bed' },
-          { id: 'sp5', title: 'Leg pain relief massage for women', rating: 4.85, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for women.png.png' }
+          { id: 'sp1', title: 'Warm Swedish stress relief massage', rating: 4.83, reviews: 6, price: 1349, image: 'src/assets/images/Warm Swedish stress relief massage.png', badge: 'Hot bed', subcategory: 'Stress relief' },
+          { id: 'sp2', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 6, price: 1499, image: 'src/assets/images/Warm deep tissue pain relief massage.png', badge: 'Hot bed', subcategory: 'Pain relief' },
+          { id: 'sp3', title: '4 sessions (Mon-Sat only): Swedish massage', rating: 4.82, reviews: 231, price: 1299, image: 'src/assets/images/4 sessions (Mon-Sat only) Swedish massage.png', subcategory: 'Super saver packs' },
+          { id: 'sp4', title: '4 sessions (Mon-Sat only): Deep tissue massage', rating: 4.82, reviews: 157, price: 1449, image: 'src/assets/images/4 sessions (Mon-Sat only) Deep tissue massage create image .png', badge: 'Hot bed', subcategory: 'Super saver packs' },
+          { id: 'sp5', title: 'Leg pain relief massage for women', rating: 4.85, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for women.png.png', subcategory: 'Pain relief' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -3025,7 +3125,7 @@ export default function Home() {
               scrollSnapAlign: 'start',
               position: 'relative'
             }}
-            onClick={() => navigate(`/services?category=Beauty`)}
+            onClick={() => goToBeautyType(service.subcategory, "spa-for-women")}
           >
             {service.badge && (
               <div style={{
@@ -3092,6 +3192,40 @@ export default function Home() {
         ))}
       </div>
     </div>
+    <button
+      onClick={() => scrollCarousel(applianceRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -3117,10 +3251,10 @@ export default function Home() {
         }}
       >
         {[
-          { id: 'sw1', title: 'Roll-on waxing (Full arms, legs & underarms)', rating: 4.88, reviews: 66, price: 899, image: 'src/assets/images/Roll-on waxing (Full arms, legs & underarms).png' },
-          { id: 'sw2', title: 'Spatula waxing (Full arms, legs & underarms)', rating: 4.86, reviews: 47, price: 699, image: 'src/assets/images/Spatula waxing (Full arms, legs & underarms).png' },
-          { id: 'sw3', title: 'Crystal rose pedicure', rating: 4.83, reviews: 134, price: 759, image: 'src/assets/images/Crystal rose pedicure.png' },
-          { id: 'sw4', title: 'Mani-pedi delight', rating: 4.82, reviews: 191, price: 1359, original: 1458, image: 'src/assets/images/Mani-pedi delight.png', badge: '7% OFF' }
+          { id: 'sw1', title: 'Roll-on waxing (Full arms, legs & underarms)', rating: 4.88, reviews: 66, price: 899, image: 'src/assets/images/Roll-on waxing (Full arms, legs & underarms).png', subcategory: 'Waxing' },
+          { id: 'sw2', title: 'Spatula waxing (Full arms, legs & underarms)', rating: 4.86, reviews: 47, price: 699, image: 'src/assets/images/Spatula waxing (Full arms, legs & underarms).png', subcategory: 'Waxing' },
+          { id: 'sw3', title: 'Crystal rose pedicure', rating: 4.83, reviews: 134, price: 759, image: 'src/assets/images/Crystal rose pedicure.png', subcategory: 'Pedicure & manicure' },
+          { id: 'sw4', title: 'Mani-pedi delight', rating: 4.82, reviews: 191, price: 1359, original: 1458, image: 'src/assets/images/Mani-pedi delight.png', badge: '7% OFF', subcategory: 'Pedicure & manicure' }
         ].map((service) => (
           <div 
             key={service.id} 
@@ -3131,7 +3265,7 @@ export default function Home() {
               scrollSnapAlign: 'start',
               position: 'relative'
             }}
-            onClick={() => navigate(`/services?category=Beauty`)}
+            onClick={() => goToBeautyType(service.subcategory, "salon-for-women")}
           >
             {service.badge && (
               <div style={{
@@ -3198,6 +3332,40 @@ export default function Home() {
         ))}
       </div>
     </div>
+    <button
+      onClick={() => scrollCarousel(applianceRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -3217,7 +3385,7 @@ export default function Home() {
     <div>
       <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Pamper Yourself Today</h3>
       <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.9, lineHeight: '1.6', color: '#1e293b' }}>Premium beauty & wellness services at home. Professional therapists, hygienic practices. Book your personal spa session now.</p>
-      <button onClick={() => navigate('/services?category=Beauty')} style={{
+      <button onClick={() => goToBeautyType("Makeup & Styling", "makeup-styling-studio")} style={{
         background: '#ffffff',
         color: '#fa709a',
         border: 'none',

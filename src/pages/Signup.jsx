@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
+import { API_ENDPOINTS } from "../config/api.js";
 
 export default function Signup() {
   const navigate = useNavigate();
@@ -10,16 +11,56 @@ export default function Signup() {
   const [email, setEmail] = useState("");
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
+  const [loading, setLoading] = useState(false);
   const { addToast } = useToast();
 
-  function handleSignup() {
-    if (!name || !number|| !email || !pass) {
+  async function handleSignup() {
+    if (!name || !number || !email || !pass) {
       setError("All fields are required");
       return;
     }
 
-    addToast("Account created ✅ (Demo mode)", 'success');
-    navigate("/login");
+    if (pass.length < 6) {
+      setError("Password must be at least 6 characters");
+      return;
+    }
+
+    setLoading(true);
+    setError("");
+
+    try {
+      const response = await fetch(API_ENDPOINTS.AUTH.SIGNUP, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          name,
+          email,
+          phone: number,
+          password: pass,
+        }),
+      });
+
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Signup failed. Please try again.");
+        return;
+      }
+
+      // Store token and user info
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+      
+      addToast("Account created ✅", "success");
+      navigate("/");
+    } catch (err) {
+      setError("Connection error. Please check if backend is running on port 5000.");
+      console.error("Signup error:", err);
+    } finally {
+      setLoading(false);
+    }
   }
 
   return (
@@ -42,6 +83,7 @@ export default function Signup() {
                 placeholder="John Doe" 
                 value={name} 
                 onChange={e => setName(e.target.value)}
+                disabled={loading}
                 required
               />
             </div>
@@ -54,6 +96,7 @@ export default function Signup() {
                 placeholder="+91 9876543210" 
                 value={number} 
                 onChange={e => setNumber(e.target.value)}
+                disabled={loading}
                 required
               />
             </div>
@@ -66,6 +109,7 @@ export default function Signup() {
                 placeholder="you@example.com" 
                 value={email} 
                 onChange={e => setEmail(e.target.value)}
+                disabled={loading}
                 required
               />
             </div>
@@ -79,12 +123,13 @@ export default function Signup() {
                 value={pass} 
                 onChange={e => setPass(e.target.value)}
                 minLength="6"
+                disabled={loading}
                 required
               />
             </div>
 
-            <button type="submit" className="btn-primary auth-btn" aria-label="Create account">
-              Create Account
+            <button type="submit" className="btn-primary auth-btn" aria-label="Create account" disabled={loading}>
+              {loading ? "Creating Account..." : "Create Account"}
             </button>
           </form>
 

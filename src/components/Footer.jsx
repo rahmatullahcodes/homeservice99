@@ -2,6 +2,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import { useToast } from "../context/ToastContext";
 import { Facebook, Twitter, Instagram, Linkedin } from 'lucide-react';
+import { buildServicesUrl } from "../utils/serviceRouting";
 
 export default function Footer() {
   const [email, setEmail] = useState("");
@@ -78,10 +79,10 @@ export default function Footer() {
           <div className="footer-section">
             <h4>Services</h4>
             <Link to="/services">All Services</Link>
-            <Link to="/services?category=Cleaning">Cleaning</Link>
-            <Link to="/services?category=Appliances">Appliances</Link>
-            <Link to="/services?category=Electrician">Electrical</Link>
-            <Link to="/services?category=Plumber">Plumbing</Link>
+            <Link to={buildServicesUrl("Cleaning")}>Cleaning</Link>
+            <Link to={buildServicesUrl("Appliances")}>Appliances</Link>
+            <Link to={buildServicesUrl("Electrician")}>Electrical</Link>
+            <Link to={buildServicesUrl("Plumber")}>Plumbing</Link>
           </div>
 
           {/* Customer */}
