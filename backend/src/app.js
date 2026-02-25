@@ -68,6 +68,10 @@ console.log("✅ All routes registered successfully");
 // Account panel routes (server-rendered)
 app.use("/account", accountRoutes);
 
+app.get("/", (req, res) => {
+  res.send("HomeService99 Backend Live 🚀");
+});
+
 // 404 handler for unmatched routes (must be before error handler)
 app.use((req, res) => {
   console.log(`404: ${req.method} ${req.path}`);
