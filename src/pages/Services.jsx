@@ -852,7 +852,7 @@ Beauty: {
       }
     ],
 
-    'Add-ons': [
+    'Spa add-ons': [
       {
         id: 'spw6',
         title: 'Head & Neck Massage Add-on',
@@ -911,6 +911,174 @@ Beauty: {
           'Heat protection products included',
           'Works with party and bridal looks'
         ]
+      }
+    ],
+    'Group deals': [
+      {
+        id: 'mk_gd_1',
+        title: 'Group Glam Deal (2 People)',
+        price: 3299,
+        image: 'https://i.postimg.cc/8z4Qv6t/bleach-face.jpg',
+        duration: '2 hrs',
+        rating: 4.81,
+        reviews: 2400,
+        features: ['2 people makeup combo', 'Base + eye + hair touch-up', 'Ideal for events and parties']
+      }
+    ],
+    'Saree draping': [
+      {
+        id: 'mk_sd_1',
+        title: 'Professional Saree Draping',
+        price: 799,
+        image: 'https://i.postimg.cc/T3mCkmJL/korean-glass.jpg',
+        duration: '35 mins',
+        rating: 4.84,
+        reviews: 3200,
+        features: ['Elegant draping styles', 'Pinning for secure hold', 'Styling as per occasion']
+      }
+    ],
+    'Wedding combos': [
+      {
+        id: 'mk_wc_1',
+        title: 'Wedding Makeup Combo',
+        price: 4999,
+        image: 'https://i.postimg.cc/8z4Qv6t/bleach-face.jpg',
+        duration: '2-2.5 hrs',
+        rating: 4.9,
+        reviews: 2700,
+        features: ['Makeup + saree draping + hair styling', 'Long-stay premium products', 'Bridal look consultation']
+      }
+    ],
+    'Party makeup': [
+      {
+        id: 'mk_pm_1',
+        title: 'Party Makeup',
+        price: 1999,
+        image: 'https://i.postimg.cc/8z4Qv6t/bleach-face.jpg',
+        duration: '75 mins',
+        rating: 4.84,
+        reviews: 5300,
+        features: ['Party-ready base and eye makeup', 'Includes hair touch-up styling', 'Long-stay branded products']
+      }
+    ],
+    'Hair styling': [
+      {
+        id: 'mk_hs_1',
+        title: 'Hair Styling',
+        price: 799,
+        image: 'https://i.postimg.cc/q7n7P1Cw/spa-wax.png',
+        duration: '35 mins',
+        rating: 4.78,
+        reviews: 4100,
+        features: ['Soft curls, sleek or bun styling', 'Heat protection products included', 'Works with party and bridal looks']
+      }
+    ],
+    'Add-ons': [
+      {
+        id: 'mk_add_1',
+        title: 'Eye Makeup Add-on',
+        price: 499,
+        image: 'https://i.postimg.cc/5y7s0mG7/face-wax.jpg',
+        duration: '20 mins',
+        rating: 4.8,
+        reviews: 2100,
+        features: ['Smokey/shimmer eye options', 'Liner + lashes support', 'Quick enhancement add-on']
+      }
+    ],
+    'Packages': [
+      {
+        id: 'hsw_pkg_1',
+        title: 'Hair Studio Complete Package',
+        price: 1499,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '90 mins',
+        rating: 4.8,
+        reviews: 2100,
+        features: ['Wash + cut + blow-dry combo', 'Stylist consultation included', 'Finishing serum included']
+      }
+    ],
+    'Blow-dry & style': [
+      {
+        id: 'hsw_bds_1',
+        title: 'Professional Blow-dry & Styling',
+        price: 699,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '45 mins',
+        rating: 4.7,
+        reviews: 1800,
+        features: ['Volume or sleek finish', 'Heat protection products', 'Style as per hair type']
+      }
+    ],
+    'Cut & trim': [
+      {
+        id: 'hsw_ct_1',
+        title: 'Hair Cut & Trim',
+        price: 499,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '40 mins',
+        rating: 4.7,
+        reviews: 2400,
+        features: ['Layer/U-cut/basic trim options', 'Consultation before cut', 'Stylist finishing']
+      }
+    ],
+    'Hair care': [
+      {
+        id: 'hsw_hc_1',
+        title: 'Nourishing Hair Spa',
+        price: 899,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '60 mins',
+        rating: 4.8,
+        reviews: 1900,
+        features: ['Deep conditioning mask', 'Scalp massage included', 'Frizz control finish']
+      }
+    ],
+    'Keratin & botox': [
+      {
+        id: 'hsw_kb_1',
+        title: 'Keratin/Botox Smoothening',
+        price: 2499,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '2-3 hrs',
+        rating: 4.8,
+        reviews: 1300,
+        features: ['Reduces frizz and roughness', 'Smooth finish treatment', 'After-care guidance provided']
+      }
+    ],
+    'Hair colour': [
+      {
+        id: 'hsw_hcl_1',
+        title: 'Global Hair Colour',
+        price: 1799,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '90 mins',
+        rating: 4.7,
+        reviews: 1600,
+        features: ['Ammonia-light options', 'Shade matching consultation', 'Post-colour wash included']
+      }
+    ],
+    'Hair extensions': [
+      {
+        id: 'hsw_he_1',
+        title: 'Hair Extensions Application',
+        price: 2999,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '2 hrs',
+        rating: 4.7,
+        reviews: 900,
+        features: ['Clip-in/tape-in support', 'Natural blending by stylist', 'Maintenance instructions included']
+      }
+    ],
+    'Fashion color': [
+      {
+        id: 'hsw_fc_1',
+        title: 'Fashion Hair Colour Highlights',
+        price: 2199,
+        image: 'https://i.postimg.cc/qMZz6YwN/hair-icon.png',
+        duration: '2 hrs',
+        rating: 4.8,
+        reviews: 1100,
+        features: ['Trending shade selection', 'Highlight or streak options', 'Tone-protection care included']
       }
     ]
   }
@@ -1052,14 +1220,31 @@ const CATEGORY_VIEW_RULES = {
         "Pain relief",
         "Skin care scrubs",
         "Post Natal",
-        "Add-ons",
+        "Spa add-ons",
       ],
     },
     "hair-studio-for-women": {
-      subcategories: ["Korean facial", "Signature facials"],
+      subcategories: [
+        "Packages",
+        "Blow-dry & style",
+        "Cut & trim",
+        "Hair care",
+        "Keratin & botox",
+        "Hair colour",
+        "Hair extensions",
+        "Fashion color",
+      ],
     },
     "makeup-styling-studio": {
-      subcategories: ["Makeup & Styling"],
+      subcategories: [
+        "Packages",
+        "Group deals",
+        "Saree draping",
+        "Wedding combos",
+        "Party makeup",
+        "Hair styling",
+        "Add-ons",
+      ],
     },
   },
   Men: {

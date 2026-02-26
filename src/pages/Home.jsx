@@ -32,13 +32,13 @@ const BEAUTY_SUBCATEGORIES = [
   {
     key: "hair-studio-for-women",
     label: "Hair Studio for Women",
-    subcategory: "Korean facial",
+    subcategory: "Packages",
     icon: "src/assets/images/Hair Studio for Women.png"
   },
   {
     key: "makeup-styling-studio",
     label: "Makeup & Styling Studio",
-    subcategory: "Makeup & Styling",
+    subcategory: "Packages",
     icon: "src/assets/images/Makeup & Styling Studio.png"
   }
 ];
@@ -3385,7 +3385,7 @@ const BEAUTY_SUBCATEGORIES = [
     <div>
       <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Pamper Yourself Today</h3>
       <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.9, lineHeight: '1.6', color: '#1e293b' }}>Premium beauty & wellness services at home. Professional therapists, hygienic practices. Book your personal spa session now.</p>
-      <button onClick={() => goToBeautyType("Makeup & Styling", "makeup-styling-studio")} style={{
+      <button onClick={() => goToBeautyType("Packages", "makeup-styling-studio")} style={{
         background: '#ffffff',
         color: '#fa709a',
         border: 'none',
