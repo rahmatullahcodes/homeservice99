@@ -32,13 +32,13 @@ const BEAUTY_SUBCATEGORIES = [
   {
     key: "hair-studio-for-women",
     label: "Hair Studio for Women",
-    subcategory: "Packages",
+    subcategory: "Korean facial",
     icon: "src/assets/images/Hair Studio for Women.png"
   },
   {
     key: "makeup-styling-studio",
     label: "Makeup & Styling Studio",
-    subcategory: "Packages",
+    subcategory: "Makeup & Styling",
     icon: "src/assets/images/Makeup & Styling Studio.png"
   }
 ];
@@ -47,6 +47,7 @@ const BEAUTY_SUBCATEGORIES = [
 
   // Carousel refs for all horizontal scroll sections
   const popularServicesRef = useRef(null);
+  const promoSliderRef = useRef(null);
   const salonMenRef = useRef(null);
   const massageMenRef = useRef(null);
   const homeRepairRef = useRef(null);
@@ -587,12 +588,18 @@ const BEAUTY_SUBCATEGORIES = [
       <CMSBanners />
 
 {/* HERO SECTION */}
-<section className="container hero fade-in">
+<section className="container hero hero-home fade-in">
   <div>
 
     {/* <span className="hero-badge">⭐ 50,000+ Happy Customers in {location}</span> */}
 
-    <h2 className="hero-title">Trusted Home Services at Your Doorstep</h2>
+    <h4 className="hero-title">Trusted Home Services at Your Doorstep</h4>
+
+    <div className="hero-metrics">
+      <span>50k+ bookings completed</span>
+      <span>4.8 average rating</span>
+      <span>30 min avg. response</span>
+    </div>
 
     {/* <p className="hero-subtitle">
       Book verified professionals for cleaning, repairs, beauty, and maintenance in minutes. Transparent pricing, quality guaranteed, and payment after service completion.
@@ -798,31 +805,28 @@ const BEAUTY_SUBCATEGORIES = [
 
       </div>
     </div>
-<div className="search-helpers">
+{/* <div className="search-helpers">
       <div className="search-pill">Background-verified experts</div>
       <div className="search-pill">Pay securely after service</div>
-    </div>
-
-    <div className="hero-metrics">
-      <span>50k+ bookings completed</span>
-      <span>4.8 average rating</span>
-      <span>30 min avg. response</span>
-    </div>
+    </div> */}
   </div>
 
   <div>
     <div className="hero-mosaic">
       <div className="mosaic-item large">
-        <img src="https://i.postimg.cc/JzC2BKTC/Gemini-Generated-Image-s06x51s06x51s06x.png" alt="Salon" />
+        <img src="src/assets/images/painterheader.JPG" alt="Salon" />
       </div>
       <div className="mosaic-item">
-        <img src="https://i.postimg.cc/X7SGMyH5/body-massage-parlour-jpg.webp" alt="Massage" />
+        <img src="src/assets/images/plumberheader.JPG" alt="Massage" />
       </div>
       {/* <div className="mosaic-item">
         <img src="https://i.postimg.cc/C1rGHLS1/834431670584630.jpg" alt="Repair" />
       </div> */}
       <div className="mosaic-item wide">
         <img src="https://i.postimg.cc/1XzWsj5g/service.webp" alt="AC service" />
+      </div>
+       <div className="mosaic-item wide">
+        <img src="src/assets/images/male-electrician.jpg" alt="AC service" />
       </div>
     </div>
   </div>
@@ -868,7 +872,7 @@ const BEAUTY_SUBCATEGORIES = [
       {/* Service Cards Grid View - Category Wise */}
       <div className="modal-body">
         {modalCategory === 'Beauty' ? (
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px' }}>
     {BEAUTY_SUBCATEGORIES.map((item) => (
       <div
         key={item.label}
@@ -912,7 +916,7 @@ const BEAUTY_SUBCATEGORIES = [
 ) 
  
         : modalCategory === 'Men' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px' }}>
             <div
               onClick={() => {
                 setModalOpen(false);
@@ -992,13 +996,13 @@ const BEAUTY_SUBCATEGORIES = [
             </div>
           </div>
         ) : modalCategory === 'Cleaning' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '14px' }}>
             {/* Cleaning Section */}
             <div>
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Cleaning
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1173,7 +1177,7 @@ const BEAUTY_SUBCATEGORIES = [
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Pest Control
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1344,13 +1348,13 @@ const BEAUTY_SUBCATEGORIES = [
             </div>
           </div>
         ) : modalCategory === 'Electrician' ? (
-          <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
             {/* Repairs Section */}
             <div>
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Repairs
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1514,7 +1518,7 @@ const BEAUTY_SUBCATEGORIES = [
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 Installations & other services
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                 <div
                   onClick={() => {
                     setModalOpen(false);
@@ -1783,7 +1787,7 @@ const BEAUTY_SUBCATEGORIES = [
 
 
         ) : modalCategory === 'Painting' ? (
-          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px' }}>
             <div
               onClick={() => {
                 setModalOpen(false);
@@ -1877,11 +1881,11 @@ const BEAUTY_SUBCATEGORIES = [
           </div>
         ) : modalCategory === 'Appliances' ? (
           Object.entries(SUBCATEGORIES.Appliances).map(([groupName, items]) => (
-            <div key={groupName} style={{ marginBottom: '24px' }}>
+            <div key={groupName} style={{ marginBottom: '14px' }}>
               <h4 style={{ margin: '0 0 16px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 {groupName}
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px' }}>
                 {items.map((item) => (
                   <div
                     key={item.key}
@@ -1962,11 +1966,11 @@ const BEAUTY_SUBCATEGORIES = [
           ))
         ) : (
           Object.keys(SUBCATEGORIES[modalCategory] || {}).map((subcategoryName) => (
-            <div key={subcategoryName} style={{ marginBottom: '24px' }}>
+            <div key={subcategoryName} style={{ marginBottom: '14px' }}>
               <h4 style={{ margin: '0 0 12px 0', fontSize: '14px', fontWeight: '600', color: '#0f172a' }}>
                 {subcategoryName}
               </h4>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(100px, 1fr))', gap: '12px' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(98px, 1fr))', gap: '12px' }}>
                 {SUBCATEGORIES[modalCategory][subcategoryName]?.map((serviceId) => {
                   const service = SERVICES_BY_CATEGORY[modalCategory]?.find(s => s.id === serviceId);
                   return service ? (
@@ -2013,9 +2017,10 @@ const BEAUTY_SUBCATEGORIES = [
 
 {/* PROMOTIONAL SLIDER SECTION */}
 <section className="container slide-up" style={{ marginTop: "16px" }}>
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
+  <div className="services-carousel-wrap">
+    <div style={{ position: 'relative', overflow: 'hidden' }}>
       <div 
+        ref={promoSliderRef}
         className="promo-slider"
         style={{ 
           display: 'flex',
@@ -2095,6 +2100,41 @@ const BEAUTY_SUBCATEGORIES = [
         ))}
       </div>
     </div>
+    <button
+      className="services-carousel-arrow"
+      onClick={() => scrollCarousel(promoSliderRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2103,10 +2143,7 @@ const BEAUTY_SUBCATEGORIES = [
   <h2 className="section-title">Popular Services</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Highly-rated services from verified professionals</p>
 
-  <div style={{
-    position: 'relative',
-    paddingRight: '50px'
-  }}>
+  <div className="services-carousel-wrap">
     <div 
       ref={popularServicesRef}
       style={{
@@ -2233,6 +2270,7 @@ const BEAUTY_SUBCATEGORIES = [
       ))}
     </div>
     <button
+      className="services-carousel-arrow"
       onClick={() => scrollCarousel(popularServicesRef, 'right')}
       style={{
         position: 'absolute',
@@ -2274,11 +2312,24 @@ const BEAUTY_SUBCATEGORIES = [
   <h2 className="section-title">Get Quote</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
 
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+  <div className="services-carousel-wrap">
+    <div
+      ref={getQuoteRef}
+      style={{
+        display: 'flex',
+        gap: '10px',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
     {OFFERS.map((offer) => (
       <div 
         key={offer.id}
         style={{
+          flex: '0 0 clamp(200px, 85vw, 250px)',
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
@@ -2314,6 +2365,42 @@ const BEAUTY_SUBCATEGORIES = [
         </p>
       </div>
     ))}
+    </div>
+    <button
+      className="services-carousel-arrow"
+      onClick={() => scrollCarousel(getQuoteRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2322,11 +2409,24 @@ const BEAUTY_SUBCATEGORIES = [
   <h2 className="section-title">Offers & discounts</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
 
-  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(5, 1fr)', gap: '10px' }}>
+  <div className="services-carousel-wrap">
+    <div
+      ref={offersRef}
+      style={{
+        display: 'flex',
+        gap: '10px',
+        overflowX: 'auto',
+        scrollBehavior: 'smooth',
+        WebkitOverflowScrolling: 'touch',
+        scrollbarWidth: 'none',
+        msOverflowStyle: 'none'
+      }}
+    >
     {OFFERS.map((offer) => (
       <div 
         key={offer.id}
         style={{
+          flex: '0 0 clamp(200px, 85vw, 250px)',
           display: 'flex',
           flexDirection: 'column',
           gap: '8px',
@@ -2362,6 +2462,42 @@ const BEAUTY_SUBCATEGORIES = [
         </p>
       </div>
     ))}
+    </div>
+    <button
+      className="services-carousel-arrow"
+      onClick={() => scrollCarousel(offersRef, 'right')}
+      style={{
+        position: 'absolute',
+        right: '0',
+        top: '50%',
+        transform: 'translateY(-50%)',
+        background: 'rgba(255, 255, 255, 0.95)',
+        width: '44px',
+        height: '44px',
+        borderRadius: '50%',
+        border: 'none',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
+        cursor: 'pointer',
+        fontSize: '24px',
+        color: '#0f172a',
+        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+        zIndex: 10,
+        transition: 'all 0.2s ease',
+        fontWeight: 'bold'
+      }}
+      onMouseEnter={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+      }}
+      onMouseLeave={(e) => {
+        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+      }}
+    >
+      →
+    </button>
   </div>
 </section>
 
@@ -2370,7 +2506,7 @@ const BEAUTY_SUBCATEGORIES = [
   <h2 className="section-title">Salon for men</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grooming essentials</p>
 
-  <div style={{ position: 'relative', paddingRight: '50px' }}>
+  <div className="services-carousel-wrap">
     <div 
       ref={salonMenRef}
       className="salon-men-scroll" 
@@ -2452,6 +2588,7 @@ const BEAUTY_SUBCATEGORIES = [
       ))}
     </div>
     <button
+      className="services-carousel-arrow"
       onClick={() => scrollCarousel(salonMenRef, 'right')}
       style={{
         position: 'absolute',
@@ -2492,7 +2629,7 @@ const BEAUTY_SUBCATEGORIES = [
 <section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Massage for Men</h2>
 
-  <div style={{ position: 'relative', paddingRight: '50px' }}>
+  <div className="services-carousel-wrap">
     <div 
       ref={massageMenRef}
       className="massage-men-scroll" 
@@ -2591,6 +2728,7 @@ const BEAUTY_SUBCATEGORIES = [
       ))}
     </div>
     <button
+      className="services-carousel-arrow"
       onClick={() => scrollCarousel(massageMenRef, 'right')}
       style={{
         position: 'absolute',
@@ -2628,48 +2766,30 @@ const BEAUTY_SUBCATEGORIES = [
 </section>
 
 {/* ADS BANNER - After Massage for Men */}
-<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
+<section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
   <div style={{
-    background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+    backgroundImage: 'url(src/assets/images/banner1.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     borderRadius: '16px',
-    padding: 'clamp(24px, 5vw, 40px)',
-    color: '#ffffff',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 90vw, 400px), 1fr))',
-    gap: '24px',
+    width: '100%',
+    maxWidth: '1200px',
+    height: '400px',
+    margin: '0 auto',
+    display: 'flex',
     alignItems: 'center',
-    boxShadow: '0 12px 32px rgba(102, 126, 234, 0.2)'
+    justifyContent: 'center',
+    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
+    position: 'relative',
+    overflow: 'hidden'
   }}>
-    <div>
-      <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Premium Wellness Package</h3>
-      <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.95, lineHeight: '1.6' }}>Book 4 sessions and get 15% off. Expert therapists, verified & insured. Your wellness journey starts here.</p>
-      <button onClick={() => goToBeautyType("Super saver packs", "spa-for-women")} style={{
-        background: '#fbbf24',
-        color: '#667eea',
-        border: 'none',
-        padding: 'clamp(10px, 2vw, 14px) clamp(20px, 3vw, 28px)',
-        borderRadius: '8px',
-        fontSize: 'clamp(12px, 2.5vw, 14px)',
-        fontWeight: '700',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f59e0b';
-        e.target.style.transform = 'translateY(-2px)';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = '#fbbf24';
-        e.target.style.transform = 'translateY(0)';
-      }}>Book Now →</button>
-    </div>
     <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontSize: 'clamp(60px, 10vw, 80px)',
-      opacity: 0.9
-    }}>💆</div>
+      position: 'absolute',
+      inset: 0,
+      background: 'rgba(0, 0, 0, 0.12)',
+      borderRadius: '16px'
+    }}></div>
   </div>
 </section>
 
@@ -2677,7 +2797,7 @@ const BEAUTY_SUBCATEGORIES = [
 <section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Home repair & installation</h2>
 
-  <div style={{ position: 'relative', paddingRight: '50px' }}>
+  <div className="services-carousel-wrap">
     <div 
       ref={homeRepairRef}
       className="repair-scroll" 
@@ -2759,6 +2879,7 @@ const BEAUTY_SUBCATEGORIES = [
       ))}
     </div>
     <button
+      className="services-carousel-arrow"
       onClick={() => scrollCarousel(homeRepairRef, 'right')}
       style={{
         position: 'absolute',
@@ -2799,7 +2920,7 @@ const BEAUTY_SUBCATEGORIES = [
 <section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Appliance Service & Repair</h2>
 
-  <div style={{ position: 'relative', paddingRight: '50px' }}>
+  <div className="services-carousel-wrap">
     <div 
       ref={applianceRef}
       className="appliance-scroll" 
@@ -2881,6 +3002,7 @@ const BEAUTY_SUBCATEGORIES = [
       ))}
     </div>
     <button
+      className="services-carousel-arrow"
       onClick={() => scrollCarousel(applianceRef, 'right')}
       style={{
         position: 'absolute',
@@ -2924,9 +3046,10 @@ const BEAUTY_SUBCATEGORIES = [
   <h2 className="section-title">Cleaning Essentials</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Monthly cleaning essential services</p>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+  <div className="services-carousel-wrap">
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
+        ref={cleaningEssentialsRef}
         className="cleaning-scroll" 
         role="list"
         style={{ 
@@ -3007,7 +3130,8 @@ const BEAUTY_SUBCATEGORIES = [
       </div>
     </div>
 <button
-      onClick={() => scrollCarousel(applianceRef, 'right')}
+      className="services-carousel-arrow"
+      onClick={() => scrollCarousel(cleaningEssentialsRef, 'right')}
       style={{
         position: 'absolute',
         right: '0',
@@ -3043,49 +3167,31 @@ const BEAUTY_SUBCATEGORIES = [
   </div>
 </section>
 
-{/* ADS BANNER - After Appliance Service & Repair */}
-<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
+{/* ADS BANNER - After Massage for Men */}
+<section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
   <div style={{
-    background: 'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+    backgroundImage: 'url(src/assets/images/banner2.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     borderRadius: '16px',
-    padding: 'clamp(24px, 5vw, 40px)',
-    color: '#ffffff',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 90vw, 400px), 1fr))',
-    gap: '24px',
+    width: '100%',
+    maxWidth: '1200px',
+    height: '400px',
+    margin: '0 auto',
+    display: 'flex',
     alignItems: 'center',
-    boxShadow: '0 12px 32px rgba(245, 87, 108, 0.2)'
+    justifyContent: 'center',
+    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
+    position: 'relative',
+    overflow: 'hidden'
   }}>
-    <div>
-      <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Expert Appliance Care</h3>
-      <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.95, lineHeight: '1.6' }}>Professional repair & maintenance. Same-day service available. Extend your appliance life with preventive care.</p>
-      <button onClick={() => goToCategory("Appliances")} style={{
-        background: '#fbbf24',
-        color: '#f5576c',
-        border: 'none',
-        padding: 'clamp(10px, 2vw, 14px) clamp(20px, 3vw, 28px)',
-        borderRadius: '8px',
-        fontSize: 'clamp(12px, 2.5vw, 14px)',
-        fontWeight: '700',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = '#f59e0b';
-        e.target.style.transform = 'translateY(-2px)';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = '#fbbf24';
-        e.target.style.transform = 'translateY(0)';
-      }}>Book Service →</button>
-    </div>
     <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontSize: 'clamp(60px, 10vw, 80px)',
-      opacity: 0.9
-    }}>🔧</div>
+      position: 'absolute',
+      inset: 0,
+      background: 'rgba(0, 0, 0, 0.12)',
+      borderRadius: '16px'
+    }}></div>
   </div>
 </section>
 
@@ -3093,9 +3199,10 @@ const BEAUTY_SUBCATEGORIES = [
 <section className="container slide-up" style={{ marginTop: "12px" }}>
   <h2 className="section-title">Spa for Women</h2>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+  <div className="services-carousel-wrap">
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
+        ref={spaWomenRef}
         className="spa-women-scroll" 
         role="list"
         style={{ 
@@ -3193,7 +3300,8 @@ const BEAUTY_SUBCATEGORIES = [
       </div>
     </div>
     <button
-      onClick={() => scrollCarousel(applianceRef, 'right')}
+      className="services-carousel-arrow"
+      onClick={() => scrollCarousel(spaWomenRef, 'right')}
       style={{
         position: 'absolute',
         right: '0',
@@ -3234,9 +3342,10 @@ const BEAUTY_SUBCATEGORIES = [
   <h2 className="section-title">Salon for Women</h2>
   <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Pamper yourself at home</p>
 
-  <div style={{ position: 'relative', display: 'flex', alignItems: 'center', gap: '12px' }}>
+  <div className="services-carousel-wrap">
     <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
       <div 
+        ref={salonWomenRef}
         className="salon-women-scroll" 
         role="list"
         style={{ 
@@ -3333,7 +3442,8 @@ const BEAUTY_SUBCATEGORIES = [
       </div>
     </div>
     <button
-      onClick={() => scrollCarousel(applianceRef, 'right')}
+      className="services-carousel-arrow"
+      onClick={() => scrollCarousel(salonWomenRef, 'right')}
       style={{
         position: 'absolute',
         right: '0',
@@ -3369,206 +3479,38 @@ const BEAUTY_SUBCATEGORIES = [
   </div>
 </section>
 
-{/* ADS BANNER - After Salon for Women */}
-<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
+{/* ADS BANNER - After Massage for Men */}
+<section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
   <div style={{
-    background: 'linear-gradient(135deg, #fa709a 0%, #fee140 100%)',
+    backgroundImage: 'url(src/assets/images/banner3.png)',
+    backgroundSize: 'cover',
+    backgroundPosition: 'center',
+    backgroundRepeat: 'no-repeat',
     borderRadius: '16px',
-    padding: 'clamp(24px, 5vw, 40px)',
-    color: '#1e293b',
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(clamp(250px, 90vw, 400px), 1fr))',
-    gap: '24px',
+    width: '100%',
+    maxWidth: '1200px',
+    height: '400px',
+    margin: '0 auto',
+    display: 'flex',
     alignItems: 'center',
-    boxShadow: '0 12px 32px rgba(250, 112, 154, 0.2)'
+    justifyContent: 'center',
+    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
+    position: 'relative',
+    overflow: 'hidden'
   }}>
-    <div>
-      <h3 style={{ margin: '0 0 8px 0', fontSize: 'clamp(18px, 4vw, 24px)', fontWeight: '700' }}>Pamper Yourself Today</h3>
-      <p style={{ margin: '0 0 16px 0', fontSize: 'clamp(13px, 3vw, 15px)', opacity: 0.9, lineHeight: '1.6', color: '#1e293b' }}>Premium beauty & wellness services at home. Professional therapists, hygienic practices. Book your personal spa session now.</p>
-      <button onClick={() => goToBeautyType("Packages", "makeup-styling-studio")} style={{
-        background: '#ffffff',
-        color: '#fa709a',
-        border: 'none',
-        padding: 'clamp(10px, 2vw, 14px) clamp(20px, 3vw, 28px)',
-        borderRadius: '8px',
-        fontSize: 'clamp(12px, 2.5vw, 14px)',
-        fontWeight: '700',
-        cursor: 'pointer',
-        transition: 'all 0.3s ease'
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.transform = 'translateY(-2px)';
-        e.target.style.boxShadow = '0 6px 12px rgba(250, 112, 154, 0.3)';
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.transform = 'translateY(0)';
-        e.target.style.boxShadow = 'none';
-      }}>Book Appointment →</button>
-    </div>
     <div style={{
-      display: 'flex',
-      justifyContent: 'center',
-      alignItems: 'center',
-      fontSize: 'clamp(60px, 10vw, 80px)',
-      opacity: 0.9
-    }}>💅</div>
+      position: 'absolute',
+      inset: 0,
+      background: 'rgba(0, 0, 0, 0.12)',
+      borderRadius: '16px'
+    }}></div>
   </div>
-</section>
-
-{/* HOW IT WORKS */}
-<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "12px" }}>
-  <div style={{ marginBottom: "48px", textAlign: "center", padding: "0 12px" }}>
-    <h2 className="section-title" style={{ fontSize: "clamp(24px, 5vw, 32px)", marginBottom: "12px", fontWeight: "700" }}>How HomeService99 Works</h2>
-    <p style={{ fontSize: "clamp(13px, 4vw, 16px)", color: "#6b7280", maxWidth: "600px", margin: "0 auto", lineHeight: "1.6" }}>
-      Simple, transparent, and secure. Book your service in just 6 easy steps.
-    </p>
-  </div>
-  
-  <div style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(clamp(280px, 90vw, 360px), 1fr))",
-    gap: "clamp(20px, 4vw, 32px)",
-    maxWidth: "1400px",
-    margin: "0 auto"
-  }}>
-    {[
-      { 
-        step: "1", 
-        icon: "🔍", 
-        title: "Browse Services", 
-        desc: "Explore thousands of verified services available in your area with detailed descriptions and ratings" 
-      },
-      { 
-        step: "2", 
-        icon: "📅", 
-        title: "Select Time", 
-        desc: "Choose your preferred date and time for the service. Get instant availability updates." 
-      },
-      { 
-        step: "3", 
-        icon: "✓", 
-        title: "Confirm Booking", 
-        desc: "Complete all details and confirm your appointment. Receive instant confirmation via SMS/Email." 
-      },
-      { 
-        step: "4", 
-        icon: "👨‍🔧", 
-        title: "Professional Arrives", 
-        desc: "Our verified expert arrives at your doorstep on scheduled time with all necessary tools." 
-      },
-      { 
-        step: "5", 
-        icon: "⭐", 
-        title: "Service Completed", 
-        desc: "Service is delivered with 100% quality assurance and attention to detail." 
-      },
-      { 
-        step: "6", 
-        icon: "💰", 
-        title: "Pay & Rate", 
-        desc: "Safe payment after service is completed. Share your feedback and help us improve." 
-      }
-    ].map((item, idx) => (
-      <div 
-        key={idx} 
-        style={{
-          position: "relative",
-          padding: "clamp(24px, 5vw, 36px) clamp(18px, 4vw, 28px)",
-          borderRadius: "16px",
-          background: "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)",
-          border: "2px solid #e2e8f0",
-          transition: "all 0.3s ease",
-          cursor: "pointer",
-          minHeight: "fit-content",
-          display: "flex",
-          flexDirection: "column"
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = "translateY(-8px)";
-          e.currentTarget.style.boxShadow = "0 12px 32px rgba(15, 23, 42, 0.12)";
-          e.currentTarget.style.borderColor = "#2563eb";
-          e.currentTarget.style.background = "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)";
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = "translateY(0)";
-          e.currentTarget.style.boxShadow = "0 4px 12px rgba(0, 0, 0, 0.08)";
-          e.currentTarget.style.borderColor = "#e2e8f0";
-          e.currentTarget.style.background = "linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%)";
-        }}
-      >
-        {/* Step Circle */}
-        <div
-          style={{
-            position: "absolute",
-            top: "clamp(12px, 3vw, 20px)",
-            right: "clamp(12px, 3vw, 20px)",
-            width: "clamp(40px, 8vw, 48px)",
-            height: "clamp(40px, 8vw, 48px)",
-            borderRadius: "50%",
-            background: "linear-gradient(135deg, #2563eb 0%, #1e40af 100%)",
-            color: "white",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            fontWeight: "700",
-            fontSize: "clamp(16px, 4vw, 20px)",
-            boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)",
-            flexShrink: 0
-          }}
-        >
-          {item.step}
-        </div>
-
-        {/* Icon */}
-        <div style={{
-          fontSize: "clamp(40px, 8vw, 56px)",
-          marginBottom: "clamp(12px, 3vw, 16px)",
-          marginTop: "clamp(8px, 2vw, 12px)",
-          display: "inline-block",
-          animation: "float 3s ease-in-out infinite",
-          lineHeight: "1"
-        }}>
-          {item.icon}
-        </div>
-
-        {/* Title */}
-        <h3 style={{
-          margin: "0 0 clamp(8px, 2vw, 12px) 0",
-          fontSize: "clamp(16px, 4vw, 20px)",
-          fontWeight: "700",
-          color: "#0f172a",
-          lineHeight: "1.4"
-        }}>
-          {item.title}
-        </h3>
-
-        {/* Description */}
-        <p style={{
-          margin: "0",
-          fontSize: "clamp(12px, 3vw, 14px)",
-          color: "#64748b",
-          lineHeight: "1.6",
-          fontWeight: "500"
-        }}>
-          {item.desc}
-        </p>
-      </div>
-    ))}
-  </div>
-
-  {/* Animated floating styles */}
-  <style>{`
-    @keyframes float {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-12px); }
-    }
-  `}</style>
 </section>
 
 
 
 {/* FAQ SECTION */}
-<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "20px" }}>
+{/* <section className="container slide-up" style={{ marginTop: "12px", marginBottom: "20px" }}>
   <h2 className="section-title">Frequently Asked Questions</h2>
   <div className="faq-container">
     {[
@@ -3607,90 +3549,13 @@ const BEAUTY_SUBCATEGORIES = [
       </div>
     ))}
   </div>
-</section>
+</section> */}
 
-{/* CTA SECTION - VENDOR SIGNUP */}
-<section className="container slide-up" style={{ marginBottom: "12px", marginTop: "12px" }}>
-  <div style={{
-    background: "linear-gradient(135deg, #ffffff 0%, #f8fafc 100%)",
-    borderRadius: "16px",
-    padding: "40px 32px",
-    textAlign: "center",
-    border: "2px solid #2563eb",
-    maxWidth: "700px",
-    margin: "0 auto",
-    transition: "all 0.3s ease"
-  }}
-  onMouseEnter={(e) => {
-    e.currentTarget.style.boxShadow = "0 12px 32px rgba(37, 99, 235, 0.2)";
-  }}
-  onMouseLeave={(e) => {
-    e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.06)";
-  }}>
-    {/* Icon */}
-    <div style={{
-      fontSize: "40px",
-      marginBottom: "16px",
-      display: "inline-block"
-    }}>
-      🧩
-    </div>
 
-    {/* Heading */}
-    <h2 style={{
-      margin: "0 0 12px 0",
-      fontSize: "28px",
-      fontWeight: "700",
-      color: "#0f172a",
-      lineHeight: "1.3"
-    }}>
-      Are you a skilled professional?
-    </h2>
 
-    {/* Description */}
-    <p style={{
-      margin: "0 0 24px 0",
-      fontSize: "14px",
-      color: "#64748b",
-      lineHeight: "1.5",
-      maxWidth: "550px",
-      marginLeft: "auto",
-      marginRight: "auto",
-      fontWeight: "500"
-    }}>
-      Elevate your business by joining HomeService99 as a Service Expert. Highlight your expertise, engage with homeowners, and expand your reach. Become a member now!
-    </p>
-
-    {/* Button */}
-    <button 
-      onClick={() => navigate('/vendor-signup')}
-      style={{
-        padding: "12px 36px",
-        fontSize: "15px",
-        fontWeight: "600",
-        borderRadius: "8px",
-        border: "none",
-        background: "#2563eb",
-        color: "white",
-        cursor: "pointer",
-        transition: "all 0.3s ease",
-        boxShadow: "0 4px 12px rgba(37, 99, 235, 0.3)"
-      }}
-      onMouseEnter={(e) => {
-        e.target.style.background = "#1e40af";
-        e.target.style.transform = "translateY(-2px)";
-      }}
-      onMouseLeave={(e) => {
-        e.target.style.background = "#2563eb";
-        e.target.style.transform = "translateY(0)";
-      }}
-    >
-      Join Our Pro Network
-    </button>
-  </div>
-</section>
 
     </div>
   );
 }
+
 

@@ -3,6 +3,7 @@ import { useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
 import { buildServicesUrl, parseServicesParams, isValidCategory } from "../utils/serviceRouting";
+import "../styles/services-layout.css";
 
 
 
@@ -111,6 +112,41 @@ const SERVICES_DATA = {
     icon: '❄️',
     label: 'AC & Appliances',
     subcategories: {
+      'Super saver packages': [
+        {
+          id: 'ap-wm-pack-1',
+          title: 'Washing Machine Super Saver Package',
+          price: 1199,
+          image: 'https://img.icons8.com/fluency/96/discount.png',
+          duration: '2 visits',
+          rating: 4.8,
+          reviews: 1320,
+          badge: '25% OFF',
+          features: [
+            '2 scheduled maintenance visits',
+            'Deep drum + filter cleaning',
+            'Priority technician support',
+            'Cost-effective annual care'
+          ]
+        }
+      ],
+      'Service': [
+        {
+          id: 'ap-wm-service-1',
+          title: 'Washing Machine Servicing',
+          price: 399,
+          image: 'https://img.icons8.com/fluency/96/washing-machine.png',
+          duration: '45-60 mins',
+          rating: 4.7,
+          reviews: 2410,
+          features: [
+            'General checkup and cleaning',
+            'Inlet and outlet inspection',
+            'Drum balancing and cycle test',
+            'Performance optimization'
+          ]
+        }
+      ],
       'Services': [
         { id: 'ap1', title: 'AC Service', price: 699, image: 'https://img.icons8.com/fluency/96/air-conditioner.png', duration: '1-1.5 hrs', rating: 4.7, reviews: 3420, features: ['Filter cleaning and replacement', 'Coolant level check', 'Compressor inspection', 'Drain pipe cleaning'] },
         { id: 'ap2', title: 'AC Installation', price: 999, image: 'https://img.icons8.com/fluency/96/air-conditioner.png', duration: '2-3 hrs', rating: 4.8, reviews: 2840, features: ['Professional wall mounting', 'Copper piping installation', 'Electrical connection setup', 'Gas charging included'] },
@@ -1343,7 +1379,7 @@ const CATEGORY_VIEW_RULES = {
       serviceTitleKeywords: ["ac "],
     },
     "washing machine": {
-      subcategories: ["Repair & Gas Refill", "Install/uninst"],
+      subcategories: ["Super saver packages", "Service", "Repair & Gas Refill", "Install/uninst"],
       serviceTitleKeywords: ["washing machine"],
     },
     television: {
@@ -2003,6 +2039,10 @@ export default function Services() {
       style={{
         minHeight: "100vh",
         background: "linear-gradient(135deg, #f8fafc 0%, #f0f4f8 100%)",
+        display: "grid",
+        gridTemplateColumns: isMobileLayout ? "1fr" : "280px 1fr 280px",
+        gap: 0,
+        width: "100%",
       }}
     >
       {/* LEFT SIDEBAR - FIXED */}
@@ -2016,11 +2056,12 @@ export default function Services() {
           height: "100vh",
           overflowY: "auto",
           overflowX: "hidden",
-          padding: "clamp(10px, 1.5vw, 16px)",
+          padding: "20px 16px",
           display: "flex",
           flexDirection: "column",
-          gap: "clamp(10px, 1.2vw, 14px)",
-          borderRadius: "clamp(6px, 0.8vw, 10px)",
+          gap: "20px",
+          position: "relative",
+          zIndex: 40,
         }}
       >
         <div className="services-drawer-header">
@@ -2047,7 +2088,7 @@ export default function Services() {
         </div>
 
         {/* Service Type Cards - BEAUTY STYLE GRID */}
-<div style={{ flex: 1, overflow: "hidden" }}>
+        <div style={{ flex: 1, overflow: "hidden" }}>
   <h3
     style={{
       fontSize: "12px",
@@ -2144,7 +2185,7 @@ export default function Services() {
                   fontWeight: "700"
                 }}
               >
-                20% OFF
+                {servicesArr[0]?.badge || "20% OFF"}
               </div>
             )}
           </div>
@@ -2507,6 +2548,27 @@ export default function Services() {
         )}
       </main>
 
+      {/* BACKDROP */}
+      {(isLeftDrawerOpen || isRightDrawerOpen) && (
+        <button
+          type="button"
+          className="services-drawer-backdrop"
+          aria-label="Close side panel"
+          onClick={closeDrawers}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            background: "rgba(0, 0, 0, 0.5)",
+            zIndex: 30,
+            border: "none",
+            cursor: "pointer",
+          }}
+        />
+      )}
+
       {/* RIGHT SIDEBAR - FIXED */}
       <aside
         className={`services-right-panel services-right-drawer${isRightDrawerOpen ? " is-open" : ""}`}
@@ -2518,11 +2580,12 @@ export default function Services() {
           height: "100vh",
           overflowY: "auto",
           overflowX: "hidden",
-          padding: "clamp(10px, 1.5vw, 16px)",
+          padding: "16px",
           display: "flex",
           flexDirection: "column",
-          gap: "clamp(10px, 1.2vw, 12px)",
-          borderRadius: "clamp(6px, 0.8vw, 10px)",
+          gap: "12px",
+          position: "relative",
+          zIndex: 40,
         }}
       >
         <div className="services-drawer-header">
@@ -2601,120 +2664,10 @@ export default function Services() {
             </div>
           ))}
         </div>
-
-        {/* FILTERS SECTION */}
-        <div style={{
-          background: '#f9fafb',
-          borderRadius: '12px',
-          padding: '14px',
-          flexShrink: 0,
-          border: '1px solid #e5e7eb'
-        }}>
-          <h4 style={{ fontSize: '12px', fontWeight: '700', color: '#0f172a', margin: '0 0 12px 0', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-            🔍 Filters
-          </h4>
-
-          {/* Sort Dropdown */}
-          <div style={{ marginBottom: '14px' }}>
-            <label style={{ fontSize: '11px', fontWeight: '600', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-              Sort By
-            </label>
-            <select value={sortBy} onChange={(e) => handleSortChange(e.target.value)} style={{
-              width: '100%',
-              padding: '8px',
-              border: '1px solid #e5e7eb',
-              borderRadius: '6px',
-              fontSize: '12px',
-              fontWeight: '500',
-              cursor: 'pointer',
-              backgroundColor: '#fff',
-              color: '#0f172a'
-            }}>
-              <option value="relevance">Relevance</option>
-              <option value="price-low-to-high">Price: Low to High</option>
-              <option value="price-high-to-low">Price: High to Low</option>
-              <option value="rating">Highest Rating</option>
-            </select>
-          </div>
-
-          {/* Price Range Filter */}
-          <div style={{ marginBottom: '14px' }}>
-            <label style={{ fontSize: '11px', fontWeight: '600', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-              Price: ₹{minPrice} - ₹{maxPrice}
-            </label>
-            <input type="range" min="0" max="10000" step="100" value={minPrice} onChange={(e) => handleMinPriceChange(parseInt(e.target.value, 10))} style={{
-              width: '100%',
-              height: '4px',
-              borderRadius: '2px',
-              background: '#e5e7eb',
-              outline: 'none',
-              cursor: 'pointer'
-            }} />
-            <input type="range" min="0" max="10000" step="100" value={maxPrice} onChange={(e) => handleMaxPriceChange(parseInt(e.target.value, 10))} style={{
-              width: '100%',
-              height: '4px',
-              borderRadius: '2px',
-              background: '#2563eb',
-              outline: 'none',
-              cursor: 'pointer',
-              marginTop: '4px'
-            }} />
-          </div>
-
-          {/* Rating Filter */}
-          <div style={{ marginBottom: '14px' }}>
-            <label style={{ fontSize: '11px', fontWeight: '600', color: '#6b7280', display: 'block', marginBottom: '6px' }}>
-              Min Rating: {minRating.toFixed(1)} ⭐
-            </label>
-            <div style={{ display: 'flex', gap: '6px' }}>
-              {[0, 3.5, 4, 4.5, 5].map(rating => (
-                <button key={rating} onClick={() => handleMinRatingChange(rating)} style={{
-                  flex: 1,
-                  padding: '6px 4px',
-                  background: minRating === rating ? '#2563eb' : '#e5e7eb',
-                  color: minRating === rating ? '#fff' : '#0f172a',
-                  border: 'none',
-                  borderRadius: '4px',
-                  fontSize: '10px',
-                  fontWeight: '600',
-                  cursor: 'pointer',
-                  transition: 'all 0.2s ease'
-                }}>
-                  {rating === 0 ? 'All' : rating}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Reset Filters */}
-          <button onClick={handleResetFilters} style={{
-            width: '100%',
-            padding: '8px',
-            background: '#f3f4f6',
-            border: '1px solid #d1d5db',
-            borderRadius: '6px',
-            fontSize: '11px',
-            fontWeight: '600',
-            color: '#0f172a',
-            cursor: 'pointer',
-            transition: 'all 0.2s ease'
-          }} onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#e5e7eb';
-          }} onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f3f4f6';
-          }}>
-            Reset Filters
-          </button>
-        </div>
       </aside>
 
-      {(isLeftDrawerOpen || isRightDrawerOpen) && (
-        <button
-          type="button"
-          className="services-drawer-backdrop"
-          aria-label="Close side panel"
-          onClick={closeDrawers}
-        />
+      {isLeftDrawerOpen && !isMobileLayout && (
+        <></>  
       )}
     </div>
   );
