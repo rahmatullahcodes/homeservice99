@@ -5,6 +5,9 @@ import { useToast } from "../context/ToastContext";
 import { buildServicesUrl } from "../utils/serviceRouting";
 import CMSBanners from "../components/CMSBanners";
 
+const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.meta.url).href;
+
+
 
 
 export default function Home() {
@@ -21,25 +24,25 @@ const BEAUTY_SUBCATEGORIES = [
     key: "salon-for-women",
     label: "Salon for Women",
     subcategory: "Waxing",
-    icon: "src/assets/images/salonicon.png"
+    icon: assetImage("salonicon.png")
   },
   {
     key: "spa-for-women",
     label: "Spa for Women",
     subcategory: "Super saver packs",
-    icon: "src/assets/images/Spa for Womenicon.png"
+    icon: assetImage("Spa for Womenicon.png")
   },
   {
     key: "hair-studio-for-women",
     label: "Hair Studio for Women",
     subcategory: "Korean facial",
-    icon: "src/assets/images/Hair Studio for Women.png"
+    icon: assetImage("Hair Studio for Women.png")
   },
   {
     key: "makeup-styling-studio",
     label: "Makeup & Styling Studio",
     subcategory: "Makeup & Styling",
-    icon: "src/assets/images/Makeup & Styling Studio.png"
+    icon: assetImage("Makeup & Styling Studio.png")
   }
 ];
 
@@ -128,12 +131,12 @@ const BEAUTY_SUBCATEGORIES = [
   // Add function to get featured services with ratings
   const getFeaturedServices = () => {
     return [
-      { id: 'cl1', title: 'Full Home Deep Cleaning', price: 299, image: 'src/assets/images/Full Home Deep Cleaning.png', rating: 4.8, reviews: 2340, desc: 'Professional deep cleaning with eco-friendly products' },
-      { id: 'el2', title: 'Fan Installation / Repair ', category: 'Electrician', price: 299, image: 'src/assets/images/Fan Installation  Repair.png', rating: 4.7, reviews: 1856, desc: 'Expert fan installation and repair services' },
-      { id: 'pl1', title: 'Tap & Mixer Repair', category: 'Plumber', price: 199, image: 'src/assets/images/Tap & Mixer Repair.png', rating: 4.9, reviews: 3120, desc: 'Professional tap and mixer repair solutions' },
-      { id: 'el5', title: 'Inverter & UPS Installation', category: 'Electrician', price: 799, image: 'src/assets/images/Inverter & UPS Installation.png', rating: 4.6, reviews: 1540, desc: 'Expert inverter and UPS installation service' },
-      { id: 'ap1', title: 'AC Service', category: 'Appliances', price: 699, image: 'src/assets/images/AC Service.png', rating: 4.8, reviews: 4230, desc: 'Professional AC service and maintenance' },
-      { id: 'el3', title: 'Light / Chandelier Installation', category: 'Electrician', price: 399, image: 'src/assets/images/Light  Chandelier Installation.png', rating: 4.7, reviews: 1204, desc: 'Professional lighting installation and setup' }
+      { id: 'cl1', title: 'Full Home Deep Cleaning', price: 299, image: assetImage("Full Home Deep Cleaning.png"), rating: 4.8, reviews: 2340, desc: 'Professional deep cleaning with eco-friendly products' },
+      { id: 'el2', title: 'Fan Installation / Repair ', category: 'Electrician', price: 299, image: assetImage("Fan Installation  Repair.png"), rating: 4.7, reviews: 1856, desc: 'Expert fan installation and repair services' },
+      { id: 'pl1', title: 'Tap & Mixer Repair', category: 'Plumber', price: 199, image: assetImage("Tap & Mixer Repair.png"), rating: 4.9, reviews: 3120, desc: 'Professional tap and mixer repair solutions' },
+      { id: 'el5', title: 'Inverter & UPS Installation', category: 'Electrician', price: 799, image: assetImage("Inverter & UPS Installation.png"), rating: 4.6, reviews: 1540, desc: 'Expert inverter and UPS installation service' },
+      { id: 'ap1', title: 'AC Service', category: 'Appliances', price: 699, image: assetImage("AC Service.png"), rating: 4.8, reviews: 4230, desc: 'Professional AC service and maintenance' },
+      { id: 'el3', title: 'Light / Chandelier Installation', category: 'Electrician', price: 399, image: assetImage("Light  Chandelier Installation.png"), rating: 4.7, reviews: 1204, desc: 'Professional lighting installation and setup' }
     ];
   };
 
@@ -278,7 +281,7 @@ const BEAUTY_SUBCATEGORIES = [
           key: 'Air Purifier',
           label: 'Air Purifier',
           instant: false,
-          icon: 'src/assets/images/Air Purifier.png'
+          icon: assetImage("Air Purifier.png")
         },
         {
           key: 'Air Cooler',
@@ -290,7 +293,7 @@ const BEAUTY_SUBCATEGORIES = [
           key: 'Geyser',
           label: 'Geyser',
           instant: true,
-          icon: 'src/assets/images/Geysericon.png'
+          icon: assetImage("Geysericon.png")
         }
       ],
       'Kitchen appliances': [
@@ -298,7 +301,7 @@ const BEAUTY_SUBCATEGORIES = [
           key: 'Water Purifier',
           label: 'Water Purifier Repair',
           instant: false,
-          icon: 'src/assets/images/Water Purifier Repair.png'
+          icon: assetImage("Water Purifier Repair.png")
         },
         {
           key: 'Refrigerator',
@@ -316,13 +319,13 @@ const BEAUTY_SUBCATEGORIES = [
           key: 'Chimney',
           label: 'Chimney',
           instant: false,
-          icon: 'src/assets/images/Chimney.png'
+          icon: assetImage("Chimney.png")
         },
         {
           key: 'Stove',
           label: 'Stove / Hob',
           instant: false,
-          icon: 'src/assets/images/StoveHob.png'
+          icon: assetImage("StoveHob.png")
         }
       ]
     },
@@ -367,10 +370,10 @@ const BEAUTY_SUBCATEGORIES = [
   // offers data (used in Offers carousel)
   const OFFERS = [
     { id: 1, title: 'Winter Home Care Special', subtitle: 'Get 20% off on all services', discount: '20%', cta: 'Get Quote', img: 'https://i.postimg.cc/xdGnf4T5/1.jpg' },
-    { id: 2, title: 'Deep Sofa & Upholstery Cleaning', subtitle: 'Just ₹569 - Deep clean & sanitize', discount: 'Save ₹400', cta: 'Get Quote', img: 'https://i.postimg.cc/XqxCdmz4/Chat-GPT-Image-Dec-24-2025-03-28-53-PM.png' },
-    { id: 3, title: 'Salon Services for Women', subtitle: 'Hair, makeup, spa - all under one app', discount: 'Starting ₹199', cta: 'Get Quote', img: 'https://i.postimg.cc/CKRk9bhM/s1.webp' },
-    { id: 4, title: 'AC Maintenance & Service', subtitle: 'Avoid summer breakdowns - preventive care', discount: 'Full inspection ₹599', cta: 'Get Quote', img: 'https://i.postimg.cc/BnkfJCCH/ac-maintenance.jpg' },
-    { id: 5, title: 'Complete Kitchen Deep Clean', subtitle: 'Hygienic, sparkling, and organized', discount: 'Starting ₹899', cta: 'Get Quote', img: 'https://i.postimg.cc/C1tvWFTQ/professional-kitchen-cleaning-hometriangle-blog.jpg' },
+    { id: 2, title: 'Deep Sofa & Upholstery Cleaning', subtitle: 'Just Rs 569 - Deep clean & sanitize', discount: 'Save Rs 400', cta: 'Get Quote', img: 'https://i.postimg.cc/XqxCdmz4/Chat-GPT-Image-Dec-24-2025-03-28-53-PM.png' },
+    { id: 3, title: 'Salon Services for Women', subtitle: 'Hair, makeup, spa - all under one app', discount: 'Starting Rs 199', cta: 'Get Quote', img: 'https://i.postimg.cc/CKRk9bhM/s1.webp' },
+    { id: 4, title: 'AC Maintenance & Service', subtitle: 'Avoid summer breakdowns - preventive care', discount: 'Full inspection Rs 599', cta: 'Get Quote', img: 'https://i.postimg.cc/BnkfJCCH/ac-maintenance.jpg' },
+    { id: 5, title: 'Complete Kitchen Deep Clean', subtitle: 'Hygienic, sparkling, and organized', discount: 'Starting Rs 899', cta: 'Get Quote', img: 'https://i.postimg.cc/C1tvWFTQ/professional-kitchen-cleaning-hometriangle-blog.jpg' },
     // { id: 6, title: 'Home Painting Services', subtitle: 'Interior & exterior - professional quality', discount: 'Free quote', cta: 'Get Quote', img: 'https://i.postimg.cc/PrvMBzPf/wall-painting-service.jpg' }
   ];
 
@@ -475,123 +478,335 @@ const BEAUTY_SUBCATEGORIES = [
     }
   }
 
-  // Refs & autoplay state for Get Quote carousel
+  // Manual-only carousel refs (slides move only when user clicks arrows)
   const getQuoteRef = useRef(null);
-  const currentGetQuoteRef = useRef(0);
-  const isPausedGetQuoteRef = useRef(false);
-  const [getQuoteIndex, setGetQuoteIndex] = useState(0);
-
-  // Refs & autoplay state for Offers carousel
   const offersRef = useRef(null);
-  const currentOfferRef = useRef(0);
-  const isPausedOffersRef = useRef(false);
-  const [offerIndex, setOfferIndex] = useState(0);
 
-  // Auto-scroll for Get Quote carousel
-  useEffect(() => {
-    const wrap = getQuoteRef.current;
-    if (!wrap) return;
+  const homeDiscoveryTiles = [
+    {
+      label: "Women's Salon & Spa",
+      key: "Beauty",
+      icon: "https://cdn-icons-png.flaticon.com/512/3621/3621997.png"
+    },
+    {
+      label: "Men's Salon & Massage",
+      key: "Men",
+      icon: "https://cdn-icons-png.flaticon.com/512/3135/3135715.png"
+    },
+    {
+      label: "Cleaning & Pest Control",
+      key: "Cleaning",
+      icon: "https://cdn-icons-png.flaticon.com/512/4097/4097458.png"
+    },
+    {
+      label: "Electrician, Plumber & Carpenter",
+      key: "Electrician",
+      icon: "https://cdn-icons-png.flaticon.com/512/929/929430.png"
+    },
+    {
+      label: "Painting & Waterproofing",
+      key: "Painting",
+      icon: "https://cdn-icons-png.flaticon.com/512/3191/3191288.png"
+    },
+    {
+      label: "AC & Appliance Repair",
+      key: "Appliances",
+      icon: "https://cdn-icons-png.flaticon.com/512/2921/2921222.png"
+    }
+  ];
 
-    const onEnter = () => (isPausedGetQuoteRef.current = true);
-    const onLeave = () => (isPausedGetQuoteRef.current = false);
+  const curatedServiceSections = [
+    {
+      key: 'salon-men',
+      title: 'Salon for men',
+      
+      ref: salonMenRef,
+      onServiceClick: () => goToCategory('Men'),
+      services: [
+        { id: 'm1', title: 'Haircut', rating: 4.8, price: 299, image: assetImage("Haircut.png") },
+        { id: 'm2', title: 'Beard trim & styling', rating: 4.87, price: 249, image: assetImage("Beard Trim & Styling.png") },
+        { id: 'm3', title: 'Haircut for kids', rating: 4.85, price: 299, image: assetImage("Haircut for kids.png") },
+        { id: 'm4', title: 'Clean shave', rating: 4.86, price: 249, image: assetImage("Shave.png") },
+        { id: 'm5', title: 'Head, neck & shoulder massage', rating: 4.83, price: 349, image: assetImage("Head Massage.png") }
+      ]
+    },
+    {
+      key: 'massage-men',
+      title: 'Massage for Men',
+      subtitle: 'Therapeutic massage by trained experts',
+      ref: massageMenRef,
+      onServiceClick: () => goToCategory('Men'),
+      services: [
+        { id: 'mm1', title: 'Foot massage', rating: 4.87, price: 549, image: assetImage("Foot massage.png") },
+        { id: 'mm2', title: 'Head, neck & shoulder massage', rating: 4.87, price: 649, image: assetImage("Head, neck & shoulder massage.png") },
+        { id: 'mm3', title: 'Leg pain relief massage for men', rating: 4.87, price: 849, image: assetImage("Leg pain relief massage for men.png") },
+        { id: 'mm4', title: 'Warm deep tissue pain relief massage', rating: 4.83, price: 1449, image: assetImage("Warm deep tissue pain relief massage.png") },
+        { id: 'mm5', title: 'Quick Comfort Therapy', rating: 4.83, price: 999, image: assetImage("Quick Comfort Therapy.png") }
+      ]
+    },
+    {
+      key: 'home-repair-installation',
+      title: 'Home repair & installation',
+      subtitle: 'Trusted professionals for quick fixes',
+      ref: homeRepairRef,
+      onServiceClick: () => goToCategory('Maintenance'),
+      services: [
+        { id: 'r1', title: 'Decor installation', rating: 4.83, price: 79, image: assetImage("Decor installation.png") },
+        { id: 'r2', title: 'Plumber consultation', rating: 4.73, price: 49, image: assetImage("Plumber consultation.png") },
+        { id: 'r3', title: 'Electrician consultation', rating: 4.74, price: 49, image: assetImage("Electrician consultation.png") },
+        { id: 'r4', title: 'Switchboard repair & replacement', rating: 4.82, price: 99, image: assetImage("Switchboard repair & replacement.png") },
+        { id: 'r5', title: 'Cupboard repair', rating: 4.77, price: 89, image: assetImage("Cupboard repair.png") }
+      ]
+    },
+    {
+      key: 'appliance-service-repair',
+      title: 'Appliance Service & Repair',
+      subtitle: 'Expert appliance diagnosis and repair',
+      ref: applianceRef,
+      onServiceClick: () => goToCategory('Appliances'),
+      services: [
+        { id: 'a1', title: 'Geyser check-up', rating: 4.73, price: 249, image: assetImage("Geyser check-up.png") },
+        { id: 'a2', title: 'Automatic top load machine check-up', rating: 4.77, price: 199, image: assetImage("Automatic top load machine check-up.png") },
+        { id: 'a3', title: 'TV check-up', rating: 4.77, price: 249, image: assetImage("TV check-up.png") },
+        { id: 'a4', title: 'Geyser service', rating: 4.76, price: 599, image: assetImage("Geyser service.png") },
+        { id: 'a5', title: 'Geyser installation', rating: 4.78, price: 499, image: assetImage("Geyser installation.png") }
+      ]
+    },
+    {
+      key: 'cleaning-essentials',
+      title: 'Cleaning Essentials',
+      subtitle: 'Monthly cleaning essential services',
+      ref: cleaningEssentialsRef,
+      onServiceClick: () => goToCategory('Cleaning'),
+      services: [
+        { id: 'c1', title: 'Intense bathroom cleaning', rating: 4.79, price: 399, original: 499, image: assetImage("Intense bathroom cleaning.png") },
+        { id: 'c2', title: 'Intense cleaning (2 bathrooms)', rating: 4.79, price: 798, original: 998, image: assetImage("Intense cleaning (2 bathrooms).png") },
+        { id: 'c3', title: 'Chimney cleaning', rating: 4.83, price: 399, image: assetImage("Chimney cleaning.png") },
+        { id: 'c4', title: 'Fridge cleaning', rating: 4.83, price: 399, image: assetImage("Fridge cleaning.png.png") },
+        { id: 'c5', title: 'Cockroach control (with utensil removal)', rating: 4.79, price: 1098, image: assetImage("Cockroach control (with utensil removal).png") }
+      ]
+    },
+    {
+      key: 'spa-women',
+      title: 'Spa for Women',
+      subtitle: 'Relaxing spa therapies at home',
+      ref: spaWomenRef,
+      onServiceClick: (service) => goToBeautyType(service.subcategory, 'spa-for-women'),
+      services: [
+        { id: 'sp1', title: 'Warm Swedish stress relief massage', rating: 4.83, price: 1349, image: assetImage("Warm Swedish stress relief massage.png"), subcategory: 'Stress relief' },
+        { id: 'sp2', title: 'Warm deep tissue pain relief massage', rating: 4.83, price: 1499, image: assetImage("Warm deep tissue pain relief massage.png"), subcategory: 'Pain relief' },
+        { id: 'sp3', title: '4 sessions (Mon-Sat only): Swedish massage', rating: 4.82, price: 1299, image: assetImage("4 sessions (Mon-Sat only) Swedish massage.png"), subcategory: 'Super saver packs' },
+        { id: 'sp4', title: '4 sessions (Mon-Sat only): Deep tissue massage', rating: 4.82, price: 1449, image: assetImage("4 sessions (Mon-Sat only) Deep tissue massage create image .png"), subcategory: 'Super saver packs' },
+        { id: 'sp5', title: 'Leg pain relief massage for women', rating: 4.85, price: 849, image: assetImage("Leg pain relief massage for women.png.png"), subcategory: 'Pain relief' }
+      ]
+    },
+    {
+      key: 'salon-women',
+      title: 'Salon for Women',
+      subtitle: 'Pamper yourself at home',
+      ref: salonWomenRef,
+      onServiceClick: (service) => goToBeautyType(service.subcategory, 'salon-for-women'),
+      services: [
+        { id: 'sw1', title: 'Roll-on waxing (Full arms, legs & underarms)', rating: 4.88, price: 899, image: assetImage("Roll-on waxing (Full arms, legs & underarms).png"), subcategory: 'Waxing' },
+        { id: 'sw2', title: 'Spatula waxing (Full arms, legs & underarms)', rating: 4.86, price: 699, image: assetImage("Spatula waxing (Full arms, legs & underarms).png"), subcategory: 'Waxing' },
+        { id: 'sw3', title: 'Crystal rose pedicure', rating: 4.83, price: 759, image: assetImage("Crystal rose pedicure.png"), subcategory: 'Pedicure & manicure' },
+        { id: 'sw4', title: 'Mani-pedi delight', rating: 4.82, price: 1359, original: 1458, image: assetImage("Mani-pedi delight.png"), subcategory: 'Pedicure & manicure' }
+      ]
+    }
+  ];
 
-    const onScroll = () => {
-      const left = wrap.scrollLeft;
-      let nearest = 0;
-      let min = Infinity;
-      Array.from(wrap.children).forEach((c, idx) => {
-        const delta = Math.abs(c.offsetLeft - left);
-        if (delta < min) { min = delta; nearest = idx; }
-      });
-      currentGetQuoteRef.current = nearest;
-      setGetQuoteIndex(nearest);
-    };
+  const renderUnifiedServiceSection = (section) => {
+    if (!section) return null;
 
-    wrap.addEventListener('mouseenter', onEnter);
-    wrap.addEventListener('mouseleave', onLeave);
-    wrap.addEventListener('scroll', onScroll, { passive: true });
+    return (
+      <section className="container slide-up" style={{ marginTop: '12px' }}>
+        <h2 className="section-title">{section.title}</h2>
+        {section.subtitle && (
+          <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>{section.subtitle}</p>
+        )}
 
-    const interval = setInterval(() => {
-      if (isPausedGetQuoteRef.current) return;
-      const count = wrap.children.length || 1;
-      const next = (currentGetQuoteRef.current + 1) % count;
-      const child = wrap.children[next];
-      if (child) {
-        wrap.scrollTo({ left: child.offsetLeft - 6, behavior: 'smooth' });
-        currentGetQuoteRef.current = next;
-        setGetQuoteIndex(next);
-      }
-    }, 3500);
+        <div className="services-carousel-wrap">
+          <div
+            ref={section.ref}
+            style={{
+              display: 'flex',
+              gap: '10px',
+              overflowX: 'auto',
+              scrollBehavior: 'smooth',
+              WebkitOverflowScrolling: 'touch',
+              scrollbarWidth: 'none',
+              msOverflowStyle: 'none',
+              paddingBottom: '8px'
+            }}
+          >
+            {section.services.map((service) => (
+              <div
+                key={service.id}
+                style={{
+                  flex: '0 0 240px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  cursor: 'pointer',
+                  transition: 'all 0.3s ease',
+                  borderRadius: '12px',
+                  overflow: 'hidden',
+                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
+                  background: '#fff'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = 'translateY(-4px)';
+                  e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.12)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = 'translateY(0)';
+                  e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
+                }}
+                onClick={() => {
+                  section.onServiceClick(service);
+                }}
+              >
+                <div
+                  style={{
+                    width: '100%',
+                    height: '140px',
+                    overflow: 'hidden',
+                    background: '#f1f5f9',
+                    position: 'relative'
+                  }}
+                >
+                  <img
+                    src={service.image}
+                    alt={service.title}
+                    style={{
+                      width: '100%',
+                      height: '100%',
+                      objectFit: 'cover'
+                    }}
+                    onError={(e) => {
+                      e.target.src = `https://via.placeholder.com/240x140?text=${section.title}`;
+                    }}
+                  />
+                </div>
 
-    document.addEventListener('visibilitychange', () => {
-      isPausedGetQuoteRef.current = document.hidden;
-    });
+                <div
+                  style={{
+                    padding: '10px',
+                    flex: 1,
+                    display: 'flex',
+                    flexDirection: 'column'
+                  }}
+                >
+                  <h3
+                    style={{
+                      margin: '0 0 5px 0',
+                      fontSize: '12px',
+                      fontWeight: '600',
+                      color: '#0f172a',
+                      lineHeight: '1.4'
+                    }}
+                  >
+                    {service.title}
+                  </h3>
 
-    return () => {
-      clearInterval(interval);
-      wrap.removeEventListener('mouseenter', onEnter);
-      wrap.removeEventListener('mouseleave', onLeave);
-      wrap.removeEventListener('scroll', onScroll);
-    };
-  }, []);
+                  <div
+                    style={{
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '4px',
+                      marginBottom: '5px',
+                      fontSize: '10px'
+                    }}
+                  >
+                    <span style={{ color: '#0f172a', fontWeight: '500' }}>&#9733; {service.rating}</span>
+                    <span style={{ color: '#6b7280' }}>{"\u2022"} Instant</span>
+                  </div>
 
-  // Auto-scroll for Offers carousel
-  useEffect(() => {
-    const wrap = offersRef.current;
-    if (!wrap) return;
+                  <div
+                    style={{
+                      marginTop: 'auto',
+                      paddingTop: '5px',
+                      borderTop: '1px solid #e5e7eb'
+                    }}
+                  >
+                    <div
+                      style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      <strong
+                        style={{
+                          fontSize: '13px',
+                          color: '#0f172a'
+                        }}
+                      >
+                        &#8377;{service.price}
+                      </strong>
+                      <span
+                        style={{
+                          fontSize: '10px',
+                          color: '#6b7280',
+                          textDecoration: 'line-through'
+                        }}
+                      >
+                        &#8377;{service.original ?? Math.round(service.price * 1.3)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
 
-    const onEnter = () => (isPausedOffersRef.current = true);
-    const onLeave = () => (isPausedOffersRef.current = false);
-
-    const onScroll = () => {
-      const left = wrap.scrollLeft;
-      let nearest = 0;
-      let min = Infinity;
-      Array.from(wrap.children).forEach((c, idx) => {
-        const delta = Math.abs(c.offsetLeft - left);
-        if (delta < min) { min = delta; nearest = idx; }
-      });
-      currentOfferRef.current = nearest;
-      setOfferIndex(nearest);
-    };
-
-    wrap.addEventListener('mouseenter', onEnter);
-    wrap.addEventListener('mouseleave', onLeave);
-    wrap.addEventListener('scroll', onScroll, { passive: true });
-
-    const interval = setInterval(() => {
-      if (isPausedOffersRef.current) return;
-      const count = wrap.children.length || 1;
-      const next = (currentOfferRef.current + 1) % count;
-      const child = wrap.children[next];
-      if (child) {
-        wrap.scrollTo({ left: child.offsetLeft - 6, behavior: 'smooth' });
-        currentOfferRef.current = next;
-        setOfferIndex(next);
-      }
-    }, 3500);
-
-    document.addEventListener('visibilitychange', () => {
-      isPausedOffersRef.current = document.hidden;
-    });
-
-    return () => {
-      clearInterval(interval);
-      wrap.removeEventListener('mouseenter', onEnter);
-      wrap.removeEventListener('mouseleave', onLeave);
-      wrap.removeEventListener('scroll', onScroll);
-    };
-  }, []);
-
+          <button
+            className="services-carousel-arrow"
+            onClick={() => scrollCarousel(section.ref, 'right')}
+            style={{
+              position: 'absolute',
+              right: '0',
+              top: '50%',
+              transform: 'translateY(-50%)',
+              background: 'rgba(255, 255, 255, 0.95)',
+              width: '44px',
+              height: '44px',
+              borderRadius: '50%',
+              border: 'none',
+              display: 'flex',
+              alignItems: 'center',
+              justifyContent: 'center',
+              cursor: 'pointer',
+              fontSize: '24px',
+              color: '#0f172a',
+              boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
+              zIndex: 10,
+              transition: 'all 0.2s ease',
+              fontWeight: 'bold'
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
+              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
+              e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
+            }}
+          >
+            ?
+          </button>
+        </div>
+      </section>
+    );
+  };
   return (
     <div>
       <CMSBanners />
 
 {/* HERO SECTION */}
 <section className="container hero hero-home fade-in">
-  <div>
+  <div className="hero-left-pane">
 
-    {/* <span className="hero-badge">⭐ 50,000+ Happy Customers in {location}</span> */}
+    {/* <span className="hero-badge">? 50,000+ Happy Customers in {location}</span> */}
 
     <h4 className="hero-title">Trusted Home Services at Your Doorstep</h4>
 
@@ -608,7 +823,7 @@ const BEAUTY_SUBCATEGORIES = [
     {/* <div className="search-card">
 
       <div className="search-location" onClick={getLocation} style={{ cursor: "pointer" }} aria-hidden="false">
-        {detecting ? "Detecting location..." : `${location} · Change`}
+        {detecting ? "Detecting location..." : `${location} \u00B7 Change`}
       </div>
 
       <div className="search-input">
@@ -620,189 +835,23 @@ const BEAUTY_SUBCATEGORIES = [
 
     
 
-    <div className="category-card">
-      <h3 className="category-card-title">What are you looking for?</h3>
-
-      <div style={{
-        display: 'grid',
-        gridTemplateColumns: 'repeat(3, 1fr)',
-        gap: '12px',
-        marginBottom: '20px'
-      }}>
-        {/* Women's Salon & Spa */}
-        <button 
-          onClick={() => openCategoryModal('Beauty')} 
-          style={{
-            border: 'none',
-            background: '#f5f5f5',
-            borderRadius: '10px',
-            padding: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.3s ease',
-            textAlign: 'center'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#e8f5e9';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <span style={{fontSize: '32px', lineHeight: '1'}}>💅</span>
-          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Women's Salon & Spa</span>
-        </button>
-
-        {/* Men's Salon & Massage */}
-        <button 
-          onClick={() => openCategoryModal('Men')} 
-          style={{
-            border: 'none',
-            background: '#f5f5f5',
-            borderRadius: '10px',
-            padding: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.3s ease',
-            textAlign: 'center'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#e3f2fd';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <span style={{fontSize: '32px', lineHeight: '1'}}>💈</span>
-          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Men's Salon & Massage</span>
-        </button>
-
-        {/* Cleaning & Pest Control */}
-        <button 
-          onClick={() => openCategoryModal('Cleaning')} 
-          style={{
-            border: 'none',
-            background: '#f5f5f5',
-            borderRadius: '10px',
-            padding: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.3s ease',
-            textAlign: 'center'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#fff3e0';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <span style={{fontSize: '32px', lineHeight: '1'}}>🧹</span>
-          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Cleaning & Pest Control</span>
-        </button>
-
-        {/* Electrician, Plumber & Carpenter */}
-        <button 
-          onClick={() => openCategoryModal('Electrician')} 
-          style={{
-            border: 'none',
-            background: '#f5f5f5',
-            borderRadius: '10px',
-            padding: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.3s ease',
-            textAlign: 'center'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#f3e5f5';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <span style={{fontSize: '32px', lineHeight: '1'}}>🔧</span>
-          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Electrician, Plumber & Carpenter</span>
-        </button>
-
-        {/* Painting & Waterproofing */}
-        <button 
-          onClick={() => openCategoryModal('Painting')} 
-          style={{
-            border: 'none',
-            background: '#f5f5f5',
-            borderRadius: '10px',
-            padding: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.3s ease',
-            textAlign: 'center'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#fce4ec';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <span style={{fontSize: '32px', lineHeight: '1'}}>🎨</span>
-          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>Painting & Waterproofing</span>
-        </button>
-
-        {/* AC & Appliance Repair */}
-        <button 
-          onClick={() => openCategoryModal('Appliances')} 
-          style={{
-            border: 'none',
-            background: '#f5f5f5',
-            borderRadius: '10px',
-            padding: '12px',
-            cursor: 'pointer',
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            gap: '8px',
-            transition: 'all 0.3s ease',
-            textAlign: 'center'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.background = '#e1f5fe';
-            e.currentTarget.style.transform = 'translateY(-4px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.background = '#f5f5f5';
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}
-        >
-          <span style={{fontSize: '32px', lineHeight: '1'}}>❄️</span>
-          <span style={{fontSize: '12px', fontWeight: '600', color: '#333'}}>AC & Appliance Repair</span>
-        </button>
-
+    <div className="service-discovery-card">
+      <h5 className="service-discovery-title">What are you looking for?</h5>
+      <div className="service-discovery-grid">
+        {homeDiscoveryTiles.map((tile) => (
+          <button
+            key={tile.label}
+            className="service-discovery-tile"
+            onClick={() => openCategoryModal(tile.key)}
+            type="button"
+            aria-label={tile.label}
+          >
+            <span className="service-discovery-icon-wrap">
+              <img src={tile.icon} alt="" className="service-discovery-icon" loading="lazy" />
+            </span>
+            <span className="service-discovery-label">{tile.label}</span>
+          </button>
+        ))}
       </div>
     </div>
 {/* <div className="search-helpers">
@@ -811,13 +860,13 @@ const BEAUTY_SUBCATEGORIES = [
     </div> */}
   </div>
 
-  <div>
+  <div className="hero-right-pane">
     <div className="hero-mosaic">
       <div className="mosaic-item large">
-        <img src="src/assets/images/painterheader.JPG" alt="Salon" />
+        <img src={assetImage("painterheader.jpg")} alt="Salon" />
       </div>
       <div className="mosaic-item">
-        <img src="src/assets/images/plumberheader.JPG" alt="Massage" />
+        <img src={assetImage("plumberheader.jpg")} alt="Massage" />
       </div>
       {/* <div className="mosaic-item">
         <img src="https://i.postimg.cc/C1rGHLS1/834431670584630.jpg" alt="Repair" />
@@ -826,7 +875,7 @@ const BEAUTY_SUBCATEGORIES = [
         <img src="https://i.postimg.cc/1XzWsj5g/service.webp" alt="AC service" />
       </div>
        <div className="mosaic-item wide">
-        <img src="src/assets/images/male-electrician.jpg" alt="AC service" />
+        <img src={assetImage("male-electrician.jpg")} alt="AC service" />
       </div>
     </div>
   </div>
@@ -854,7 +903,7 @@ const BEAUTY_SUBCATEGORIES = [
                 alignItems: 'center'
               }}
             >
-              ←
+              &larr;
             </button>
           )}
           <div>
@@ -866,7 +915,7 @@ const BEAUTY_SUBCATEGORIES = [
             </p>
           </div>
         </div>
-        <button className="btn-outline" onClick={() => setModalOpen(false)} aria-label="Close modal">✕</button>
+        <button className="btn-outline" onClick={() => setModalOpen(false)} aria-label="Close modal">&times;</button>
       </div>
 
       {/* Service Cards Grid View - Category Wise */}
@@ -949,7 +998,7 @@ const BEAUTY_SUBCATEGORIES = [
                 overflow: 'hidden',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
               }}>
-                <img src="src/assets/images/Salon for Men.png" alt="Salon for Men" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+                <img src={assetImage("Salon for Men.png")} alt="Salon for Men" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
               </div>
               <p style={{ fontSize: '11px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                 Salon for Men
@@ -988,7 +1037,7 @@ const BEAUTY_SUBCATEGORIES = [
                 overflow: 'hidden',
                 boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)'
               }}>
-                <img src="src/assets/images/Massage for Men.png" alt="Massage for Men" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
+                <img src={assetImage("Massage for Men.png")} alt="Massage for Men" style={{ width: '50px', height: '50px', objectFit: 'contain' }} />
               </div>
               <p style={{ fontSize: '11px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                 Massage for Men
@@ -1034,7 +1083,7 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Bathroom Cleaning.png" alt="Bathroom Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
+                    <img src={assetImage("Bathroom Cleaning.png")} alt="Bathroom Cleaning" style={{ width: '65px', height: '65px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Bathroom Cleaning
@@ -1072,7 +1121,7 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Kitchen Cleaning.png" alt="Kitchen Cleaning" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Kitchen Cleaning.png")} alt="Kitchen Cleaning" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Kitchen Cleaning
@@ -1112,7 +1161,7 @@ const BEAUTY_SUBCATEGORIES = [
                     overflow: 'hidden',
                     position: 'relative'
                   }}>
-                    <img src="src/assets/images/Living & Bedroom Cleaning.png" alt="Living & Bedroom Cleaning" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Living & Bedroom Cleaning.png")} alt="Living & Bedroom Cleaning" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                     <span style={{
                       position: 'absolute',
                       top: '4px',
@@ -1247,7 +1296,7 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Termite Control.png" alt="Termite Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Termite Control.png")} alt="Termite Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Termite Control
@@ -1285,7 +1334,7 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Bed Bugs Control.png" alt="Bed Bugs Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Bed Bugs Control.png")} alt="Bed Bugs Control" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Bed Bugs Control
@@ -1386,12 +1435,12 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Electrician.png" alt="Electrician" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Electrician.png")} alt="Electrician" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Electrician
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
 
                 <div
@@ -1425,12 +1474,12 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Plumber.png" alt="Plumber" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Plumber.png")} alt="Plumber" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Plumber
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
 
                 <div
@@ -1469,7 +1518,7 @@ const BEAUTY_SUBCATEGORIES = [
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Carpenter
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
 
                 <div
@@ -1508,7 +1557,7 @@ const BEAUTY_SUBCATEGORIES = [
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Festival Lights
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
               </div>
             </div>
@@ -1550,12 +1599,12 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Fan Installation.png" alt="Fan Installation" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Fan Installation.png")} alt="Fan Installation" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Fan Installation
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
 
                 <div
@@ -1594,7 +1643,7 @@ const BEAUTY_SUBCATEGORIES = [
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Furniture Assembly
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
 
                 <div
@@ -1628,12 +1677,12 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/Geyser.png" alt="Geyser" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Geyser.png")} alt="Geyser" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     Geyser
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
 
                 <div
@@ -1667,12 +1716,12 @@ const BEAUTY_SUBCATEGORIES = [
                     justifyContent: 'center',
                     overflow: 'hidden'
                   }}>
-                    <img src="src/assets/images/IKEA Furniture Assembly.png" alt="IKEA Furniture Assembly" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("IKEA Furniture Assembly.png")} alt="IKEA Furniture Assembly" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                   </div>
                   <p style={{ fontSize: '12px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                     IKEA Furniture Assembly
                   </p>
-                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>✓ Instant</span>
+                  <span style={{ fontSize: '11px', color: '#059669', fontWeight: '600' }}>? Instant</span>
                 </div>
 
                 <div
@@ -1708,7 +1757,7 @@ const BEAUTY_SUBCATEGORIES = [
                     overflow: 'hidden',
                     position: 'relative'
                   }}>
-                    <img src="src/assets/images/Tile Grouting.png" alt="Tile Grouting" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
+                    <img src={assetImage("Tile Grouting.png")} alt="Tile Grouting" style={{ width: '55px', height: '55px', objectFit: 'contain' }} />
                     <span style={{
                       position: 'absolute',
                       top: '4px',
@@ -1872,7 +1921,7 @@ const BEAUTY_SUBCATEGORIES = [
                 justifyContent: 'center',
                 overflow: 'hidden'
               }}>
-                <img src="src/assets/images/Walls & Rooms Painting.png" alt="Walls & Rooms Painting" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
+                <img src={assetImage("Walls & Rooms Painting.png")} alt="Walls & Rooms Painting" style={{ width: '70px', height: '70px', objectFit: 'contain' }} />
               </div>
               <p style={{ fontSize: '13px', fontWeight: '600', color: '#0f172a', margin: '0' }}>
                 Walls & Rooms Painting
@@ -1942,7 +1991,7 @@ const BEAUTY_SUBCATEGORIES = [
                           fontSize: '12px',
                           fontWeight: 'bold'
                         }}>
-                          ✓
+                          ?
                         </div>
                       )}
                     </div>
@@ -1956,7 +2005,7 @@ const BEAUTY_SUBCATEGORIES = [
                         fontWeight: '600',
                         color: '#059669'
                       }}>
-                        ✓ Instant
+                        ? Instant
                       </span>
                     )}
                   </div>
@@ -2036,27 +2085,27 @@ const BEAUTY_SUBCATEGORIES = [
         {[
           { 
             id: 1, 
-            img: 'src/assets/images/Ac_service.jpg',
+            img: assetImage("Ac_service.jpg"),
             category: 'Appliances'
           },
           { 
             id: 2, 
-            img: 'src/assets/images/plumber.jpg',
+            img: assetImage("plumber.jpg"),
             category: 'Plumber'
           },
           { 
             id: 3, 
-            img: 'src/assets/images/carpenter.jpg',
+            img: assetImage("carpenter.jpg"),
             category: 'Carpentry'
           },
           { 
             id: 4, 
-            img: 'src/assets/images/painter.jpg',
+            img: assetImage("painter.jpg"),
             category: 'Painting'
           },
           { 
             id: 5, 
-            img: 'src/assets/images/pestcontrol.jpg',
+            img: assetImage("pestcontrol.jpg"),
             category: 'Pest Control'
           }
         ].map((promo) => (
@@ -2133,7 +2182,7 @@ const BEAUTY_SUBCATEGORIES = [
         e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
       }}
     >
-      →
+      &rarr;
     </button>
   </div>
 </section>
@@ -2232,10 +2281,10 @@ const BEAUTY_SUBCATEGORIES = [
               fontSize: '10px'
             }}>
               <span style={{ color: '#0f172a', fontWeight: '500' }}>
-                ⭐ {service.rating}
+                &#9733; {service.rating}
               </span>
               <span style={{ color: '#6b7280' }}>
-                • Instant
+                {"\u2022"} Instant
               </span>
             </div>
             
@@ -2254,14 +2303,14 @@ const BEAUTY_SUBCATEGORIES = [
                   fontSize: '13px',
                   color: '#0f172a'
                 }}>
-                  ₹{service.price}
+                  &#8377;{service.price}
                 </strong>
                 <span style={{
                   fontSize: '10px',
                   color: '#6b7280',
                   textDecoration: 'line-through'
                 }}>
-                  ₹{Math.round(service.price * 1.3)}
+                  &#8377;{Math.round(service.price * 1.3)}
                 </span>
               </div>
             </div>
@@ -2302,7 +2351,7 @@ const BEAUTY_SUBCATEGORIES = [
         e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
       }}
     >
-      →
+      &rarr;
     </button>
   </div>
 </section>
@@ -2355,7 +2404,7 @@ const BEAUTY_SUBCATEGORIES = [
         />
         <p style={{
           margin: '0',
-          fontSize: '10px',
+          fontSize: '12px',
           fontWeight: '600',
           color: '#0f172a',
           textAlign: 'center',
@@ -2399,7 +2448,7 @@ const BEAUTY_SUBCATEGORIES = [
         e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
       }}
     >
-      →
+      &rarr;
     </button>
   </div>
 </section>
@@ -2452,7 +2501,7 @@ const BEAUTY_SUBCATEGORIES = [
         />
         <p style={{
           margin: '0',
-          fontSize: '10px',
+          fontSize: '12px',
           fontWeight: '600',
           color: '#0f172a',
           textAlign: 'center',
@@ -2496,1014 +2545,100 @@ const BEAUTY_SUBCATEGORIES = [
         e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
       }}
     >
-      →
+      &rarr;
     </button>
   </div>
 </section>
 
-{/* SALON FOR MEN - GROOMING ESSENTIALS */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
-  <h2 className="section-title">Salon for men</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grooming essentials</p>
+{renderUnifiedServiceSection(curatedServiceSections[0])}
 
-  <div className="services-carousel-wrap">
-    <div 
-      ref={salonMenRef}
-      className="salon-men-scroll" 
-      role="list"
-      style={{ 
-        display: 'flex',
-        gap: '12px',
-        overflowX: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
-        scrollSnapType: 'x mandatory',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
-      }}
-    >
-      {[
-        { id: 'm1', title: 'Haircut', rating: 4.8, reviews: 470, price: 299, image: 'src/assets/images/Haircut.png' },
-        { id: 'm2', title: 'Beard trim & styling', rating: 4.87, reviews: 139, price: 249, image: 'src/assets/images/Beard Trim & Styling.png' },
-        { id: 'm3', title: 'Haircut for kids', rating: 4.85, reviews: 105, price: 299, image: 'src/assets/images/Haircut for kids.png' },
-        { id: 'm4', title: 'Clean shave', rating: 4.86, reviews: 68, price: 249, image: 'src/assets/images/Shave.png' },
-        { id: 'm5', title: 'Head, neck & shoulder massage', rating: 4.83, reviews: 50, price: 349, image: 'src/assets/images/Head Massage.png' }
-      ].map((service) => (
-        <div 
-          key={service.id} 
-          role="listitem"
-          style={{
-            flex: '0 0 calc(20% - 9.6px)',
-            minWidth: '220px',
-            scrollSnapAlign: 'start'
-          }}
-          onClick={() => goToCategory("Men")}
-        >
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-8px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}>
-            <img 
-              src={service.image} 
-              alt={service.title}
-              style={{
-                width: '100%',
-                height: '220px',
-                objectFit: 'cover',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-              }}
-            />
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#0f172a'
-            }}>
-              {service.title}
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-            </div>
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '700',
-              color: '#0f172a'
-            }}>
-              ₹{service.price}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(salonMenRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      →
-    </button>
-  </div>
-</section>
-
-{/* MASSAGE FOR MEN */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
-  <h2 className="section-title">Massage for Men</h2>
-
-  <div className="services-carousel-wrap">
-    <div 
-      ref={massageMenRef}
-      className="massage-men-scroll" 
-      role="list"
-      style={{ 
-        display: 'flex',
-        gap: '12px',
-        overflowX: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
-        scrollSnapType: 'x mandatory',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
-      }}
-    >
-      {[
-        { id: 'mm1', title: 'Foot massage', rating: 4.87, reviews: 39, price: 549, image: 'src/assets/images/Foot massage.png' },
-        { id: 'mm2', title: 'Head, neck & shoulder massage', rating: 4.87, reviews: 41, price: 649, image: 'src/assets/images/Head, neck & shoulder massage.png' },
-        { id: 'mm3', title: 'Leg pain relief massage for men', rating: 4.87, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for men.png' },
-        { id: 'mm4', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 2, price: 1449, image: 'src/assets/images/Warm deep tissue pain relief massage.png' },
-        { id: 'mm5', title: 'Quick Comfort Therapy', rating: 4.83, reviews: 11, price: 999, image: 'src/assets/images/Quick Comfort Therapy.png', badge: '17% OFF' }
-      ].map((service) => (
-        <div 
-          key={service.id} 
-          role="listitem"
-          style={{
-            flex: '0 0 calc(20% - 9.6px)',
-            minWidth: '220px',
-            scrollSnapAlign: 'start',
-            position: 'relative'
-          }}
-          onClick={() => goToCategory("Men")}
-        >
-          {service.badge && (
-            <div style={{
-              position: 'absolute',
-              top: '8px',
-              right: '8px',
-              background: '#059669',
-              color: 'white',
-              padding: '4px 8px',
-              borderRadius: '4px',
-              fontSize: '11px',
-              fontWeight: '700',
-              zIndex: 5
-            }}>
-              {service.badge}
-            </div>
-          )}
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-8px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}>
-            <img 
-              src={service.image} 
-              alt={service.title}
-              style={{
-                width: '100%',
-                height: '220px',
-                objectFit: 'cover',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-              }}
-            />
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#0f172a'
-            }}>
-              {service.title}
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-            </div>
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '700',
-              color: '#0f172a'
-            }}>
-              ₹{service.price}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(massageMenRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      →
-    </button>
-  </div>
-</section>
+{renderUnifiedServiceSection(curatedServiceSections[1])}
 
 {/* ADS BANNER - After Massage for Men */}
 <section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
   <div style={{
-    backgroundImage: 'url(src/assets/images/banner1.png)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
     borderRadius: '16px',
     width: '100%',
     maxWidth: '1200px',
-    height: '400px',
     margin: '0 auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
-    position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    background: '#e5e7eb'
   }}>
-    <div style={{
-      position: 'absolute',
-      inset: 0,
-      background: 'rgba(0, 0, 0, 0.12)',
-      borderRadius: '16px'
-    }}></div>
-  </div>
-</section>
-
-{/* HOME REPAIR & INSTALLATION */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
-  <h2 className="section-title">Home repair & installation</h2>
-
-  <div className="services-carousel-wrap">
-    <div 
-      ref={homeRepairRef}
-      className="repair-scroll" 
-      role="list"
-      style={{ 
-        display: 'flex',
-        gap: '12px',
-        overflowX: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
-        scrollSnapType: 'x mandatory',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
-      }}
-    >
-      {[
-        { id: 'r1', title: 'Decor installation', rating: 4.83, reviews: 83, price: 79, image: 'src/assets/images/Decor installation.png' },
-        { id: 'r2', title: 'Plumber consultation', rating: 4.73, reviews: 92, price: 49, image: 'src/assets/images/Plumber consultation.png' },
-        { id: 'r3', title: 'Electrician consultation', rating: 4.74, reviews: 76, price: 49, image: 'src/assets/images/Electrician consultation.png' },
-        { id: 'r4', title: 'Switchboard repair & replacement', rating: 4.82, reviews: 46, price: 99, image: 'src/assets/images/Switchboard repair & replacement.png' },
-        { id: 'r5', title: 'Cupboard repair', rating: 4.77, reviews: 48, price: 89, image: 'src/assets/images/Cupboard repair.png' }
-      ].map((service) => (
-        <div 
-          key={service.id} 
-          role="listitem"
-          style={{
-            flex: '0 0 calc(20% - 9.6px)',
-            minWidth: '220px',
-            scrollSnapAlign: 'start'
-          }}
-          onClick={() => goToCategory("Maintenance")}
-        >
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-8px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}>
-            <img 
-              src={service.image} 
-              alt={service.title}
-              style={{
-                width: '100%',
-                height: '220px',
-                objectFit: 'cover',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-              }}
-            />
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#0f172a'
-            }}>
-              {service.title}
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-            </div>
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '700',
-              color: '#0f172a'
-            }}>
-              ₹{service.price}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(homeRepairRef, 'right')}
+    <img
+      src={assetImage("banner1.png")}
+      alt="Electrician service banner"
+      loading="lazy"
+      decoding="async"
       style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
+        width: '100%',
+        height: 'auto',
+        display: 'block',
+        imageRendering: 'auto'
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      →
-    </button>
+    />
   </div>
 </section>
 
-{/* APPLIANCE SERVICE & REPAIR */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
-  <h2 className="section-title">Appliance Service & Repair</h2>
+{renderUnifiedServiceSection(curatedServiceSections[2])}
 
-  <div className="services-carousel-wrap">
-    <div 
-      ref={applianceRef}
-      className="appliance-scroll" 
-      role="list"
-      style={{ 
-        display: 'flex',
-        gap: '12px',
-        overflowX: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
-        scrollSnapType: 'x mandatory',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
-      }}
-    >
-      {[
-        { id: 'a1', title: 'Geyser check-up', rating: 4.73, reviews: 99, price: 249, image: 'src/assets/images/Geyser check-up.png' },
-        { id: 'a2', title: 'Automatic top load machine check-up', rating: 4.77, reviews: 346, price: 199, image: 'src/assets/images/Automatic top load machine check-up.png' },
-        { id: 'a3', title: 'TV check-up', rating: 4.77, reviews: 158, price: 249, image: 'src/assets/images/TV check-up.png' },
-        { id: 'a4', title: 'Geyser service', rating: 4.76, reviews: 74, price: 599, image: 'src/assets/images/Geyser service.png' },
-        { id: 'a5', title: 'Geyser installation', rating: 4.78, reviews: 46, price: 499, image: 'src/assets/images/Geyser installation.png' }
-      ].map((service) => (
-        <div 
-          key={service.id} 
-          role="listitem"
-          style={{
-            flex: '0 0 calc(20% - 9.6px)',
-            minWidth: '220px',
-            scrollSnapAlign: 'start'
-          }}
-          onClick={() => goToCategory("Appliances")}
-        >
-          <div style={{
-            display: 'flex',
-            flexDirection: 'column',
-            gap: '8px',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-8px)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-          }}>
-            <img 
-              src={service.image} 
-              alt={service.title}
-              style={{
-                width: '100%',
-                height: '220px',
-                objectFit: 'cover',
-                borderRadius: '12px',
-                boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-              }}
-            />
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '600',
-              color: '#0f172a'
-            }}>
-              {service.title}
-            </p>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-              <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-              <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-            </div>
-            <p style={{
-              margin: '0',
-              fontSize: '14px',
-              fontWeight: '700',
-              color: '#0f172a'
-            }}>
-              ₹{service.price}
-            </p>
-          </div>
-        </div>
-      ))}
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(applianceRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      →
-    </button>
+{renderUnifiedServiceSection(curatedServiceSections[3])}
 
-
-  </div>
-</section>
-
-{/* CLEANING ESSENTIALS */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
-  <h2 className="section-title">Cleaning Essentials</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Monthly cleaning essential services</p>
-
-  <div className="services-carousel-wrap">
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        ref={cleaningEssentialsRef}
-        className="cleaning-scroll" 
-        role="list"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { id: 'c1', title: 'Intense bathroom cleaning', rating: 4.79, reviews: '4M', price: 399, original: 499, image: 'src/assets/images/Intense bathroom cleaning.png' },
-          { id: 'c2', title: 'Intense cleaning (2 bathrooms)', rating: 4.79, reviews: '4M', price: 798, original: 998, image: 'src/assets/images/Intense cleaning (2 bathrooms).png' },
-          { id: 'c3', title: 'Chimney cleaning', rating: 4.83, reviews: '157K', price: 399, image: 'src/assets/images/Chimney cleaning.png' },
-          { id: 'c4', title: 'Fridge cleaning', rating: 4.83, reviews: '125K', price: 399, image: 'src/assets/images/Fridge cleaning.png.png' },
-          { id: 'c5', title: 'Cockroach control (with utensil removal)', rating: 4.79, reviews: '137K', price: 1098, image: 'src/assets/images/Cockroach control (with utensil removal).png' }
-        ].map((service) => (
-          <div 
-            key={service.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 calc(20% - 9.6px)',
-              minWidth: '220px',
-              scrollSnapAlign: 'start'
-            }}
-            onClick={() => goToCategory("Cleaning")}
-          >
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: '220px',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '600',
-                color: '#0f172a'
-              }}>
-                {service.title}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-                <span style={{ color: '#6b7280' }}>({service.reviews})</span>
-              </div>
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: '#0f172a'
-              }}>
-                ₹{service.price} {service.original && <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px' }}>₹{service.original}</span>}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-<button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(cleaningEssentialsRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      →
-    </button>
-  </div>
-</section>
+{renderUnifiedServiceSection(curatedServiceSections[4])}
 
 {/* ADS BANNER - After Massage for Men */}
 <section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
   <div style={{
-    backgroundImage: 'url(src/assets/images/banner2.png)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
     borderRadius: '16px',
     width: '100%',
     maxWidth: '1200px',
-    height: '400px',
     margin: '0 auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
-    position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    background: '#e5e7eb'
   }}>
-    <div style={{
-      position: 'absolute',
-      inset: 0,
-      background: 'rgba(0, 0, 0, 0.12)',
-      borderRadius: '16px'
-    }}></div>
-  </div>
-</section>
-
-{/* SPA FOR WOMEN */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
-  <h2 className="section-title">Spa for Women</h2>
-
-  <div className="services-carousel-wrap">
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        ref={spaWomenRef}
-        className="spa-women-scroll" 
-        role="list"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { id: 'sp1', title: 'Warm Swedish stress relief massage', rating: 4.83, reviews: 6, price: 1349, image: 'src/assets/images/Warm Swedish stress relief massage.png', badge: 'Hot bed', subcategory: 'Stress relief' },
-          { id: 'sp2', title: 'Warm deep tissue pain relief massage', rating: 4.83, reviews: 6, price: 1499, image: 'src/assets/images/Warm deep tissue pain relief massage.png', badge: 'Hot bed', subcategory: 'Pain relief' },
-          { id: 'sp3', title: '4 sessions (Mon-Sat only): Swedish massage', rating: 4.82, reviews: 231, price: 1299, image: 'src/assets/images/4 sessions (Mon-Sat only) Swedish massage.png', subcategory: 'Super saver packs' },
-          { id: 'sp4', title: '4 sessions (Mon-Sat only): Deep tissue massage', rating: 4.82, reviews: 157, price: 1449, image: 'src/assets/images/4 sessions (Mon-Sat only) Deep tissue massage create image .png', badge: 'Hot bed', subcategory: 'Super saver packs' },
-          { id: 'sp5', title: 'Leg pain relief massage for women', rating: 4.85, reviews: 12, price: 849, image: 'src/assets/images/Leg pain relief massage for women.png.png', subcategory: 'Pain relief' }
-        ].map((service) => (
-          <div 
-            key={service.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 clamp(200px, 85vw, 260px)',
-              minWidth: 'clamp(200px, 85vw, 260px)',
-              scrollSnapAlign: 'start',
-              position: 'relative'
-            }}
-            onClick={() => goToBeautyType(service.subcategory, "spa-for-women")}
-          >
-            {service.badge && (
-              <div style={{
-                position: 'absolute',
-                top: '8px',
-                left: '8px',
-                background: '#92400e',
-                color: 'white',
-                padding: '6px 10px',
-                borderRadius: '6px',
-                fontSize: '11px',
-                fontWeight: '700',
-                zIndex: 5
-              }}>
-                {service.badge}
-              </div>
-            )}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: 'clamp(180px, 40vw, 220px)',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: 'clamp(12px, 3vw, 14px)',
-                fontWeight: '600',
-                color: '#0f172a'
-              }}>
-                {service.title}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-              </div>
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: '#0f172a'
-              }}>
-                ₹{service.price}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(spaWomenRef, 'right')}
+    <img
+      src={assetImage("banner2.png")}
+      alt="Home service promotion banner"
+      loading="lazy"
+      decoding="async"
       style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
+        width: '100%',
+        height: 'auto',
+        display: 'block',
+        imageRendering: 'auto'
       }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      →
-    </button>
+    />
   </div>
 </section>
 
-{/* SALON FOR WOMEN */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
-  <h2 className="section-title">Salon for Women</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Pamper yourself at home</p>
+{renderUnifiedServiceSection(curatedServiceSections[5])}
 
-  <div className="services-carousel-wrap">
-    <div style={{ position: 'relative', overflow: 'hidden', flex: 1 }}>
-      <div 
-        ref={salonWomenRef}
-        className="salon-women-scroll" 
-        role="list"
-        style={{ 
-          display: 'flex',
-          gap: '12px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { id: 'sw1', title: 'Roll-on waxing (Full arms, legs & underarms)', rating: 4.88, reviews: 66, price: 899, image: 'src/assets/images/Roll-on waxing (Full arms, legs & underarms).png', subcategory: 'Waxing' },
-          { id: 'sw2', title: 'Spatula waxing (Full arms, legs & underarms)', rating: 4.86, reviews: 47, price: 699, image: 'src/assets/images/Spatula waxing (Full arms, legs & underarms).png', subcategory: 'Waxing' },
-          { id: 'sw3', title: 'Crystal rose pedicure', rating: 4.83, reviews: 134, price: 759, image: 'src/assets/images/Crystal rose pedicure.png', subcategory: 'Pedicure & manicure' },
-          { id: 'sw4', title: 'Mani-pedi delight', rating: 4.82, reviews: 191, price: 1359, original: 1458, image: 'src/assets/images/Mani-pedi delight.png', badge: '7% OFF', subcategory: 'Pedicure & manicure' }
-        ].map((service) => (
-          <div 
-            key={service.id} 
-            role="listitem"
-            style={{
-              flex: '0 0 clamp(200px, 85vw, 260px)',
-              minWidth: 'clamp(200px, 85vw, 260px)',
-              scrollSnapAlign: 'start',
-              position: 'relative'
-            }}
-            onClick={() => goToBeautyType(service.subcategory, "salon-for-women")}
-          >
-            {service.badge && (
-              <div style={{
-                position: 'absolute',
-                top: '8px',
-                right: '8px',
-                background: '#059669',
-                color: 'white',
-                padding: '4px 8px',
-                borderRadius: '4px',
-                fontSize: '11px',
-                fontWeight: '700',
-                zIndex: 5
-              }}>
-                {service.badge}
-              </div>
-            )}
-            <div style={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: '8px',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-            }}>
-              <img 
-                src={service.image} 
-                alt={service.title}
-                style={{
-                  width: '100%',
-                  height: 'clamp(180px, 40vw, 220px)',
-                  objectFit: 'cover',
-                  borderRadius: '12px',
-                  boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-                }}
-              />
-              <p style={{
-                margin: '0',
-                fontSize: 'clamp(12px, 3vw, 14px)',
-                fontWeight: '600',
-                color: '#0f172a'
-              }}>
-                {service.title}
-              </p>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', fontSize: '13px' }}>
-                <span style={{ color: '#f59e0b' }}>★ {service.rating}</span>
-                <span style={{ color: '#6b7280' }}>({service.reviews}K)</span>
-              </div>
-              <p style={{
-                margin: '0',
-                fontSize: '14px',
-                fontWeight: '700',
-                color: '#0f172a'
-              }}>
-                ₹{service.price} {service.original && <span style={{ textDecoration: 'line-through', color: '#9ca3af', marginLeft: '6px' }}>₹{service.original}</span>}
-              </p>
-            </div>
-          </div>
-        ))}
-      </div>
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(salonWomenRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      →
-    </button>
-  </div>
-</section>
+{renderUnifiedServiceSection(curatedServiceSections[6])}
 
 {/* ADS BANNER - After Massage for Men */}
 <section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
   <div style={{
-    backgroundImage: 'url(src/assets/images/banner3.png)',
-    backgroundSize: 'cover',
-    backgroundPosition: 'center',
-    backgroundRepeat: 'no-repeat',
     borderRadius: '16px',
     width: '100%',
     maxWidth: '1200px',
-    height: '400px',
     margin: '0 auto',
-    display: 'flex',
-    alignItems: 'center',
-    justifyContent: 'center',
     boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
-    position: 'relative',
-    overflow: 'hidden'
+    overflow: 'hidden',
+    background: '#e5e7eb'
   }}>
-    <div style={{
-      position: 'absolute',
-      inset: 0,
-      background: 'rgba(0, 0, 0, 0.12)',
-      borderRadius: '16px'
-    }}></div>
+    <img
+      src={assetImage("banner3.png")}
+      alt="Home services discount banner"
+      loading="lazy"
+      decoding="async"
+      style={{
+        width: '100%',
+        height: 'auto',
+        display: 'block',
+        imageRendering: 'auto'
+      }}
+    />
   </div>
 </section>
 
@@ -3542,7 +2677,7 @@ const BEAUTY_SUBCATEGORIES = [
       <div key={idx} className="faq-item">
         <details className="faq-details">
           <summary className="faq-question">
-            <span>❓</span> {item.q}
+            <span>+</span> {item.q}
           </summary>
           <p className="faq-answer">{item.a}</p>
         </details>
@@ -3557,5 +2692,10 @@ const BEAUTY_SUBCATEGORIES = [
     </div>
   );
 }
+
+
+
+
+
 
 

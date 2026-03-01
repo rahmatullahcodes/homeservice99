@@ -2,6 +2,9 @@ import { Link } from "react-router-dom";
 import { Facebook, House, Instagram, Linkedin, X, Youtube } from "lucide-react";
 import "./Footer.css";
 
+const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.meta.url).href;
+
+
 const navSections = [
   {
     title: "Home Service",
@@ -58,7 +61,7 @@ export default function Footer() {
       <div className="footer-brand-row">
         <Link to="/" className="footer-logo-link" aria-label="HomeService99">
           <img 
-            src="src/assets/images/logohs99-removebg-preview.png" 
+            src={assetImage("logohs99-removebg-preview.png")} 
             alt="HomeService99 Logo" 
             className="footer-logo-image"
             style={{ height: "50px", width: "auto", objectFit: "contain" }}

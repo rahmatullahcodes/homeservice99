@@ -3,6 +3,9 @@ import { Link, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import "./Navbar.css";
 
+const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.meta.url).href;
+
+
 // Popular locations for search
 const LOCATION_SUGGESTIONS = [
   "Sector 82, Noida",
@@ -171,7 +174,7 @@ export default function Navbar() {
       {/* LEFT: LOGO */}
       <div className="uc-logo" onClick={() => navigate("/")} style={{ cursor: "pointer" }}>
         <img 
-          src="src/assets/images/logohs99-removebg-preview.png" 
+          src={assetImage("logohs99-removebg-preview.png")} 
           alt="HomeService99 Logo" 
           className="navbar-logo-image"
           style={{ height: "40px", width: "auto", objectFit: "contain" }}
@@ -182,9 +185,9 @@ export default function Navbar() {
       <div className="uc-center">
         {/* Location Box - Click to open modal */}
         <div className="location-dropdown" onClick={() => setShowLocationModal(true)} style={{ cursor: "pointer" }}>
-          <span className="location-icon">📍</span>
+          <span className="location-icon">{"\u{1F4CD}"}</span>
           <span className="location-text">{location}</span>
-          <span style={{ fontSize: "12px", color: "#9ca3af", marginLeft: "4px" }}>▼</span>
+          <span style={{ fontSize: "12px", color: "#9ca3af", marginLeft: "4px" }}>{"\u25BE"}</span>
         </div>
 
         {/* Search Box */}
@@ -305,7 +308,7 @@ export default function Navbar() {
                 zIndex: 10000
               }}
             >
-              ✕
+              {"\u2715"}
             </button>
 
             {/* Back Arrow */}
@@ -329,7 +332,7 @@ export default function Navbar() {
               onMouseEnter={(e) => e.target.style.background = "#f3f4f6"}
               onMouseLeave={(e) => e.target.style.background = "none"}
             >
-              ← Back
+              {"\u2190 Back"}
             </button>
 
             {/* Search Input */}
@@ -380,7 +383,7 @@ export default function Navbar() {
               onMouseEnter={(e) => !geoLoading && (e.target.style.background = "#eff6ff")}
               onMouseLeave={(e) => (e.target.style.background = "white")}
             >
-              <span>{geoLoading ? "Getting location..." : "📍 Use current location"}</span>
+              <span>{geoLoading ? "Getting location..." : "\u{1F4CD} Use current location"}</span>
             </button>
 
             {/* Error Message */}
@@ -395,7 +398,7 @@ export default function Navbar() {
                 }}
               >
                 <p style={{ margin: "0", fontSize: "13px", color: "#991b1b", fontWeight: "500" }}>
-                  ⚠️ {geoError}
+                  {"\u26A0\uFE0F"} {geoError}
                 </p>
               </div>
             )}
@@ -412,7 +415,7 @@ export default function Navbar() {
                 }}
               >
                 <p style={{ margin: "0", fontSize: "13px", color: "#15803d", fontWeight: "500" }}>
-                  ✓ Location updated successfully!
+                  {"\u2713"} Location updated successfully!
                 </p>
               </div>
             )}
@@ -457,7 +460,7 @@ export default function Navbar() {
                         e.target.style.borderColor = "#e5e7eb";
                       }}
                     >
-                      <span style={{ marginRight: "8px" }}>📍</span>
+                      <span style={{ marginRight: "8px" }}>{"\u{1F4CD}"}</span>
                       {loc}
                     </button>
                   ))}
@@ -474,7 +477,7 @@ export default function Navbar() {
               fontSize: "11px",
               color: "#9ca3af"
             }}>
-              🗺️ Location data powered by OpenStreetMap
+              {"\u{1F5FA}\uFE0F"} Location data powered by OpenStreetMap
             </div>
           </div>
         </div>

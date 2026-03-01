@@ -137,7 +137,8 @@ export default function AdminServicesManagement() {
         <div style={{
           backgroundColor: "#fff",
           borderRadius: "10px",
-          overflow: "hidden",
+          overflowX: "auto",
+          overflowY: "hidden",
           boxShadow: "0 2px 8px rgba(0,0,0,0.1)"
         }}>
           {loading ? (
@@ -149,7 +150,7 @@ export default function AdminServicesManagement() {
               <p>No services found</p>
             </div>
           ) : (
-            <table style={{ width: "100%", borderCollapse: "collapse" }}>
+            <table style={{ width: "100%", minWidth: "760px", borderCollapse: "collapse" }}>
               <thead>
                 <tr style={{ backgroundColor: "#f5f5f5", borderBottom: "2px solid #ddd" }}>
                   <th style={{ padding: "15px", textAlign: "left", fontWeight: "600" }}>Service</th>
