@@ -64,7 +64,7 @@ export default function Footer() {
             src={assetImage("logohs99-removebg-preview.png")} 
             alt="HomeService99 Logo" 
             className="footer-logo-image"
-            style={{ height: "50px", width: "auto", objectFit: "contain" }}
+            style={{ height: "40px", width: "auto", objectFit: "contain" }}
           />
         </Link>
       </div>

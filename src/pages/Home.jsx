@@ -1,4 +1,4 @@
-import { useState, useRef, useEffect } from "react";
+﻿import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
@@ -533,7 +533,7 @@ const BEAUTY_SUBCATEGORIES = [
     {
       key: 'massage-men',
       title: 'Massage for Men',
-      subtitle: 'Therapeutic massage by trained experts',
+      
       ref: massageMenRef,
       onServiceClick: () => goToCategory('Men'),
       services: [
@@ -547,7 +547,7 @@ const BEAUTY_SUBCATEGORIES = [
     {
       key: 'home-repair-installation',
       title: 'Home repair & installation',
-      subtitle: 'Trusted professionals for quick fixes',
+      // subtitle: 'Trusted professionals for quick fixes',
       ref: homeRepairRef,
       onServiceClick: () => goToCategory('Maintenance'),
       services: [
@@ -561,7 +561,7 @@ const BEAUTY_SUBCATEGORIES = [
     {
       key: 'appliance-service-repair',
       title: 'Appliance Service & Repair',
-      subtitle: 'Expert appliance diagnosis and repair',
+      // subtitle: 'Expert appliance diagnosis and repair',
       ref: applianceRef,
       onServiceClick: () => goToCategory('Appliances'),
       services: [
@@ -575,7 +575,7 @@ const BEAUTY_SUBCATEGORIES = [
     {
       key: 'cleaning-essentials',
       title: 'Cleaning Essentials',
-      subtitle: 'Monthly cleaning essential services',
+      // subtitle: 'Monthly cleaning essential services',
       ref: cleaningEssentialsRef,
       onServiceClick: () => goToCategory('Cleaning'),
       services: [
@@ -589,7 +589,7 @@ const BEAUTY_SUBCATEGORIES = [
     {
       key: 'spa-women',
       title: 'Spa for Women',
-      subtitle: 'Relaxing spa therapies at home',
+      // subtitle: 'Relaxing spa therapies at home',
       ref: spaWomenRef,
       onServiceClick: (service) => goToBeautyType(service.subcategory, 'spa-for-women'),
       services: [
@@ -603,7 +603,7 @@ const BEAUTY_SUBCATEGORIES = [
     {
       key: 'salon-women',
       title: 'Salon for Women',
-      subtitle: 'Pamper yourself at home',
+      // subtitle: 'Pamper yourself at home',
       ref: salonWomenRef,
       onServiceClick: (service) => goToBeautyType(service.subcategory, 'salon-for-women'),
       services: [
@@ -627,10 +627,11 @@ const BEAUTY_SUBCATEGORIES = [
 
         <div className="services-carousel-wrap">
           <div
+            className="home-services-track home-services-track--catalog"
             ref={section.ref}
             style={{
               display: 'flex',
-              gap: '10px',
+              gap: '20px',
               overflowX: 'auto',
               scrollBehavior: 'smooth',
               WebkitOverflowScrolling: 'touch',
@@ -642,6 +643,7 @@ const BEAUTY_SUBCATEGORIES = [
             {section.services.map((service) => (
               <div
                 key={service.id}
+                className="home-slider-card home-slider-card--service"
                 style={{
                   flex: '0 0 240px',
                   display: 'flex',
@@ -799,7 +801,7 @@ const BEAUTY_SUBCATEGORIES = [
     );
   };
   return (
-    <div>
+    <div className="home-page-white">
       <CMSBanners />
 
 {/* HERO SECTION */}
@@ -2070,7 +2072,7 @@ const BEAUTY_SUBCATEGORIES = [
     <div style={{ position: 'relative', overflow: 'hidden' }}>
       <div 
         ref={promoSliderRef}
-        className="promo-slider"
+        className="promo-slider home-services-track home-services-track--promo"
         style={{ 
           display: 'flex',
           gap: '12px',
@@ -2111,6 +2113,7 @@ const BEAUTY_SUBCATEGORIES = [
         ].map((promo) => (
           <div 
             key={promo.id}
+            className="home-slider-card home-slider-card--promo"
             style={{
               flex: '0 0 clamp(280px, 85vw, 360px)',
               minWidth: 'clamp(280px, 85vw, 360px)',
@@ -2188,27 +2191,29 @@ const BEAUTY_SUBCATEGORIES = [
 </section>
 
 {/* FEATURED SERVICES CARDS - HORIZONTAL CAROUSEL */}
-<section className="container slide-up" style={{ marginTop: "12px", marginBottom: "20px" }}>
+<section className="container slide-up" style={{ marginTop: "8px", marginBottom: "8px", paddingBottom: "4px" }}>
   <h2 className="section-title">Popular Services</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Highly-rated services from verified professionals</p>
+  
 
   <div className="services-carousel-wrap">
     <div 
+      className="home-services-track home-services-track--popular"
       ref={popularServicesRef}
       style={{
         display: 'flex',
-        gap: '10px',
+        gap: '16px',
         overflowX: 'auto',
         scrollBehavior: 'smooth',
         WebkitOverflowScrolling: 'touch',
         scrollbarWidth: 'none',
         msOverflowStyle: 'none',
-        paddingBottom: '8px'
+        paddingBottom: '4px'
       }}
     >
       {getFeaturedServices().map((service, index) => (
         <div 
           key={`${service.id}-${index}`}
+          className="home-slider-card home-slider-card--service"
           style={{
             flex: '0 0 240px',
             display: 'flex',
@@ -2235,7 +2240,7 @@ const BEAUTY_SUBCATEGORIES = [
           {/* Service Image */}
           <div style={{
             width: '100%',
-            height: '140px',
+            height: '156px',
             overflow: 'hidden',
             background: '#f1f5f9',
             position: 'relative'
@@ -2357,16 +2362,17 @@ const BEAUTY_SUBCATEGORIES = [
 </section>
 
 {/* GET QUOTE - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
+<section className="container slide-up" style={{ marginTop: "0px", paddingTop: "4px" }}>
   <h2 className="section-title">Get Quote</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
+ 
 
   <div className="services-carousel-wrap">
     <div
+      className="home-services-track home-services-track--quote"
       ref={getQuoteRef}
       style={{
         display: 'flex',
-        gap: '10px',
+        gap: '16px',
         overflowX: 'auto',
         scrollBehavior: 'smooth',
         WebkitOverflowScrolling: 'touch',
@@ -2377,6 +2383,7 @@ const BEAUTY_SUBCATEGORIES = [
     {OFFERS.map((offer) => (
       <div 
         key={offer.id}
+        className="home-slider-card home-slider-card--offer"
         style={{
           flex: '0 0 clamp(200px, 85vw, 250px)',
           display: 'flex',
@@ -2396,7 +2403,7 @@ const BEAUTY_SUBCATEGORIES = [
           alt={offer.title}
           style={{
             width: '100%',
-            height: '140px',
+            height: '156px',
             objectFit: 'cover',
             borderRadius: '10px',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
@@ -2454,16 +2461,17 @@ const BEAUTY_SUBCATEGORIES = [
 </section>
 
 {/* OFFERS & DISCOUNTS - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "12px" }}>
+<section className="container slide-up" style={{ marginTop: "8px", paddingTop: "6px" }}>
   <h2 className="section-title">Offers & discounts</h2>
-  <p style={{ fontSize: "13px", color: "#6b7280", marginBottom: "12px" }}>Grab limited-time deals and curated packages</p>
+ 
 
   <div className="services-carousel-wrap">
     <div
+      className="home-services-track home-services-track--offers"
       ref={offersRef}
       style={{
         display: 'flex',
-        gap: '10px',
+        gap: '6px',
         overflowX: 'auto',
         scrollBehavior: 'smooth',
         WebkitOverflowScrolling: 'touch',
@@ -2474,6 +2482,7 @@ const BEAUTY_SUBCATEGORIES = [
     {OFFERS.map((offer) => (
       <div 
         key={offer.id}
+        className="home-slider-card home-slider-card--offer"
         style={{
           flex: '0 0 clamp(200px, 85vw, 250px)',
           display: 'flex',
@@ -2493,7 +2502,7 @@ const BEAUTY_SUBCATEGORIES = [
           alt={offer.title}
           style={{
             width: '100%',
-            height: '140px',
+            height: '156px',
             objectFit: 'cover',
             borderRadius: '10px',
             boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'

@@ -83,10 +83,10 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 11px 14px;
+  padding: 9px 12px;
   background: #fff;
   border: 1.5px solid #d1d5db;
-  border-radius: 10px;
+  border-radius: 9px;
   transition: all 0.3s ease;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.06);
   white-space: nowrap;
@@ -147,10 +147,10 @@
 
 .uc-search input {
   flex: 1;
-  padding: 11px 14px;
+  padding: 9px 12px;
   border: none;
   outline: none;
-  font-size: 13px;
+  font-size: 12.5px;
   background: transparent;
   color: #1e293b;
   transition: color 0.2s ease;
@@ -165,7 +165,7 @@
 .uc-actions {
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 10px;
   flex-shrink: 0;
 }
 
@@ -180,12 +180,12 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 9px 20px;
+  padding: 8px 16px;
   border: 2px solid #2563eb;
   border-radius: 25px;
   background: transparent;
   color: #2563eb;
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 600;
   text-decoration: none;
   cursor: pointer;
@@ -211,8 +211,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 44px;
-  height: 44px;
+  width: 40px;
+  height: 40px;
   border-radius: 10px;
   background: #f1f5f9;
   color: #1e293b;
@@ -229,8 +229,8 @@
 }
 
 .uc-cart svg {
-  width: 22px;
-  height: 22px;
+  width: 20px;
+  height: 20px;
   stroke: currentColor;
 }
 
@@ -307,8 +307,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 40px;
-  height: 40px;
+  width: 38px;
+  height: 38px;
   border: none;
   background: #f1f5f9;
   border-radius: 10px;
@@ -1016,7 +1016,7 @@
 }
 
 .location-text {
-  font-size: 14px;
+  font-size: 13px;
   font-weight: 500;
   color: #1f2937;
   max-width: 150px;
@@ -1053,17 +1053,17 @@
 /* ===== NAV WIDTH ALIGNMENT FIX ===== */
 .uc-navbar {
   display: block;
-  padding: 0 16px;
+  padding: 0 clamp(18px, 2.8vw, 40px);
 }
 
 .uc-navbar-inner {
-  width: min(1120px, 100%);
+  width: min(1320px, 100%);
   margin: 0 auto;
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) auto;
   align-items: center;
-  gap: 24px;
-  padding: 14px 0;
+  gap: 16px;
+  padding: 10px 0;
 }
 
 @media (min-width: 769px) {
@@ -1072,9 +1072,9 @@
   }
 
   .uc-search {
-    flex: 0 1 520px;
-    max-width: 520px;
-    min-width: 260px;
+    flex: 0 1 480px;
+    max-width: 480px;
+    min-width: 240px;
     background: #ffffff !important;
     border-color: #d1d5db !important;
   }
@@ -1086,13 +1086,19 @@
 
 @media (min-width: 1440px) {
   .uc-navbar-inner {
-    width: min(1180px, 100%);
+    width: min(1320px, 100%);
+  }
+}
+
+@media (max-width: 992px) {
+  .uc-navbar {
+    padding: 0 18px;
   }
 }
 
 @media (max-width: 768px) {
   .uc-navbar {
-    padding: 0 12px;
+    padding: 0 14px;
   }
 
   .uc-navbar-inner {

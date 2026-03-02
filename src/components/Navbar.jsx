@@ -177,7 +177,7 @@ export default function Navbar() {
           src={assetImage("logohs99-removebg-preview.png")} 
           alt="HomeService99 Logo" 
           className="navbar-logo-image"
-          style={{ height: "40px", width: "auto", objectFit: "contain" }}
+          style={{ height: "34px", width: "auto", objectFit: "contain" }}
         />
       </div>
 
