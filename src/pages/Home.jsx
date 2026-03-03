@@ -619,7 +619,7 @@ const BEAUTY_SUBCATEGORIES = [
     if (!section) return null;
 
     return (
-      <section className="container slide-up" style={{ marginTop: '12px' }}>
+      <section className="container slide-up" style={{ marginTop: '24px' }}>
         <h2 className="section-title">{section.title}</h2>
         {section.subtitle && (
           <p style={{ fontSize: '13px', color: '#6b7280', marginBottom: '12px' }}>{section.subtitle}</p>
@@ -800,6 +800,16 @@ const BEAUTY_SUBCATEGORIES = [
       </section>
     );
   };
+
+  const MODAL_TITLE_MAP = {
+    Appliances: "AC & Appliance Repair",
+    Men: "Men's Grooming Services"
+  };
+
+  const modalTitle = selectedSubcategory
+    ? selectedSubcategory
+    : (MODAL_TITLE_MAP[modalCategory] || `${modalCategory} Services`);
+
   return (
     <div className="home-page-white">
       <CMSBanners />
@@ -885,43 +895,43 @@ const BEAUTY_SUBCATEGORIES = [
 
 {/* CATEGORY QUICK-MODAL WITH SUBCATEGORIES */}
 {modalOpen && (
-  <div className="modal-backdrop" role="dialog" aria-modal="true">
-    <div className="modal modal-large">
+  <div
+    className="modal-backdrop home-quick-modal-backdrop"
+    role="dialog"
+    aria-modal="true"
+    onClick={() => setModalOpen(false)}
+  >
+    <div className="modal modal-large home-quick-modal" onClick={(e) => e.stopPropagation()}>
       {/* Modal Header */}
-      <div className="modal-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: 1 }}>
+      <div className="modal-header home-quick-modal-header">
+        <div className="home-quick-modal-heading">
           {selectedSubcategory && (
             <button 
-              className="btn-icon" 
+              className="home-quick-modal-back"
               onClick={backToCategory}
               aria-label="Back to categories"
-              style={{
-                background: 'none',
-                border: 'none',
-                fontSize: '20px',
-                cursor: 'pointer',
-                padding: '4px',
-                display: 'flex',
-                alignItems: 'center'
-              }}
             >
               &larr;
             </button>
           )}
-          <div>
-            <h3 style={{ margin: '0 0 4px 0', fontSize: '16px', fontWeight: '600' }}>
-              {selectedSubcategory ? selectedSubcategory : `${modalCategory} Services`}
-            </h3>
-            <p style={{ margin: 0, fontSize: '12px', color: '#6b7280' }}>
+          <div className="home-quick-modal-title-wrap">
+            <h3 className="home-quick-modal-title">{modalTitle}</h3>
+            <p className="home-quick-modal-subtitle">
               {selectedSubcategory ? 'Select a service' : 'Choose a category'}
             </p>
           </div>
         </div>
-        <button className="btn-outline" onClick={() => setModalOpen(false)} aria-label="Close modal">&times;</button>
+        <button
+          className="home-quick-modal-close"
+          onClick={() => setModalOpen(false)}
+          aria-label="Close modal"
+        >
+          &times;
+        </button>
       </div>
 
       {/* Service Cards Grid View - Category Wise */}
-      <div className="modal-body">
+      <div className="modal-body home-quick-modal-body">
         {modalCategory === 'Beauty' ? (
   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px' }}>
     {BEAUTY_SUBCATEGORIES.map((item) => (
@@ -2067,7 +2077,7 @@ const BEAUTY_SUBCATEGORIES = [
 )}
 
 {/* PROMOTIONAL SLIDER SECTION */}
-<section className="container slide-up" style={{ marginTop: "16px" }}>
+<section className="container slide-up" style={{ marginTop: "48px" }}>
   <div className="services-carousel-wrap">
     <div style={{ position: 'relative', overflow: 'hidden' }}>
       <div 
@@ -2075,7 +2085,7 @@ const BEAUTY_SUBCATEGORIES = [
         className="promo-slider home-services-track home-services-track--promo"
         style={{ 
           display: 'flex',
-          gap: '12px',
+          gap: '20px',
           overflowX: 'auto',
           scrollBehavior: 'smooth',
           WebkitOverflowScrolling: 'touch',
@@ -2191,7 +2201,7 @@ const BEAUTY_SUBCATEGORIES = [
 </section>
 
 {/* FEATURED SERVICES CARDS - HORIZONTAL CAROUSEL */}
-<section className="container slide-up" style={{ marginTop: "8px", marginBottom: "8px", paddingBottom: "4px" }}>
+<section className="container slide-up" style={{ marginTop: "24px", marginBottom: "8px", paddingBottom: "4px" }}>
   <h2 className="section-title">Popular Services</h2>
   
 
@@ -2201,7 +2211,7 @@ const BEAUTY_SUBCATEGORIES = [
       ref={popularServicesRef}
       style={{
         display: 'flex',
-        gap: '16px',
+        gap: '12px',
         overflowX: 'auto',
         scrollBehavior: 'smooth',
         WebkitOverflowScrolling: 'touch',
@@ -2362,7 +2372,7 @@ const BEAUTY_SUBCATEGORIES = [
 </section>
 
 {/* GET QUOTE - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "0px", paddingTop: "4px" }}>
+<section className="container slide-up" style={{ marginTop: "24px", paddingTop: "4px" }}>
   <h2 className="section-title">Get Quote</h2>
  
 
@@ -2461,7 +2471,7 @@ const BEAUTY_SUBCATEGORIES = [
 </section>
 
 {/* OFFERS & DISCOUNTS - PROFESSIONAL SLIDER */}
-<section className="container slide-up" style={{ marginTop: "8px", paddingTop: "6px" }}>
+<section className="container slide-up" style={{ marginTop: "24px", paddingTop: "6px" }}>
   <h2 className="section-title">Offers & discounts</h2>
  
 
@@ -2564,7 +2574,7 @@ const BEAUTY_SUBCATEGORIES = [
 {renderUnifiedServiceSection(curatedServiceSections[1])}
 
 {/* ADS BANNER - After Massage for Men */}
-<section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
+<section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
   <div style={{
     borderRadius: '16px',
     width: '100%',
@@ -2596,7 +2606,7 @@ const BEAUTY_SUBCATEGORIES = [
 {renderUnifiedServiceSection(curatedServiceSections[4])}
 
 {/* ADS BANNER - After Massage for Men */}
-<section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
+<section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
   <div style={{
     borderRadius: '16px',
     width: '100%',
@@ -2626,7 +2636,7 @@ const BEAUTY_SUBCATEGORIES = [
 {renderUnifiedServiceSection(curatedServiceSections[6])}
 
 {/* ADS BANNER - After Massage for Men */}
-<section className="container slide-up" style={{ marginTop: "20px", marginBottom: "20px" }}>
+<section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
   <div style={{
     borderRadius: '16px',
     width: '100%',
