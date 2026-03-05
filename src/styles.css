@@ -10828,7 +10828,7 @@ iframe {
 }
 
 .home-page-white .home-services-track {
-  gap: 16px !important;
+  gap: 20px !important;
   padding-bottom: 8px !important;
 }
 
@@ -10958,9 +10958,37 @@ iframe {
 
 
 .home-page-white .section-title {
-  font-size: clamp(28px, 2.9vw, 36px);
-  font-weight: 700;
-  margin-bottom: 14px;
+  font-size: clamp(24px, 2.6vw, 30px);
+  font-weight: 600;
+  margin-bottom: 16px;
+}
+
+.home-page-white section.container.slide-up + section.container.slide-up {
+  margin-top: 44px !important;
+}
+
+.home-page-white .home-slider-card--service > div:first-child {
+  height: 172px !important;
+}
+
+.home-page-white .home-slider-card--offer img {
+  height: 172px !important;
+}
+
+.home-page-white .home-slider-card--service h3 {
+  font-size: 14px !important;
+}
+
+.home-page-white .home-slider-card--offer > p {
+  font-size: 14px !important;
+}
+
+.home-page-white .home-slider-card--promo {
+  border-radius: 6px !important;
+}
+
+.home-page-white .home-promo-banner-box {
+  border-radius: 6px !important;
 }
 
 @media (hover: hover) and (pointer: fine) {

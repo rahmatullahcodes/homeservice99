@@ -384,6 +384,13 @@ const BEAUTY_SUBCATEGORIES = [
       return;
     }
 
+    const host = window.location.hostname;
+    const isLocalhost = host === "localhost" || host === "127.0.0.1";
+    if (!window.isSecureContext && !isLocalhost) {
+      addToast("Location works only on HTTPS (or localhost)", 'warning');
+      return;
+    }
+
     setDetecting(true);
 
     navigator.geolocation.getCurrentPosition(
@@ -393,7 +400,7 @@ const BEAUTY_SUBCATEGORIES = [
 
         try {
           const res = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lon}`
+            `https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&lat=${lat}&lon=${lon}`
           );
           const data = await res.json();
 
@@ -413,6 +420,11 @@ const BEAUTY_SUBCATEGORIES = [
       () => {
         addToast("Permission denied", 'warning');
         setDetecting(false);
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 300000
       }
     );
   }
@@ -2575,7 +2587,7 @@ const BEAUTY_SUBCATEGORIES = [
 
 {/* ADS BANNER - After Massage for Men */}
 <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
-  <div style={{
+  <div className="home-promo-banner-box" style={{
     borderRadius: '16px',
     width: '100%',
     maxWidth: '1200px',
@@ -2607,7 +2619,7 @@ const BEAUTY_SUBCATEGORIES = [
 
 {/* ADS BANNER - After Massage for Men */}
 <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
-  <div style={{
+  <div className="home-promo-banner-box" style={{
     borderRadius: '16px',
     width: '100%',
     maxWidth: '1200px',
@@ -2637,7 +2649,7 @@ const BEAUTY_SUBCATEGORIES = [
 
 {/* ADS BANNER - After Massage for Men */}
 <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
-  <div style={{
+  <div className="home-promo-banner-box" style={{
     borderRadius: '16px',
     width: '100%',
     maxWidth: '1200px',

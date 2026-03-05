@@ -78,29 +78,36 @@ export default function Navbar() {
       return;
     }
 
+    const host = window.location.hostname;
+    const isLocalhost = host === "localhost" || host === "127.0.0.1";
+    if (!window.isSecureContext && !isLocalhost) {
+      setGeoError("Location works only on HTTPS (or localhost). Please open the site with https://");
+      setGeoLoading(false);
+      return;
+    }
+
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
+        let timeout;
 
         try {
           // Create abort controller with 5 second timeout
           const controller = new AbortController();
-          const timeout = setTimeout(() => controller.abort(), 5000);
+          timeout = setTimeout(() => controller.abort(), 5000);
 
           // Use Nominatim for reverse geocoding (free, reliable, no API key)
           const nominatimResponse = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+            `https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&lat=${latitude}&lon=${longitude}`,
             { 
               signal: controller.signal,
               headers: { 'Accept-Language': 'en' }
             }
           );
 
-          clearTimeout(timeout);
-
           if (nominatimResponse.ok) {
             const data = await nominatimResponse.json();
-            
+             
             if (data.address) {
               // Build a readable address from the Nominatim response
               const city = data.address.city || data.address.town || data.address.village || "";
@@ -118,6 +125,7 @@ export default function Navbar() {
 
               if (address.trim()) {
                 handleLocationSelect(address);
+                setGeoLoading(false);
                 setGeoSuccess(true);
                 setTimeout(() => setGeoSuccess(false), 2000);
                 return;
@@ -135,6 +143,8 @@ export default function Navbar() {
             setGeoError("Unable to determine your exact location. Please search manually.");
           }
           setGeoLoading(false);
+        } finally {
+          clearTimeout(timeout);
         }
       },
       (error) => {
@@ -152,6 +162,11 @@ export default function Navbar() {
           default:
             setGeoError("Unable to get your location. Please search manually.");
         }
+      },
+      {
+        enableHighAccuracy: true,
+        timeout: 12000,
+        maximumAge: 300000
       }
     );
   }
