@@ -18,24 +18,54 @@ export default function ServiceDetail() {
   // Find service from the complete database
   let service = null;
   let currentCategory = null;
-  let currentSubcategory = null;
   let relatedServices = [];
-  
-  if (stateService) {
-    service = stateService;
-    // Find the category and subcategory for related services
+
+  const findServiceContext = (targetServiceId) => {
+    if (!targetServiceId) {
+      return null;
+    }
+
     for (const [catKey, catData] of Object.entries(ALL_SERVICES)) {
       for (const [subcatKey, services] of Object.entries(catData.subcategories)) {
-        const found = services.find(s => s.id === stateService.id);
+        const found = services.find((s) => s.id === targetServiceId);
         if (found) {
-          currentCategory = catKey;
-          currentSubcategory = subcatKey;
-          // Get other services from same subcategory
-          relatedServices = services.filter(s => s.id !== stateService.id);
-          break;
+          return {
+            service: found,
+            category: catKey,
+            subcategory: subcatKey,
+            related: services.filter((s) => s.id !== targetServiceId),
+          };
         }
       }
-      if (currentCategory) break;
+    }
+
+    return null;
+  };
+
+  const serviceContext = findServiceContext(stateService?.id || id);
+
+  if (serviceContext) {
+    service = stateService || serviceContext.service;
+    currentCategory = serviceContext.category;
+    relatedServices = serviceContext.related;
+  }
+
+  if (service && currentCategory === "Plumber") {
+    const plumberRelatedServices = [];
+    const seenIds = new Set();
+
+    Object.values(ALL_SERVICES.Plumber?.subcategories || {}).forEach((services) => {
+      services.forEach((item) => {
+        if (item.id === service.id || seenIds.has(item.id)) {
+          return;
+        }
+        seenIds.add(item.id);
+        plumberRelatedServices.push(item);
+      });
+    });
+
+    if (plumberRelatedServices.length > 0) {
+      relatedServices = plumberRelatedServices;
     }
   }
 

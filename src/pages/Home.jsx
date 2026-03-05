@@ -437,12 +437,20 @@ const BEAUTY_SUBCATEGORIES = [
     const baseUrl = buildServicesUrl(category, subcategory);
     const [path, query = ""] = baseUrl.split("?");
     const params = new URLSearchParams(query);
+    const shouldOpenCompleteCategory = modalOpen;
+    const normalizedExtraParams = shouldOpenCompleteCategory ? {} : { ...extraParams };
 
-    Object.entries(extraParams).forEach(([key, value]) => {
+    Object.entries(normalizedExtraParams).forEach(([key, value]) => {
       if (value !== undefined && value !== null && value !== "") {
         params.set(key, value);
       }
     });
+
+    if (shouldOpenCompleteCategory) {
+      params.delete("serviceType");
+      params.delete("beautyType");
+      params.delete("appliance");
+    }
 
     const nextQuery = params.toString();
     navigate(nextQuery ? `${path}?${nextQuery}` : path);
