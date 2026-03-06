@@ -4,23 +4,93 @@ import { useCart } from "../context/CartContext";
 import "./Navbar.css";
 
 const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.meta.url).href;
+const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
+const GOOGLE_MAPS_SCRIPT_ID = "hs99-google-maps-script";
+const GOOGLE_MAPS_LIBRARIES = "places";
 
+function loadGoogleMapsScript(apiKey) {
+  if (!apiKey) {
+    return Promise.reject(new Error("Google Maps API key is missing"));
+  }
 
-// Popular locations for search
-const LOCATION_SUGGESTIONS = [
-  "Sector 82, Noida",
-  "Sector 90, Noida",
-  "Connaught Place, Delhi",
-  "Ghaziabad",
-  "Greater Noida",
-  "Indirapuram, Ghaziabad",
-  "Vasundhara, Ghaziabad",
-  "Ecotech Extn, Noida",
-  "Faridabad",
-  "Gurgaon",
-  "DLF City, Gurgaon",
-  "MG Road, Delhi"
-];
+  if (window.google?.maps?.places && window.google?.maps?.Geocoder) {
+    return Promise.resolve(window.google);
+  }
+
+  return new Promise((resolve, reject) => {
+    const existingScript = document.getElementById(GOOGLE_MAPS_SCRIPT_ID);
+
+    if (existingScript) {
+      if (window.google?.maps?.places && window.google?.maps?.Geocoder) {
+        resolve(window.google);
+        return;
+      }
+
+      let settled = false;
+
+      const cleanup = () => {
+        existingScript.removeEventListener("load", onLoad);
+        existingScript.removeEventListener("error", onError);
+      };
+
+      const resolveIfReady = () => {
+        if (window.google?.maps?.places && window.google?.maps?.Geocoder) {
+          settled = true;
+          cleanup();
+          resolve(window.google);
+          return true;
+        }
+        return false;
+      };
+
+      const onLoad = () => {
+        if (resolveIfReady()) {
+          return;
+        }
+        if (!settled) {
+          settled = true;
+          cleanup();
+          reject(new Error("Google Maps services are unavailable"));
+        }
+      };
+
+      const onError = () => {
+        if (!settled) {
+          settled = true;
+          cleanup();
+          reject(new Error("Failed to load Google Maps script"));
+        }
+      };
+
+      if (resolveIfReady()) {
+        return;
+      }
+
+      existingScript.addEventListener("load", onLoad);
+      existingScript.addEventListener("error", onError);
+
+      setTimeout(() => {
+        if (!settled) {
+          if (!resolveIfReady()) {
+            settled = true;
+            cleanup();
+            reject(new Error("Google Maps script did not become ready"));
+          }
+        }
+      }, 4000);
+      return;
+    }
+
+    const script = document.createElement("script");
+    script.id = GOOGLE_MAPS_SCRIPT_ID;
+    script.src = `https://maps.googleapis.com/maps/api/js?key=${apiKey}&libraries=${GOOGLE_MAPS_LIBRARIES}`;
+    script.async = true;
+    script.defer = true;
+    script.onload = () => resolve(window.google);
+    script.onerror = () => reject(new Error("Failed to load Google Maps script"));
+    document.head.appendChild(script);
+  });
+}
 
 export default function Navbar() {
   const navigate = useNavigate();
@@ -31,42 +101,390 @@ export default function Navbar() {
   const [query, setQuery] = useState("");
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
-  const [filteredSuggestions, setFilteredSuggestions] = useState(LOCATION_SUGGESTIONS);
+  const [googleReady, setGoogleReady] = useState(false);
+  const [googleSuggestions, setGoogleSuggestions] = useState([]);
   const [geoLoading, setGeoLoading] = useState(false);
   const [geoError, setGeoError] = useState("");
   const [geoSuccess, setGeoSuccess] = useState(false);
+  const autocompleteServiceRef = useRef(null);
+  const geocoderRef = useRef(null);
+  const searchRequestIdRef = useRef(0);
 
   const isLoggedIn = !!localStorage.getItem("token");
-  const user = JSON.parse(localStorage.getItem("user") || "null");
-  const isVendor = user?.role === "vendor";
 
   const cartCount = cart.length;
   const hideCartOnServicesPage = routeLocation.pathname.startsWith("/services");
+
+  useEffect(() => {
+    if (!showLocationModal) {
+      searchRequestIdRef.current += 1;
+      setGoogleSuggestions([]);
+      return;
+    }
+
+    let cancelled = false;
+
+    if (!GOOGLE_MAPS_API_KEY) {
+      setGoogleReady(false);
+      autocompleteServiceRef.current = null;
+      geocoderRef.current = null;
+      return () => {
+        cancelled = true;
+      };
+    }
+
+    loadGoogleMapsScript(GOOGLE_MAPS_API_KEY)
+      .then(() => {
+        if (cancelled) {
+          return;
+        }
+
+        if (!window.google?.maps?.places || !window.google?.maps?.Geocoder) {
+          throw new Error("Google Maps services are unavailable");
+        }
+
+        autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+        geocoderRef.current = new window.google.maps.Geocoder();
+        setGoogleReady(true);
+      })
+      .catch((error) => {
+        console.error("Google Maps load error:", error);
+        if (cancelled) {
+          return;
+        }
+
+        setGoogleReady(false);
+        autocompleteServiceRef.current = null;
+        geocoderRef.current = null;
+      });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [showLocationModal]);
 
   function handleLocationSelect(selectedLocation) {
     setLocation(selectedLocation);
     localStorage.setItem("selectedLocation", selectedLocation);
     setShowLocationModal(false);
     setLocationSearch("");
-    setFilteredSuggestions(LOCATION_SUGGESTIONS);
+    setGoogleSuggestions([]);
     setGeoError("");
     setGeoSuccess(false);
   }
 
   function handleLocationSearchChange(value) {
     setLocationSearch(value);
+    setGeoError("");
+    setGeoSuccess(false);
 
     if (!value.trim()) {
-      setFilteredSuggestions(LOCATION_SUGGESTIONS);
+      searchRequestIdRef.current += 1;
+      setGoogleSuggestions([]);
       return;
     }
 
-    // Filter suggestions based on search input
-    const filtered = LOCATION_SUGGESTIONS.filter(loc =>
-      loc.toLowerCase().includes(value.toLowerCase())
+    if (googleReady && autocompleteServiceRef.current) {
+      const requestId = searchRequestIdRef.current + 1;
+      searchRequestIdRef.current = requestId;
+
+      autocompleteServiceRef.current.getPlacePredictions(
+        {
+          input: value,
+          componentRestrictions: { country: "in" },
+          types: ["geocode"],
+        },
+        (predictions, status) => {
+          if (searchRequestIdRef.current !== requestId) {
+            return;
+          }
+
+          const okStatus = window.google?.maps?.places?.PlacesServiceStatus?.OK || "OK";
+          if (status === okStatus && Array.isArray(predictions) && predictions.length > 0) {
+            setGoogleSuggestions(
+              predictions.map((prediction) => ({
+                id: prediction.place_id || prediction.description,
+                description: prediction.description,
+                placeId: prediction.place_id,
+              }))
+            );
+            return;
+          }
+
+          setGoogleSuggestions([]);
+        }
+      );
+      return;
+    }
+    setGoogleSuggestions([]);
+  }
+
+  function handleGoogleSuggestionSelect(suggestion) {
+    if (!suggestion) {
+      return;
+    }
+
+    if (suggestion.placeId && geocoderRef.current) {
+      geocoderRef.current.geocode({ placeId: suggestion.placeId }, (results, status) => {
+        const okStatus = window.google?.maps?.GeocoderStatus?.OK || "OK";
+        if (status === okStatus && Array.isArray(results) && results.length > 0) {
+          handleLocationSelect(results[0].formatted_address);
+          return;
+        }
+        handleLocationSelect(suggestion.description);
+      });
+      return;
+    }
+
+    handleLocationSelect(suggestion.description);
+  }
+
+  async function ensureGoogleServicesReady() {
+    if (window.google?.maps?.Geocoder && geocoderRef.current) {
+      return true;
+    }
+
+    if (!GOOGLE_MAPS_API_KEY) {
+      return false;
+    }
+
+    try {
+      await loadGoogleMapsScript(GOOGLE_MAPS_API_KEY);
+      if (!window.google?.maps?.Geocoder) {
+        return false;
+      }
+
+      if (!geocoderRef.current) {
+        geocoderRef.current = new window.google.maps.Geocoder();
+      }
+
+      if (!autocompleteServiceRef.current && window.google?.maps?.places) {
+        autocompleteServiceRef.current = new window.google.maps.places.AutocompleteService();
+      }
+
+      setGoogleReady(Boolean(window.google?.maps?.Geocoder && window.google?.maps?.places));
+      return true;
+    } catch (error) {
+      console.error("Google Maps readiness error:", error);
+      return false;
+    }
+  }
+
+  function buildAddressFromParts(parts) {
+    const normalized = parts
+      .map((part) => (typeof part === "string" ? part.trim() : ""))
+      .filter(Boolean);
+
+    return [...new Set(normalized)].join(", ");
+  }
+
+  function reverseGeocodeWithGoogleJs(latitude, longitude) {
+    if (!geocoderRef.current) {
+      return Promise.resolve("");
+    }
+
+    return new Promise((resolve, reject) => {
+      geocoderRef.current.geocode(
+        { location: { lat: latitude, lng: longitude } },
+        (results, status) => {
+          const okStatus = window.google?.maps?.GeocoderStatus?.OK || "OK";
+          if (status === okStatus && Array.isArray(results) && results.length > 0) {
+            resolve(results[0].formatted_address || "");
+            return;
+          }
+
+          if (status === "ZERO_RESULTS") {
+            resolve("");
+            return;
+          }
+
+          reject(new Error(`Google JS reverse geocoding failed with status: ${status}`));
+        }
+      );
+    });
+  }
+
+  async function fetchJsonWithTimeout(url, timeoutMs) {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
+
+    try {
+      const response = await fetch(url, {
+        signal: controller.signal,
+        headers: {
+          Accept: "application/json",
+          "Accept-Language": "en",
+        },
+      });
+
+      if (!response.ok) {
+        return null;
+      }
+
+      return await response.json();
+    } catch (error) {
+      if (error?.name !== "AbortError") {
+        console.error("Reverse geocode fetch failed:", error);
+      }
+      return null;
+    } finally {
+      clearTimeout(timeoutId);
+    }
+  }
+
+  async function reverseGeocodeWithGoogleHttp(latitude, longitude) {
+    if (!GOOGLE_MAPS_API_KEY) {
+      return "";
+    }
+
+    const data = await fetchJsonWithTimeout(
+      `https://maps.googleapis.com/maps/api/geocode/json?latlng=${latitude},${longitude}&language=en&key=${GOOGLE_MAPS_API_KEY}`,
+      10000
     );
 
-    setFilteredSuggestions(filtered.length > 0 ? filtered : LOCATION_SUGGESTIONS);
+    if (!data || data.status !== "OK" || !Array.isArray(data.results) || data.results.length === 0) {
+      return "";
+    }
+
+    return data.results[0].formatted_address || "";
+  }
+
+  async function reverseGeocodeWithBigDataCloud(latitude, longitude) {
+    const data = await fetchJsonWithTimeout(
+      `https://api.bigdatacloud.net/data/reverse-geocode-client?latitude=${latitude}&longitude=${longitude}&localityLanguage=en`,
+      9000
+    );
+
+    if (!data) {
+      return "";
+    }
+
+    const locality =
+      data.locality ||
+      data.city ||
+      data.principalSubdivision ||
+      data.localityInfo?.administrative?.[0]?.name ||
+      "";
+
+    return buildAddressFromParts([locality, data.principalSubdivision, data.countryName]);
+  }
+
+  async function reverseGeocodeWithNominatim(latitude, longitude) {
+    const data = await fetchJsonWithTimeout(
+      `https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&zoom=18&lat=${latitude}&lon=${longitude}`,
+      12000
+    );
+
+    if (!data) {
+      return "";
+    }
+
+    const address = data.address || {};
+    const locality =
+      address.suburb ||
+      address.neighbourhood ||
+      address.city_district ||
+      address.city ||
+      address.town ||
+      address.village ||
+      address.county ||
+      "";
+
+    return (
+      buildAddressFromParts([locality, address.state, address.country]) ||
+      (typeof data.display_name === "string" ? data.display_name : "")
+    );
+  }
+
+  async function resolveAddressFromCoordinates(latitude, longitude) {
+    const googleReadyNow = await ensureGoogleServicesReady();
+    if (googleReadyNow) {
+      try {
+        const googleJsAddress = await reverseGeocodeWithGoogleJs(latitude, longitude);
+        if (googleJsAddress) {
+          return googleJsAddress;
+        }
+      } catch (error) {
+        console.error("Google JS reverse geocode error:", error);
+      }
+    }
+
+    const googleHttpAddress = await reverseGeocodeWithGoogleHttp(latitude, longitude);
+    if (googleHttpAddress) {
+      return googleHttpAddress;
+    }
+
+    const bigDataCloudAddress = await reverseGeocodeWithBigDataCloud(latitude, longitude);
+    if (bigDataCloudAddress) {
+      return bigDataCloudAddress;
+    }
+
+    const nominatimAddress = await reverseGeocodeWithNominatim(latitude, longitude);
+    if (nominatimAddress) {
+      return nominatimAddress;
+    }
+
+    return "";
+  }
+
+  async function resolveAndApplyLocation(latitude, longitude) {
+    const address = await resolveAddressFromCoordinates(latitude, longitude);
+    if (!address) {
+      return false;
+    }
+
+    handleLocationSelect(address);
+    setGeoLoading(false);
+    setGeoSuccess(true);
+    setTimeout(() => setGeoSuccess(false), 2000);
+    return true;
+  }
+
+  async function getIpCoordinates() {
+    const data = await fetchJsonWithTimeout("https://ipapi.co/json/", 7000);
+    if (!data) {
+      return null;
+    }
+
+    const latitude = Number(data.latitude);
+    const longitude = Number(data.longitude);
+
+    if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+      return null;
+    }
+
+    return { latitude, longitude };
+  }
+
+  function getGeoErrorMessage(error) {
+    switch (error?.code) {
+      case 1:
+        return "Location permission denied. Turn on location access for better accuracy.";
+      case 2:
+        return "GPS location is unavailable. Showing approximate location instead.";
+      case 3:
+        return "Location request timed out. Showing approximate location instead.";
+      default:
+        return "Unable to get precise GPS location. Showing approximate location instead.";
+    }
+  }
+
+  async function applyIpFallback(error) {
+    try {
+      const ipCoordinates = await getIpCoordinates();
+      if (ipCoordinates) {
+        const applied = await resolveAndApplyLocation(ipCoordinates.latitude, ipCoordinates.longitude);
+        if (applied) {
+          return true;
+        }
+      }
+    } catch (fallbackError) {
+      console.error("IP fallback location error:", fallbackError);
+    }
+
+    setGeoError(getGeoErrorMessage(error));
+    setGeoLoading(false);
+    return false;
   }
 
   async function getCurrentLocation() {
@@ -75,8 +493,10 @@ export default function Navbar() {
     setGeoSuccess(false);
 
     if (!navigator.geolocation) {
-      setGeoError("Geolocation is not supported by your browser");
-      setGeoLoading(false);
+      const fallbackApplied = await applyIpFallback();
+      if (!fallbackApplied) {
+        setGeoError("Geolocation is not supported by your browser.");
+      }
       return;
     }
 
@@ -91,84 +511,29 @@ export default function Navbar() {
     navigator.geolocation.getCurrentPosition(
       async (position) => {
         const { latitude, longitude } = position.coords;
-        let timeout;
+        const applied = await resolveAndApplyLocation(latitude, longitude);
 
-        try {
-          // Create abort controller with 5 second timeout
-          const controller = new AbortController();
-          timeout = setTimeout(() => controller.abort(), 5000);
+        if (applied) {
+          return;
+        }
 
-          // Use Nominatim for reverse geocoding (free, reliable, no API key)
-          const nominatimResponse = await fetch(
-            `https://nominatim.openstreetmap.org/reverse?format=json&addressdetails=1&lat=${latitude}&lon=${longitude}`,
-            { 
-              signal: controller.signal,
-              headers: { 'Accept-Language': 'en' }
-            }
-          );
-
-          if (nominatimResponse.ok) {
-            const data = await nominatimResponse.json();
-             
-            if (data.address) {
-              // Build a readable address from the Nominatim response
-              const city = data.address.city || data.address.town || data.address.village || "";
-              const state = data.address.state || "";
-              const country = data.address.country || "";
-              
-              let address = "";
-              if (city && state) {
-                address = `${city}, ${state}, ${country}`;
-              } else if (city) {
-                address = `${city}, ${country}`;
-              } else {
-                address = country;
-              }
-
-              if (address.trim()) {
-                handleLocationSelect(address);
-                setGeoLoading(false);
-                setGeoSuccess(true);
-                setTimeout(() => setGeoSuccess(false), 2000);
-                return;
-              }
-            }
-          }
-
-          setGeoError("Unable to determine your exact location. Please search manually.");
+        const ipFallbackApplied = await applyIpFallback();
+        if (!ipFallbackApplied) {
+          setGeoError("Unable to determine your location. Please search manually.");
           setGeoLoading(false);
-        } catch (err) {
-          console.error("Location error:", err);
-          if (err.name === "AbortError") {
-            setGeoError("Location lookup timed out. Please search manually.");
-          } else {
-            setGeoError("Unable to determine your exact location. Please search manually.");
-          }
-          setGeoLoading(false);
-        } finally {
-          clearTimeout(timeout);
         }
       },
-      (error) => {
-        setGeoLoading(false);
-        switch (error.code) {
-          case error.PERMISSION_DENIED:
-            setGeoError("Location permission denied. Please enable location access in your browser settings.");
-            break;
-          case error.POSITION_UNAVAILABLE:
-            setGeoError("Your location is unavailable. Please search manually.");
-            break;
-          case error.TIMEOUT:
-            setGeoError("Location request timed out. Please try again.");
-            break;
-          default:
-            setGeoError("Unable to get your location. Please search manually.");
+      async (error) => {
+        const ipFallbackApplied = await applyIpFallback(error);
+        if (!ipFallbackApplied) {
+          setGeoError(getGeoErrorMessage(error));
+          setGeoLoading(false);
         }
       },
       {
         enableHighAccuracy: true,
-        timeout: 12000,
-        maximumAge: 300000
+        timeout: 18000,
+        maximumAge: 60000,
       }
     );
   }
@@ -439,8 +804,7 @@ export default function Navbar() {
               </div>
             )}
 
-            {/* Location Suggestions */}
-            {filteredSuggestions.length > 0 && (
+            {googleSuggestions.length > 0 && (
               <div style={{ marginBottom: "16px" }}>
                 <p style={{
                   margin: "0 0 12px 0",
@@ -450,14 +814,14 @@ export default function Navbar() {
                   textTransform: "uppercase",
                   letterSpacing: "0.5px"
                 }}>
-                  Suggestions
+                  Search results
                 </p>
 
                 <div style={{ display: "flex", flexDirection: "column", gap: "8px", maxHeight: "300px", overflowY: "auto" }}>
-                  {filteredSuggestions.map((loc, idx) => (
+                  {googleSuggestions.map((prediction) => (
                     <button
-                      key={idx}
-                      onClick={() => handleLocationSelect(loc)}
+                      key={prediction.id}
+                      onClick={() => handleGoogleSuggestionSelect(prediction)}
                       style={{
                         padding: "12px",
                         border: "1px solid #e5e7eb",
@@ -471,8 +835,8 @@ export default function Navbar() {
                         color: "#111827"
                       }}
                       onMouseEnter={(e) => {
-                        e.target.style.background = "#f0fdf4";
-                        e.target.style.borderColor = "#16a34a";
+                        e.target.style.background = "#eff6ff";
+                        e.target.style.borderColor = "#2563eb";
                       }}
                       onMouseLeave={(e) => {
                         e.target.style.background = "white";
@@ -480,7 +844,7 @@ export default function Navbar() {
                       }}
                     >
                       <span style={{ marginRight: "8px" }}>{"\u{1F4CD}"}</span>
-                      {loc}
+                      {prediction.description}
                     </button>
                   ))}
                 </div>
@@ -496,7 +860,7 @@ export default function Navbar() {
               fontSize: "11px",
               color: "#9ca3af"
             }}>
-              {"\u{1F5FA}\uFE0F"} Location data powered by OpenStreetMap
+              {googleReady ? "powered by Google" : "\u{1F5FA}\uFE0F Location data powered by OpenStreetMap"}
             </div>
           </div>
         </div>
