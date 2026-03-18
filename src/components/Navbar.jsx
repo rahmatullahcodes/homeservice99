@@ -113,7 +113,12 @@ export default function Navbar() {
   const isLoggedIn = !!localStorage.getItem("token");
 
   const cartCount = cart.length;
-  const hideCartOnServicesPage = routeLocation.pathname.startsWith("/services");
+  const isCheckoutRoute = routeLocation.pathname.startsWith("/checkout");
+  const hideCartOnCurrentPage =
+    routeLocation.pathname.startsWith("/services") ||
+    isCheckoutRoute ||
+    routeLocation.pathname.startsWith("/account");
+  const showJoinAsPro = !isLoggedIn && !isCheckoutRoute;
 
   useEffect(() => {
     if (!showLocationModal) {
@@ -600,16 +605,18 @@ export default function Navbar() {
         </div>
 
         {/* JOIN AS A PRO BUTTON */}
-        <Link 
-          to={isLoggedIn ? "/vendor-dashboard" : "/vendor-signup"} 
-          className="join-pro-btn" 
-          aria-label="Join as a professional"
-        >
-          Join as a pro
-        </Link>
+        {showJoinAsPro && (
+          <Link
+            to="/vendor-signup"
+            className="join-pro-btn"
+            aria-label="Join as a professional"
+          >
+            Join as a pro
+          </Link>
+        )}
 
         {/* CART */}
-        {!hideCartOnServicesPage && (
+        {!hideCartOnCurrentPage && (
           <Link to="/cart" className="uc-cart" aria-label="Shopping cart">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M9 2L6.12 9H18.88L16 2M6.12 9H3L5 20C5 20.5304 5.21071 21.0391 5.58579 21.4142C5.96086 21.7893 6.46957 22 7 22H17C17.5304 22 18.0391 21.7893 18.4142 21.4142C18.7893 21.0391 19 20.5304 19 20L21 9M9 13V19M15 13V19" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/></svg>
             {cartCount > 0 && <span className="cart-badge">{cartCount}</span>}

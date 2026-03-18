@@ -9,8 +9,8 @@ import {
   deleteContact,
   getUserContacts
 } from "../controllers/contactController.js";
-import { auth } from "../middleware/auth.js";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { userAuth } from "../middleware/userAuth.js";
 
 const router = express.Router();
 
@@ -18,7 +18,7 @@ const router = express.Router();
 router.post("/submit", submitContact);
 
 // Get user's own contacts
-router.get("/my-contacts", auth, getUserContacts);
+router.get("/my-contacts", userAuth, getUserContacts);
 
 // Admin routes
 router.get("/", adminAuth, getAllContacts);

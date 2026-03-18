@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+import { API_ENDPOINTS } from "../../config/api";
 
 export default function AdminContacts() {
   const [contacts, setContacts] = useState([]);
@@ -55,7 +54,7 @@ export default function AdminContacts() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/contact`, {
+      const response = await fetch(API_ENDPOINTS.CONTACT.GET_ALL, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -154,7 +153,7 @@ export default function AdminContacts() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/contact/${contactId}/status`, {
+      const response = await fetch(API_ENDPOINTS.CONTACT.UPDATE_STATUS(contactId), {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -211,7 +210,7 @@ export default function AdminContacts() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/contact/${contactId}/status`, {
+      const response = await fetch(API_ENDPOINTS.CONTACT.UPDATE_STATUS(contactId), {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -267,7 +266,7 @@ export default function AdminContacts() {
   }
 
   async function handleDeleteContact(contactId) {
-    if (!confirm("Are you sure you want to delete this contact?")) return;
+    if (!window.confirm("Are you sure you want to delete this contact?")) return;
 
     try {
       setIsSubmitting(true);
@@ -277,7 +276,7 @@ export default function AdminContacts() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/contact/${contactId}`, {
+      const response = await fetch(API_ENDPOINTS.CONTACT.DELETE(contactId), {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -452,7 +451,7 @@ export default function AdminContacts() {
             </div>
           ) : (
             <div className="admin-table-wrapper">
-              <div className="admin-table">
+              <div className="admin-table card-mobile">
                 <div className="table-row head">
                   <span className="col-name">Name</span>
                   <span className="col-email">Email</span>
@@ -465,27 +464,27 @@ export default function AdminContacts() {
 
                 {filteredContacts.map(contact => (
                   <div key={contact._id} className="table-row">
-                    <span className="col-name">
+                    <span className="col-name" data-label="Name">
                       <strong>{contact.name}</strong>
                     </span>
-                    <span className="col-email">{contact.email}</span>
-                    <span className="col-category">{contact.category}</span>
-                    <span className="col-status">
+                    <span className="col-email" data-label="Email">{contact.email}</span>
+                    <span className="col-category" data-label="Category">{contact.category}</span>
+                    <span className="col-status" data-label="Status">
                       <span className={`tag ${contact.status.toLowerCase().replace(/ /g, '-')}`}>
                         {contact.status}
                       </span>
                     </span>
-                    <span className="col-priority">
+                    <span className="col-priority" data-label="Priority">
                       <span className={`priority-badge ${contact.priority.toLowerCase()}`}>
                         {contact.priority}
                       </span>
                     </span>
-                    <span className="col-date">
+                    <span className="col-date" data-label="Date">
                       <small>{contact.createdAtFormatted}</small>
                       <br />
                       <small className="text-muted">{contact.createdAtTime}</small>
                     </span>
-                    <span className="col-actions">
+                    <span className="col-actions" data-label="Actions">
                       <button
                         className="btn-action view"
                         onClick={() => {
@@ -493,18 +492,11 @@ export default function AdminContacts() {
                           setResponseText("");
                           setShowDetailsModal(true);
                         }}
-                        title="View Details"
-                      >
-                        👁️
-                      </button>
+                        title="View Details">View</button>
                       <button
                         className="btn-action delete"
                         onClick={() => handleDeleteContact(contact._id)}
-                        title="Delete"
-                        disabled={isSubmitting}
-                      >
-                        🗑️
-                      </button>
+                        title="Delete" disabled={isSubmitting}>Delete</button>
                     </span>
                   </div>
                 ))}
@@ -661,3 +653,4 @@ export default function AdminContacts() {
     </div>
   );
 }
+

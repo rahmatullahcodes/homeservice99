@@ -115,8 +115,13 @@ export async function updateVendorProfile(req, res) {
 /* VERIFY VENDOR */
 export async function verifyVendor(req, res) {
   try {
+    const vendorId = req.params.vendorId || req.body.vendorId;
+    if (!vendorId) {
+      return res.status(400).json({ message: "vendorId is required" });
+    }
+
     const vendor = await Vendor.findByIdAndUpdate(
-      req.user.id,
+      vendorId,
       { verified: true },
       { new: true }
     ).select("-password");

@@ -47,6 +47,16 @@ const reviewSchema = new mongoose.Schema({
     type: Number,
     default: 0
   },
+  vendorReply: {
+    message: {
+      type: String,
+      default: ""
+    },
+    repliedAt: {
+      type: Date,
+      default: null
+    }
+  },
   createdAt: {
     type: Date,
     default: Date.now

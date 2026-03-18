@@ -17,6 +17,8 @@ import notificationRoutes from "./routes/notificationRoutes.js";
 import settingsRoutes from "./routes/settingsRoutes.js";
 import supportTicketRoutes from "./routes/supportTicketRoutes.js";
 import contactRoutes from "./routes/contactRoutes.js";
+import { getLatestPopupNotification } from "./controllers/notificationController.js";
+import { getPublicHomePageSettings, getPublicPaymentOptions } from "./controllers/settingsController.js";
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -39,20 +41,23 @@ app.use((req, res, next) => {
 
 // Health check endpoint
 app.get("/api/health", (req, res) => {
-  res.json({ status: "Backend is running ✅", timestamp: new Date() });
+  res.json({ status: "Backend is running", timestamp: new Date() });
 });
+app.get("/api/public/broadcast-popup", getLatestPopupNotification);
+app.get("/api/settings/payment-methods", getPublicPaymentOptions);
+app.get("/api/settings/homepage", getPublicHomePageSettings);
 
 app.use("/api/auth/user", userAuthRoutes);
 app.use("/api/auth/vendor", vendorAuthRoutes);
 app.use("/api/auth/admin", adminAuthRoutes);
 app.use("/api/user", userRoutes);
 app.use("/api/vendor", vendorRoutes);
-app.use("/api/admin", adminRoutes);
+app.use("/api/admin/settings", settingsRoutes);
 app.use("/api/services", serviceRoutes);
 app.use("/api/bookings", bookingRoutes);
 app.use("/api/reports", reportsRoutes);
+app.use("/api/admin", adminRoutes);
 app.use("/api/admin/notifications", notificationRoutes);
-app.use("/api/admin/settings", settingsRoutes);
 app.use("/api/admin/support-tickets", supportTicketRoutes);
 app.use("/api/contact", contactRoutes);
 
@@ -98,3 +103,4 @@ app.use((err, req, res, next) => {
 });
 
 export default app;
+

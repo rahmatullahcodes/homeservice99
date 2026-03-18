@@ -15,10 +15,14 @@ export default function VendorWallet() {
   const [totalWithdrawn, setTotalWithdrawn] = useState(0);
   const [transactions, setTransactions] = useState([]);
   const [showWithdraw, setShowWithdraw] = useState(false);
+  const [showAddFunds, setShowAddFunds] = useState(false);
   const [amount, setAmount] = useState("");
+  const [addAmount, setAddAmount] = useState("");
+  const [addNote, setAddNote] = useState("");
   const [error, setError] = useState("");
   const [filter, setFilter] = useState("All");
   const [withdrawing, setWithdrawing] = useState(false);
+  const [addingFunds, setAddingFunds] = useState(false);
   const [loading, setLoading] = useState(true);
   const [bankAccount, setBankAccount] = useState({
     holderName: vendor?.businessName || "Vendor",
@@ -26,6 +30,13 @@ export default function VendorWallet() {
     lastFour: "****",
     ifsc: "****0001"
   });
+
+  useEffect(() => {
+    setBankAccount((prev) => ({
+      ...prev,
+      holderName: vendor?.businessName || vendor?.name || "Vendor"
+    }));
+  }, [vendor?.businessName, vendor?.name]);
 
   // Fetch wallet data on mount
   useEffect(() => {
@@ -64,7 +75,12 @@ export default function VendorWallet() {
 
   async function fetchTransactions() {
     try {
-      const response = await fetch(API_ENDPOINTS.VENDOR.GET_TRANSACTIONS, {
+      const url = new URL(API_ENDPOINTS.VENDOR.GET_TRANSACTIONS);
+      url.searchParams.append("page", "1");
+      url.searchParams.append("limit", "100");
+      url.searchParams.append("sort", "latest");
+
+      const response = await fetch(url.toString(), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -142,8 +158,54 @@ export default function VendorWallet() {
     }
   }
 
+  async function requestAddFunds() {
+    const value = Number(addAmount);
+    if (!value || value <= 0) {
+      addToast("Please enter a valid amount", "warning");
+      return;
+    }
+
+    setAddingFunds(true);
+    setError("");
+
+    try {
+      const response = await fetch(API_ENDPOINTS.VENDOR.REQUEST_TOPUP, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+          amount: value,
+          note: addNote
+        })
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to submit add-money request");
+      }
+
+      setShowAddFunds(false);
+      setAddAmount("");
+      setAddNote("");
+      await fetchTransactions();
+      addToast("Add-money request submitted. Admin approval pending.", "success");
+    } catch (err) {
+      setError(err.message);
+      addToast(err.message, "error");
+    } finally {
+      setAddingFunds(false);
+    }
+  }
+
   const filteredTxns = filter === "All" ? transactions : transactions.filter(t => t.type === filter);
   const recentTransactions = filteredTxns.slice(0, 5);
+  const monthStart = new Date();
+  monthStart.setDate(monthStart.getDate() - 30);
+  const thisMonthEarned = transactions
+    .filter(t => t.type === "Credit" && new Date(t.date) >= monthStart)
+    .reduce((sum, t) => sum + Number(t.amount || 0), 0);
 
   const formatDate = (date) => {
     return new Date(date).toLocaleDateString('en-US', {
@@ -198,24 +260,44 @@ export default function VendorWallet() {
               Ready to withdraw
             </p>
           </div>
-          <button
-            className="vendor-btn"
-            onClick={() => setShowWithdraw(true)}
-            disabled={loading || balance === 0}
-            style={{
-              background: "white",
-              color: "#2563eb",
-              padding: "12px 28px",
-              fontWeight: "700",
-              fontSize: "15px",
-              border: "none",
-              borderRadius: "8px",
-              cursor: loading || balance === 0 ? "not-allowed" : "pointer",
-              opacity: loading || balance === 0 ? 0.6 : 1
-            }}
-          >
-            💰 Withdraw Money
-          </button>
+          <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+            <button
+              className="vendor-btn"
+              onClick={() => setShowAddFunds(true)}
+              disabled={loading}
+              style={{
+                background: "rgba(255, 255, 255, 0.15)",
+                color: "white",
+                padding: "12px 22px",
+                fontWeight: "700",
+                fontSize: "14px",
+                border: "1px solid rgba(255, 255, 255, 0.5)",
+                borderRadius: "8px",
+                cursor: loading ? "not-allowed" : "pointer",
+                opacity: loading ? 0.6 : 1
+              }}
+            >
+              Add Money
+            </button>
+            <button
+              className="vendor-btn"
+              onClick={() => setShowWithdraw(true)}
+              disabled={loading || balance === 0}
+              style={{
+                background: "white",
+                color: "#2563eb",
+                padding: "12px 22px",
+                fontWeight: "700",
+                fontSize: "14px",
+                border: "none",
+                borderRadius: "8px",
+                cursor: loading || balance === 0 ? "not-allowed" : "pointer",
+                opacity: loading || balance === 0 ? 0.6 : 1
+              }}
+            >
+              Withdraw Money
+            </button>
+          </div>
         </div>
       </div>
 
@@ -288,7 +370,7 @@ export default function VendorWallet() {
             }}>
               <p style={{ margin: "0 0 4px 0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>Pending Withdrawals</p>
               <p style={{ margin: "0", fontSize: "20px", fontWeight: "700", color: "#dc2626" }}>
-                {transactions.filter(t => t.type === "Debit" && t.status === "Processing").length}
+                {transactions.filter(t => t.type === "Debit" && t.status === "Pending").length}
               </p>
             </div>
 
@@ -300,7 +382,7 @@ export default function VendorWallet() {
             }}>
               <p style={{ margin: "0 0 4px 0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>This Month Earned</p>
               <p style={{ margin: "0", fontSize: "20px", fontWeight: "700", color: "#2563eb" }}>
-                ₹{transactions.filter(t => t.type === "Credit").slice(0, 3).reduce((sum, t) => sum + t.amount, 0).toLocaleString()}
+                ₹{thisMonthEarned.toLocaleString()}
               </p>
             </div>
           </div>
@@ -367,7 +449,7 @@ export default function VendorWallet() {
               >
                 <div style={{ flex: 1 }}>
                   <p style={{ margin: "0 0 4px 0", fontSize: "14px", fontWeight: "700", color: "#111827" }}>
-                    {t.note}
+                    {t.note || t.source || t.description || "Transaction"}
                   </p>
                   <div style={{ display: "flex", gap: "8px", alignItems: "center", flexWrap: "wrap" }}>
                     <p style={{ margin: "0", fontSize: "12px", color: "#6b7280" }}>
@@ -439,6 +521,115 @@ export default function VendorWallet() {
           📈 Dashboard
         </button>
       </div>
+
+      {/* Add Funds Modal */}
+      {showAddFunds && (
+        <div
+          className="vendor-modal-backdrop"
+          onClick={() => {
+            if (addingFunds) return;
+            setShowAddFunds(false);
+            setAddAmount("");
+            setAddNote("");
+          }}
+          style={{
+            position: "fixed",
+            top: 0,
+            left: 0,
+            right: 0,
+            bottom: 0,
+            backgroundColor: "rgba(0, 0, 0, 0.5)",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            zIndex: 100
+          }}
+        >
+          <div
+            className="vendor-modal"
+            onClick={e => e.stopPropagation()}
+            style={{
+              background: "white",
+              borderRadius: "12px",
+              padding: "28px",
+              maxWidth: "420px",
+              width: "90%",
+              boxShadow: "0 20px 25px -5px rgba(0, 0, 0, 0.1)"
+            }}
+          >
+            <h3 style={{ margin: "0 0 8px 0", fontSize: "20px", fontWeight: "700", color: "#111827" }}>
+              Add Money
+            </h3>
+            <p style={{ margin: "0 0 20px 0", fontSize: "13px", color: "#6b7280" }}>
+              Submit wallet top-up request for admin approval.
+            </p>
+
+            <div className="vendor-form-group" style={{ marginBottom: "14px" }}>
+              <label style={{ display: "block", marginBottom: "8px", fontWeight: "600", color: "#111827" }}>
+                Amount
+              </label>
+              <input
+                type="number"
+                min="1"
+                value={addAmount}
+                onChange={(e) => setAddAmount(e.target.value)}
+                placeholder="Enter amount"
+                disabled={addingFunds}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "8px",
+                  fontSize: "14px"
+                }}
+              />
+            </div>
+
+            <div className="vendor-form-group" style={{ marginBottom: "16px" }}>
+              <label style={{ display: "block", marginBottom: "8px", fontWeight: "600", color: "#111827" }}>
+                Note (optional)
+              </label>
+              <textarea
+                rows="3"
+                value={addNote}
+                onChange={(e) => setAddNote(e.target.value)}
+                placeholder="UPI ref / transfer note"
+                disabled={addingFunds}
+                style={{
+                  width: "100%",
+                  padding: "12px",
+                  border: "1px solid #d1d5db",
+                  borderRadius: "8px",
+                  fontSize: "14px",
+                  fontFamily: "inherit",
+                  resize: "vertical"
+                }}
+              />
+            </div>
+
+            <div style={{ display: "flex", gap: "12px" }}>
+              <button
+                className="vendor-btn outline full"
+                onClick={() => {
+                  setShowAddFunds(false);
+                  setAddAmount("");
+                  setAddNote("");
+                }}
+                disabled={addingFunds}
+              >
+                Cancel
+              </button>
+              <button
+                className="vendor-btn primary full"
+                onClick={requestAddFunds}
+                disabled={addingFunds}
+              >
+                {addingFunds ? "Submitting..." : "Submit Request"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
 
       {/* Withdrawal Modal */}
       {showWithdraw && (
@@ -561,3 +752,4 @@ export default function VendorWallet() {
     </div>
   );
 }
+

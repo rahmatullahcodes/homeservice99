@@ -1,79 +1,124 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useToast } from "../../context/ToastContext";
+import {
+  addUserAddress,
+  deleteUserAddress,
+  fetchUserAddresses,
+  setUserDefaultAddress,
+  updateUserAddress
+} from "../../utils/accountApi";
 import "../../styles/account.css";
 
+const EMPTY_FORM = { type: "Home", street: "", city: "", state: "", pincode: "" };
+
 export default function AccountAddresses() {
-  const [addresses, setAddresses] = useState(() => {
-    const saved = localStorage.getItem('userAddresses');
-    return saved ? JSON.parse(saved) : [{ id: 1, type: 'Home', street: '123 Main St', city: 'New York', state: 'NY', pincode: '10001', isDefault: true }];
-  });
-  
-  const [showForm, setShowForm] = useState(false);
-  const [editId, setEditId] = useState(null);
-  const [formData, setFormData] = useState({ type: 'Home', street: '', city: '', state: '', pincode: '' });
-  const [errors, setErrors] = useState({});
-  
   const { addToast } = useToast();
 
-  const validateForm = () => {
-    const newErrors = {};
-    if (!formData.street.trim()) newErrors.street = 'Street is required';
-    if (!formData.city.trim()) newErrors.city = 'City is required';
-    if (!formData.state.trim()) newErrors.state = 'State is required';
-    if (!formData.pincode.trim()) newErrors.pincode = 'Pincode is required';
-    if (!/^\d{5,6}$/.test(formData.pincode)) newErrors.pincode = 'Invalid pincode';
-    setErrors(newErrors);
-    return Object.keys(newErrors).length === 0;
-  };
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [addresses, setAddresses] = useState([]);
+  const [showForm, setShowForm] = useState(false);
+  const [editId, setEditId] = useState("");
+  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [errors, setErrors] = useState({});
 
-  function saveAddress() {
+  useEffect(() => {
+    loadAddresses();
+  }, []);
+
+  async function loadAddresses() {
+    try {
+      setLoading(true);
+      const data = await fetchUserAddresses();
+      setAddresses(Array.isArray(data) ? data : []);
+    } catch (err) {
+      addToast(err.message || "Failed to load addresses", "error");
+    } finally {
+      setLoading(false);
+    }
+  }
+
+  function validateForm() {
+    const nextErrors = {};
+    if (!formData.street.trim()) nextErrors.street = "Street is required";
+    if (!formData.city.trim()) nextErrors.city = "City is required";
+    if (!formData.state.trim()) nextErrors.state = "State is required";
+    if (!formData.pincode.trim()) {
+      nextErrors.pincode = "Pincode is required";
+    } else if (!/^\d{5,6}$/.test(formData.pincode)) {
+      nextErrors.pincode = "Invalid pincode";
+    }
+
+    setErrors(nextErrors);
+    return Object.keys(nextErrors).length === 0;
+  }
+
+  async function saveAddress() {
     if (!validateForm()) {
-      addToast('Please fix the errors', 'error');
+      addToast("Please fix the errors", "warning");
       return;
     }
 
-    let updatedAddresses;
-    if (editId) {
-      updatedAddresses = addresses.map(a => a.id === editId ? { ...a, ...formData } : a);
-      addToast('Address updated', 'success');
-    } else {
-      updatedAddresses = [...addresses, { id: Date.now(), ...formData }];
-      addToast('Address added', 'success');
-    }
+    try {
+      setSaving(true);
+      if (editId) {
+        const result = await updateUserAddress(editId, formData);
+        setAddresses(result.addresses || []);
+        addToast("Address updated", "success");
+      } else {
+        const result = await addUserAddress(formData);
+        setAddresses(result.addresses || []);
+        addToast("Address added", "success");
+      }
 
-    setAddresses(updatedAddresses);
-    localStorage.setItem('userAddresses', JSON.stringify(updatedAddresses));
-    resetForm();
+      resetForm();
+    } catch (err) {
+      addToast(err.message || "Failed to save address", "error");
+    } finally {
+      setSaving(false);
+    }
   }
 
   function resetForm() {
     setShowForm(false);
-    setEditId(null);
-    setFormData({ type: 'Home', street: '', city: '', state: '', pincode: '' });
+    setEditId("");
+    setFormData(EMPTY_FORM);
     setErrors({});
   }
 
-  function editAddress(id) {
-    const addr = addresses.find(a => a.id === id);
-    setFormData(addr);
-    setEditId(id);
+  function startEdit(address) {
+    setEditId(address._id);
+    setFormData({
+      type: address.type || "Home",
+      street: address.street || "",
+      city: address.city || "",
+      state: address.state || "",
+      pincode: address.pincode || ""
+    });
     setShowForm(true);
   }
 
-  function deleteAddress(id) {
-    if (confirm('Delete this address?')) {
-      const updated = addresses.filter(a => a.id !== id);
-      setAddresses(updated);
-      localStorage.setItem('userAddresses', JSON.stringify(updated));
-      addToast('Address deleted', 'success');
+  async function handleDelete(addressId) {
+    if (!window.confirm("Delete this address?")) return;
+
+    try {
+      const result = await deleteUserAddress(addressId);
+      setAddresses(result.addresses || []);
+      addToast("Address deleted", "success");
+      if (editId === addressId) resetForm();
+    } catch (err) {
+      addToast(err.message || "Failed to delete address", "error");
     }
   }
 
-  function setDefault(id) {
-    const updated = addresses.map(a => ({ ...a, isDefault: a.id === id }));
-    setAddresses(updated);
-    localStorage.setItem('userAddresses', JSON.stringify(updated));
-    addToast('Default address updated', 'success');
+  async function handleSetDefault(addressId) {
+    try {
+      const result = await setUserDefaultAddress(addressId);
+      setAddresses(result.addresses || []);
+      addToast("Default address updated", "success");
+    } catch (err) {
+      addToast(err.message || "Failed to set default address", "error");
+    }
   }
 
   return (
@@ -81,37 +126,51 @@ export default function AccountAddresses() {
       <h2 className="dashboard-title">Saved Addresses</h2>
       <p className="dashboard-subtitle">Manage your home and work addresses</p>
 
-      {/* ADDRESS CARDS */}
-      <div className="account-grid-2" style={{ marginBottom: "32px" }}>
-        {addresses.map(addr => (
-          <div key={addr.id} className="account-card">
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '12px' }}>
-              <span className={`account-badge ${addr.type === 'Home' ? 'blue' : addr.type === 'Work' ? 'green' : 'purple'}`}>
-                {addr.type}
-              </span>
-              {addr.isDefault && <span className="account-badge blue">Default</span>}
+      {loading ? (
+        <div className="account-alert info">Loading addresses...</div>
+      ) : (
+        <div className="account-grid-2" style={{ marginBottom: "32px" }}>
+          {addresses.map((address) => (
+            <div key={address._id} className="account-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                <span className={`account-badge ${address.type === "Home" ? "blue" : address.type === "Work" ? "green" : "purple"}`}>
+                  {address.type || "Other"}
+                </span>
+                {address.isDefault && <span className="account-badge blue">Default</span>}
+              </div>
+              <p style={{ margin: "8px 0", color: "#6b7280" }}>
+                {address.street}<br />
+                {address.city}, {address.state} {address.pincode}
+              </p>
+              <div style={{ display: "flex", gap: "8px", marginTop: "12px" }}>
+                <button className="account-btn primary" style={{ fontSize: "12px", padding: "6px 12px" }} onClick={() => startEdit(address)}>
+                  Edit
+                </button>
+                <button className="account-btn secondary" style={{ fontSize: "12px", padding: "6px 12px" }} onClick={() => handleSetDefault(address._id)}>
+                  Set Default
+                </button>
+                <button className="account-btn danger" style={{ fontSize: "12px", padding: "6px 12px" }} onClick={() => handleDelete(address._id)}>
+                  Delete
+                </button>
+              </div>
             </div>
-            <p style={{ margin: '8px 0', color: '#6b7280' }}>
-              {addr.street}<br/>
-              {addr.city}, {addr.state} {addr.pincode}
-            </p>
-            <div style={{ display: 'flex', gap: '8px', marginTop: '12px' }}>
-              <button className="account-btn primary" style={{ fontSize: '12px', padding: '6px 12px' }} onClick={() => editAddress(addr.id)}>Edit</button>
-              <button className="account-btn secondary" style={{ fontSize: '12px', padding: '6px 12px' }} onClick={() => setDefault(addr.id)}>Set Default</button>
-              <button className="account-btn danger" style={{ fontSize: '12px', padding: '6px 12px' }} onClick={() => deleteAddress(addr.id)}>Delete</button>
-            </div>
-          </div>
-        ))}
-      </div>
+          ))}
 
-      {/* ADD/EDIT ADDRESS FORM */}
+          {addresses.length === 0 && <div className="account-alert info">No addresses saved yet.</div>}
+        </div>
+      )}
+
       {showForm && (
         <div className="account-card" style={{ marginBottom: "32px" }}>
-          <h3 style={{ marginBottom: '16px' }}>{editId ? 'Edit Address' : 'Add New Address'}</h3>
-          
+          <h3 style={{ marginBottom: "16px" }}>{editId ? "Edit Address" : "Add New Address"}</h3>
+
           <div className="account-form-group">
             <label>Address Type</label>
-            <select value={formData.type} onChange={e => setFormData({...formData, type: e.target.value})} className="account-form-input">
+            <select
+              value={formData.type}
+              onChange={(event) => setFormData({ ...formData, type: event.target.value })}
+              className="account-form-input"
+            >
               <option>Home</option>
               <option>Work</option>
               <option>Other</option>
@@ -119,24 +178,24 @@ export default function AccountAddresses() {
           </div>
 
           <div className="account-form-group">
-            <label>Street Address <span style={{ color: 'var(--account-danger)' }}>*</span></label>
-            <input 
-              type="text" 
-              value={formData.street} 
-              onChange={e => { setFormData({...formData, street: e.target.value}); if (errors.street) setErrors({...errors, street: ''}) }}
+            <label>Street Address</label>
+            <input
+              type="text"
+              value={formData.street}
+              onChange={(event) => setFormData({ ...formData, street: event.target.value })}
               placeholder="House no, street name"
               className="account-form-input"
             />
             {errors.street && <span className="form-error">{errors.street}</span>}
           </div>
 
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px' }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "16px" }}>
             <div className="account-form-group">
-              <label>City <span style={{ color: 'var(--account-danger)' }}>*</span></label>
-              <input 
-                type="text" 
-                value={formData.city} 
-                onChange={e => { setFormData({...formData, city: e.target.value}); if (errors.city) setErrors({...errors, city: ''}) }}
+              <label>City</label>
+              <input
+                type="text"
+                value={formData.city}
+                onChange={(event) => setFormData({ ...formData, city: event.target.value })}
                 placeholder="City"
                 className="account-form-input"
               />
@@ -144,11 +203,11 @@ export default function AccountAddresses() {
             </div>
 
             <div className="account-form-group">
-              <label>State <span style={{ color: 'var(--account-danger)' }}>*</span></label>
-              <input 
-                type="text" 
-                value={formData.state} 
-                onChange={e => { setFormData({...formData, state: e.target.value}); if (errors.state) setErrors({...errors, state: ''}) }}
+              <label>State</label>
+              <input
+                type="text"
+                value={formData.state}
+                onChange={(event) => setFormData({ ...formData, state: event.target.value })}
                 placeholder="State"
                 className="account-form-input"
               />
@@ -157,29 +216,29 @@ export default function AccountAddresses() {
           </div>
 
           <div className="account-form-group">
-            <label>Pincode <span style={{ color: 'var(--account-danger)' }}>*</span></label>
-            <input 
-              type="text" 
-              value={formData.pincode} 
-              onChange={e => { setFormData({...formData, pincode: e.target.value}); if (errors.pincode) setErrors({...errors, pincode: ''}) }}
+            <label>Pincode</label>
+            <input
+              type="text"
+              value={formData.pincode}
+              onChange={(event) => setFormData({ ...formData, pincode: event.target.value })}
               placeholder="Postal code"
               className="account-form-input"
             />
             {errors.pincode && <span className="form-error">{errors.pincode}</span>}
           </div>
 
-          <div style={{ display: 'flex', gap: '12px' }}>
-            <button className="account-btn primary" onClick={saveAddress}>
-              {editId ? '✏️ Update Address' : '➕ Add Address'}
+          <div style={{ display: "flex", gap: "12px" }}>
+            <button className="account-btn primary" onClick={saveAddress} disabled={saving}>
+              {saving ? "Saving..." : editId ? "Update Address" : "Add Address"}
             </button>
-            <button className="account-btn secondary" onClick={resetForm}>Cancel</button>
+            <button className="account-btn secondary" onClick={resetForm} disabled={saving}>Cancel</button>
           </div>
         </div>
       )}
 
       {!showForm && (
         <button className="account-btn primary" onClick={() => setShowForm(true)} style={{ marginBottom: "32px" }}>
-          ➕ Add New Address
+          Add New Address
         </button>
       )}
     </div>

@@ -73,13 +73,13 @@ export default function VendorBookings() {
         throw new Error(data.message || 'Failed to update booking');
       }
 
-      // Update local state
-      setBookings(prev => prev.map(b => b._id === bookingId ? data.booking : b));
-      
-      // Close modal
+      // Update selected booking in modal if open
       if (selectedBooking?._id === bookingId) {
         setSelectedBooking(data.booking);
       }
+
+      // Refetch list so accepted bookings disappear for other filters immediately
+      await fetchBookings();
     } catch (err) {
       console.error('Update error:', err);
       setError(err.message);
@@ -100,6 +100,10 @@ export default function VendorBookings() {
     await updateBookingStatus(bookingId, "Completed");
   };
 
+  const handleAcceptBooking = async (bookingId) => {
+    await updateBookingStatus(bookingId, "Scheduled");
+  };
+
   // Format date
   const formatDate = (dateString) => {
     const date = new Date(dateString);
@@ -115,6 +119,7 @@ export default function VendorBookings() {
   const filteredBookings = bookings;
   const stats = {
     all: pagination.total,
+    pending: bookings.filter(b => b.status === "Pending").length,
     scheduled: bookings.filter(b => b.status === "Scheduled").length,
     completed: bookings.filter(b => b.status === "Completed").length,
     cancelled: bookings.filter(b => b.status === "Cancelled").length
@@ -158,14 +163,18 @@ export default function VendorBookings() {
             <h3>{pagination.total}</h3>
           </div>
           <div className="vendor-stat-card green">
+            <span>Open Leads</span>
+            <h3>{stats.pending}</h3>
+          </div>
+          <div className="vendor-stat-card yellow">
             <span>Scheduled</span>
             <h3>{stats.scheduled}</h3>
           </div>
-          <div className="vendor-stat-card yellow">
+          <div className="vendor-stat-card orange">
             <span>Completed</span>
             <h3>{stats.completed}</h3>
           </div>
-          <div className="vendor-stat-card orange">
+          <div className="vendor-stat-card purple">
             <span>Cancelled</span>
             <h3>{stats.cancelled}</h3>
           </div>
@@ -185,7 +194,7 @@ export default function VendorBookings() {
           >
             All ({pagination.total})
           </button>
-          {["Scheduled", "Completed", "Cancelled"].map(status => (
+          {["Pending", "Scheduled", "Completed", "Cancelled"].map(status => (
             <button
               key={status}
               className={`vendor-btn ${filter === status ? "primary" : "outline"} small`}
@@ -251,6 +260,16 @@ export default function VendorBookings() {
                       >
                         View
                       </button>
+                      {b.status === "Pending" && (
+                        <button
+                          className="vendor-btn small primary"
+                          onClick={() => handleAcceptBooking(b._id)}
+                          disabled={updating === b._id}
+                          style={{ marginLeft: "4px" }}
+                        >
+                          {updating === b._id ? "..." : "Accept"}
+                        </button>
+                      )}
                       {b.status === "Scheduled" && (
                         <button
                           className="vendor-btn small success"
@@ -349,6 +368,20 @@ export default function VendorBookings() {
             </div>
 
             <div style={{ borderTop: "1.5px solid #e5e7eb", paddingTop: "16px", marginTop: "16px" }}>
+              {selectedBooking.status === "Pending" && (
+                <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+                  <p style={{ margin: 0, fontSize: "13px", color: "#6b7280" }}>
+                    Accept this booking to assign it to yourself. Coins will be deducted from your wallet.
+                  </p>
+                  <button
+                    className="vendor-btn primary full"
+                    onClick={() => handleAcceptBooking(selectedBooking._id)}
+                    disabled={updating === selectedBooking._id}
+                  >
+                    {updating === selectedBooking._id ? "Accepting..." : "Accept Booking"}
+                  </button>
+                </div>
+              )}
               {selectedBooking.status === "Scheduled" && (
                 <div style={{ display: "flex", gap: "8px" }}>
                   <button
@@ -377,7 +410,7 @@ export default function VendorBookings() {
                   <p style={{ margin: "0", color: "#991b1b" }}>✕ This booking has been cancelled</p>
                 </div>
               )}
-              {(selectedBooking.status !== "Scheduled" || !selectedBooking.status) && (
+              {(!["Scheduled", "Pending"].includes(selectedBooking.status) || !selectedBooking.status) && (
                 <button
                   className="vendor-btn outline full"
                   onClick={() => setSelectedBooking(null)}

@@ -1,5 +1,18 @@
 // Frontend API Configuration
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const LOCAL_API_BASE_URL = "http://localhost:5000/api";
+const envApiUrl = String(import.meta.env.VITE_API_URL || "").trim();
+const envLocalApiUrl = String(import.meta.env.VITE_API_URL_LOCAL || "").trim();
+
+function isLocalHost(hostname) {
+  return hostname === "localhost" || hostname === "127.0.0.1" || hostname === "::1";
+}
+
+const browserHostname = typeof window !== "undefined" ? window.location.hostname : "";
+const useLocalApi = isLocalHost(browserHostname);
+
+const API_BASE_URL = useLocalApi
+  ? (envLocalApiUrl || LOCAL_API_BASE_URL)
+  : (envApiUrl || LOCAL_API_BASE_URL);
 
 export const API_ENDPOINTS = {
   // User Authentication
@@ -22,8 +35,28 @@ export const API_ENDPOINTS = {
   // User Profile
   USER: {
     ME: `${API_BASE_URL}/user/me`,
+    DASHBOARD: `${API_BASE_URL}/user/dashboard`,
     PROFILE: `${API_BASE_URL}/user/profile`,
-    UPDATE: `${API_BASE_URL}/user/update`,
+    UPDATE_PROFILE: `${API_BASE_URL}/user/profile`,
+    UPDATE_PASSWORD: `${API_BASE_URL}/user/password`,
+    DELETE_ACCOUNT: `${API_BASE_URL}/user/account`,
+    BOOKINGS: `${API_BASE_URL}/user/bookings`,
+    CANCEL_BOOKING: (bookingId) => `${API_BASE_URL}/user/bookings/${bookingId}/cancel`,
+    BOOKING_INVOICE: (bookingId) => `${API_BASE_URL}/user/bookings/${bookingId}/invoice`,
+    ADDRESSES: `${API_BASE_URL}/user/addresses`,
+    ADDRESS_BY_ID: (addressId) => `${API_BASE_URL}/user/addresses/${addressId}`,
+    ADDRESS_SET_DEFAULT: (addressId) => `${API_BASE_URL}/user/addresses/${addressId}/default`,
+    PAYMENT_METHODS: `${API_BASE_URL}/user/payment-methods`,
+    PAYMENT_METHOD_SET_DEFAULT: (methodId) => `${API_BASE_URL}/user/payment-methods/${methodId}/default`,
+    PAYMENT_METHOD_BY_ID: (methodId) => `${API_BASE_URL}/user/payment-methods/${methodId}`,
+    WALLET: `${API_BASE_URL}/user/wallet`,
+    WALLET_TOPUP: `${API_BASE_URL}/user/wallet/topup`,
+    WALLET_TOPUP_ORDER: `${API_BASE_URL}/user/wallet/topup/order`,
+    WALLET_TOPUP_VERIFY: `${API_BASE_URL}/user/wallet/topup/verify`,
+    COUPONS: `${API_BASE_URL}/user/coupons`,
+    REVIEWS: `${API_BASE_URL}/user/reviews`,
+    REVIEWABLE_BOOKINGS: `${API_BASE_URL}/user/reviews/reviewable-bookings`,
+    REFERRAL: `${API_BASE_URL}/user/referral`,
   },
   
   // Services
@@ -36,6 +69,8 @@ export const API_ENDPOINTS = {
   // Bookings
   BOOKINGS: {
     CREATE: `${API_BASE_URL}/bookings`,
+    CREATE_PAYMENT_ORDER: `${API_BASE_URL}/bookings/payment/order`,
+    VERIFY_PAYMENT: `${API_BASE_URL}/bookings/payment/verify`,
     GET_MY_BOOKINGS: `${API_BASE_URL}/bookings/my-bookings`,
     GET_BY_ID: (id) => `${API_BASE_URL}/bookings/${id}`,
     CANCEL: (id) => `${API_BASE_URL}/bookings/${id}/cancel`,
@@ -63,7 +98,11 @@ export const API_ENDPOINTS = {
     GET_WALLET_BALANCE: `${API_BASE_URL}/vendor/wallet/balance`,
     GET_TRANSACTIONS: `${API_BASE_URL}/vendor/transactions`,
     GET_TRANSACTION: (id) => `${API_BASE_URL}/vendor/transactions/${id}`,
+    GET_EARNINGS_REPORT: `${API_BASE_URL}/vendor/earnings`,
+    REQUEST_TOPUP: `${API_BASE_URL}/vendor/wallet/topup`,
     REQUEST_WITHDRAWAL: `${API_BASE_URL}/vendor/wallet/withdraw`,
+    GET_REVIEWS: `${API_BASE_URL}/vendor/reviews`,
+    REPLY_REVIEW: (id) => `${API_BASE_URL}/vendor/reviews/${id}/reply`,
   },
   
   // Admin
@@ -71,9 +110,21 @@ export const API_ENDPOINTS = {
     GET_DASHBOARD: `${API_BASE_URL}/admin/dashboard`,
     GET_USERS: `${API_BASE_URL}/admin/users`,
     GET_VENDORS: `${API_BASE_URL}/admin/vendors`,
+    CREATE_VENDOR: `${API_BASE_URL}/admin/vendors`,
+    UPDATE_VENDOR_STATUS: (id) => `${API_BASE_URL}/admin/vendors/${id}/status`,
+    DELETE_VENDOR: (id) => `${API_BASE_URL}/admin/vendors/${id}`,
     GET_BOOKINGS: `${API_BASE_URL}/admin/bookings`,
     GET_PAYMENTS: `${API_BASE_URL}/admin/payments`,
     GET_SERVICES: `${API_BASE_URL}/admin/services`,
+    CREATE_SERVICE: `${API_BASE_URL}/admin/services`,
+    UPDATE_SERVICE: (id) => `${API_BASE_URL}/admin/services/${id}`,
+    TOGGLE_SERVICE: (id) => `${API_BASE_URL}/admin/services/${id}/toggle`,
+    DELETE_SERVICE: (id) => `${API_BASE_URL}/admin/services/${id}`,
+    GET_SERVICE_TAXONOMY: `${API_BASE_URL}/admin/services/taxonomy`,
+    RENAME_SERVICE_CATEGORY: `${API_BASE_URL}/admin/services/category/rename`,
+    TOGGLE_SERVICE_CATEGORY_STATUS: `${API_BASE_URL}/admin/services/category/status`,
+    RENAME_SERVICE_SUBCATEGORY: `${API_BASE_URL}/admin/services/subcategory/rename`,
+    TOGGLE_SERVICE_SUBCATEGORY_STATUS: `${API_BASE_URL}/admin/services/subcategory/status`,
     GET_COUPONS: `${API_BASE_URL}/admin/coupons`,
     CREATE_COUPON: `${API_BASE_URL}/admin/coupons`,
     UPDATE_COUPON: (id) => `${API_BASE_URL}/admin/coupons/${id}`,
@@ -88,9 +139,11 @@ export const API_ENDPOINTS = {
     GET_VENDOR_REVIEWS: (vendorId) => `${API_BASE_URL}/admin/reviews/vendor/${vendorId}`,
     GET_USER_REVIEWS: (userId) => `${API_BASE_URL}/admin/reviews/user/${userId}`,
     UPDATE_USER: (id) => `${API_BASE_URL}/admin/users/${id}`,
+    ADJUST_USER_WALLET: (id) => `${API_BASE_URL}/admin/users/${id}/wallet-adjust`,
     DELETE_USER: (id) => `${API_BASE_URL}/admin/users/${id}`,
     UPDATE_BOOKING_STATUS: (id) => `${API_BASE_URL}/admin/bookings/${id}/status`,
     UPDATE_PAYMENT_STATUS: (id) => `${API_BASE_URL}/admin/payments/${id}/status`,
+    MANUAL_VENDOR_PAYMENT: `${API_BASE_URL}/admin/payments/manual-credit`,
   },
 
   // Reports & Analytics
@@ -120,11 +173,12 @@ export const API_ENDPOINTS = {
   // Notifications
   NOTIFICATIONS: {
     GET_ALL: `${API_BASE_URL}/admin/notifications`,
+    GET_PUBLIC_POPUP: `${API_BASE_URL}/public/broadcast-popup`,
     CREATE: `${API_BASE_URL}/admin/notifications`,
     GET_BY_ID: (id) => `${API_BASE_URL}/admin/notifications/${id}`,
     UPDATE: (id) => `${API_BASE_URL}/admin/notifications/${id}`,
     DELETE: (id) => `${API_BASE_URL}/admin/notifications/${id}`,
-    SEND: `${API_BASE_URL}/admin/notifications/send`,
+    SEND: (id) => `${API_BASE_URL}/admin/notifications/${id}/send`,
     GET_STATS: `${API_BASE_URL}/admin/notifications/stats`,
   },
 
@@ -134,6 +188,24 @@ export const API_ENDPOINTS = {
     UPDATE: `${API_BASE_URL}/admin/settings`,
     GET_STATS: `${API_BASE_URL}/admin/settings/stats`,
     RESET: `${API_BASE_URL}/admin/settings/reset`,
+  },
+
+  // Home page settings
+  HOME_PAGE: {
+    GET_PUBLIC: `${API_BASE_URL}/settings/homepage`,
+    ADMIN_GET: `${API_BASE_URL}/admin/settings/homepage`,
+    ADMIN_UPDATE: `${API_BASE_URL}/admin/settings/homepage`,
+    ADMIN_GET_FALLBACK: `${API_BASE_URL}/admin/homepage`,
+    ADMIN_UPDATE_FALLBACK: `${API_BASE_URL}/admin/homepage`,
+  },
+
+  // Payment gateway settings
+  PAYMENT_GATEWAYS: {
+    GET_PUBLIC: `${API_BASE_URL}/settings/payment-methods`,
+    ADMIN_GET: `${API_BASE_URL}/admin/settings/payment-methods`,
+    ADMIN_UPDATE: `${API_BASE_URL}/admin/settings/payment-methods`,
+    ADMIN_GET_FALLBACK: `${API_BASE_URL}/admin/payment-methods`,
+    ADMIN_UPDATE_FALLBACK: `${API_BASE_URL}/admin/payment-methods`,
   },
 
   // CMS

@@ -1,8 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS } from "../../config/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
-
 export default function AdminVendors() {
   const [vendors, setVendors] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -44,7 +42,7 @@ export default function AdminVendors() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/vendors`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.GET_VENDORS, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -116,7 +114,7 @@ export default function AdminVendors() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/vendors`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.CREATE_VENDOR, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -170,7 +168,7 @@ export default function AdminVendors() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/vendors/${id}/status`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.UPDATE_VENDOR_STATUS(id), {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -222,7 +220,7 @@ export default function AdminVendors() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/vendors/${id}`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.DELETE_VENDOR(id), {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,

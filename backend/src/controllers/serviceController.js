@@ -1,5 +1,6 @@
 import Service from "../models/Service.js";
 import Booking from "../models/Booking.js";
+import mongoose from "mongoose";
 
 /* ============ PUBLIC / USER ENDPOINTS ============ */
 
@@ -31,8 +32,16 @@ export async function getAllServices(req, res) {
 /* Get service by ID */
 export async function getServiceById(req, res) {
   try {
-    const service = await Service.findById(req.params.id)
-      .populate("vendor", "name email image phone");
+    const rawId = String(req.params.id || "").trim();
+    let service = null;
+
+    if (mongoose.Types.ObjectId.isValid(rawId)) {
+      service = await Service.findById(rawId).populate("vendor", "name email image phone");
+    }
+
+    if (!service) {
+      service = await Service.findOne({ id: rawId }).populate("vendor", "name email image phone");
+    }
     
     if (!service) return res.status(404).json({ message: "Service not found" });
     res.json(service);

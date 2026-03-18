@@ -1,17 +1,27 @@
-import { useState, useEffect } from "react";
-import { useToast } from "../../context/ToastContext";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { useToast } from "../../context/ToastContext";
+import {
+  deleteUserAccount,
+  fetchUserMe,
+  setStoredUser,
+  updateUserPassword,
+  updateUserProfile
+} from "../../utils/accountApi";
 import "../../styles/account.css";
 
 export default function AccountSettings() {
+  const { addToast } = useToast();
+  const navigate = useNavigate();
 
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [tab, setTab] = useState("profile");
 
-  // LOAD SAVED DATA
-  const [name, setName] = useState(localStorage.getItem("name") || "Demo User");
-  const [email, setEmail] = useState(localStorage.getItem("email") || "demo@user.com");
-  const [phone, setPhone] = useState(localStorage.getItem("phone") || "");
-  const [address, setAddress] = useState(localStorage.getItem("address") || "");
+  const [name, setName] = useState("");
+  const [email, setEmail] = useState("");
+  const [phone, setPhone] = useState("");
+  const [address, setAddress] = useState("");
 
   const [current, setCurrent] = useState("");
   const [newPass, setNewPass] = useState("");
@@ -19,228 +29,236 @@ export default function AccountSettings() {
   const [passMsg, setPassMsg] = useState("");
   const [show, setShow] = useState(false);
 
-  const { addToast } = useToast();
-  const navigate = useNavigate();
+  useEffect(() => {
+    loadUser();
+  }, []);
 
-  function saveProfile() {
-    localStorage.setItem("name", name);
-    localStorage.setItem("email", email);
-    localStorage.setItem("phone", phone);
-    addToast("Profile updated ✅", 'success');
+  async function loadUser() {
+    try {
+      setLoading(true);
+      const user = await fetchUserMe();
+      setName(user?.name || "");
+      setEmail(user?.email || "");
+      setPhone(user?.phone || "");
+      setAddress(user?.address || "");
+      setStoredUser(user);
+    } catch (err) {
+      addToast(err.message || "Failed to load settings", "error");
+    } finally {
+      setLoading(false);
+    }
   }
 
-  function saveAddress() {
-    localStorage.setItem("address", address);
-    addToast("Address saved ✅", 'success');
+  async function saveProfile() {
+    try {
+      setSaving(true);
+      const response = await updateUserProfile({ name, email, phone });
+      if (response?.user) setStoredUser(response.user);
+      addToast("Profile updated", "success");
+    } catch (err) {
+      addToast(err.message || "Failed to update profile", "error");
+    } finally {
+      setSaving(false);
+    }
   }
 
-  function updatePassword() {
+  async function saveAddress() {
+    try {
+      setSaving(true);
+      const response = await updateUserProfile({ address });
+      if (response?.user) setStoredUser(response.user);
+      addToast("Address saved", "success");
+    } catch (err) {
+      addToast(err.message || "Failed to save address", "error");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function changePassword() {
     if (!current || !newPass || !confirm) {
       setPassMsg("All fields required");
       return;
     }
     if (newPass.length < 6) {
-      setPassMsg("Min 6 characters");
+      setPassMsg("Minimum 6 characters required");
       return;
     }
     if (newPass !== confirm) {
-      setPassMsg("Passwords do not match");
-      return;
-    }
-    if (current !== "123456") {
-      setPassMsg("Wrong current password");
+      setPassMsg("New password and confirm password do not match");
       return;
     }
 
-    setPassMsg("Password changed ✅");
-    setCurrent("");
-    setNewPass("");
-    setConfirm("");
+    try {
+      setSaving(true);
+      await updateUserPassword({ currentPassword: current, newPassword: newPass });
+      setPassMsg("Password changed successfully");
+      setCurrent("");
+      setNewPass("");
+      setConfirm("");
+      addToast("Password updated", "success");
+    } catch (err) {
+      setPassMsg(err.message || "Failed to update password");
+      addToast(err.message || "Failed to update password", "error");
+    } finally {
+      setSaving(false);
+    }
+  }
+
+  async function removeAccount() {
+    const confirm1 = window.confirm("Are you sure you want to delete your account?");
+    if (!confirm1) return;
+
+    const confirm2 = window.confirm("This action is permanent. Continue?");
+    if (!confirm2) return;
+
+    try {
+      setSaving(true);
+      await deleteUserAccount();
+      localStorage.removeItem("token");
+      localStorage.removeItem("user");
+      localStorage.removeItem("cart");
+      addToast("Account deleted", "success");
+      navigate("/signup");
+    } catch (err) {
+      addToast(err.message || "Failed to delete account", "error");
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
     <div className="dashboard-wrapper">
-
       <h2 className="dashboard-title">Account Settings</h2>
-      <p className="dashboard-subtitle">Manage your account preferences and security</p>
+      <p className="dashboard-subtitle">Manage account preferences and security</p>
 
-      {/* TABS */}
+      {loading && <div className="account-alert info">Loading settings...</div>}
+
       <div className="account-tabs">
-        <button className={`account-tab-button ${tab === "profile" ? "active" : ""}`} onClick={() => setTab("profile")}>👤 Profile</button>
-        <button className={`account-tab-button ${tab === "address" ? "active" : ""}`} onClick={() => setTab("address")}>📍 Address</button>
-        <button className={`account-tab-button ${tab === "password" ? "active" : ""}`} onClick={() => setTab("password")}>🔒 Password</button>
-        <button className={`account-tab-button ${tab === "danger" ? "active" : ""}`} onClick={() => setTab("danger")}>⚠️ Danger Zone</button>
+        <button className={`account-tab-button ${tab === "profile" ? "active" : ""}`} onClick={() => setTab("profile")}>Profile</button>
+        <button className={`account-tab-button ${tab === "address" ? "active" : ""}`} onClick={() => setTab("address")}>Address</button>
+        <button className={`account-tab-button ${tab === "password" ? "active" : ""}`} onClick={() => setTab("password")}>Password</button>
+        <button className={`account-tab-button ${tab === "danger" ? "active" : ""}`} onClick={() => setTab("danger")}>Danger Zone</button>
       </div>
 
-      {/* PROFILE TAB */}
       {tab === "profile" && (
         <div className="account-card">
           <h3 style={{ marginBottom: "20px" }}>Profile Information</h3>
-          
+
           <div className="account-form-group">
             <label htmlFor="name">Full Name</label>
-            <input 
-              id="name"
-              type="text"
-              value={name} 
-              onChange={e => setName(e.target.value)} 
-              placeholder="Your full name"
-              className="account-form-input"
-            />
+            <input id="name" type="text" value={name} onChange={(event) => setName(event.target.value)} className="account-form-input" />
           </div>
 
           <div className="account-form-group">
             <label htmlFor="email">Email Address</label>
-            <input 
-              id="email"
-              type="email"
-              value={email} 
-              onChange={e => setEmail(e.target.value)} 
-              placeholder="your@email.com"
-              className="account-form-input"
-            />
+            <input id="email" type="email" value={email} onChange={(event) => setEmail(event.target.value)} className="account-form-input" />
           </div>
 
           <div className="account-form-group">
             <label htmlFor="phone">Phone Number</label>
-            <input 
-              id="phone"
-              type="tel"
-              value={phone} 
-              onChange={e => setPhone(e.target.value)} 
-              placeholder="Your phone number"
-              className="account-form-input"
-            />
+            <input id="phone" type="tel" value={phone} onChange={(event) => setPhone(event.target.value)} className="account-form-input" />
           </div>
 
-          <button className="account-btn primary" onClick={saveProfile}>💾 Save Profile Changes</button>
+          <button className="account-btn primary" onClick={saveProfile} disabled={saving}>
+            {saving ? "Saving..." : "Save Profile Changes"}
+          </button>
         </div>
       )}
 
-      {/* ADDRESS TAB */}
       {tab === "address" && (
         <div className="account-card">
-          <h3 style={{ marginBottom: "20px" }}>Saved Address</h3>
-          
+          <h3 style={{ marginBottom: "20px" }}>Primary Address</h3>
+
           <div className="account-form-group">
-            <label htmlFor="address">Home Address</label>
-            <textarea 
+            <label htmlFor="address">Address</label>
+            <textarea
               id="address"
               rows="4"
-              value={address} 
-              onChange={e => setAddress(e.target.value)}
+              value={address}
+              onChange={(event) => setAddress(event.target.value)}
               placeholder="House no, street, city, state, pincode"
               className="account-form-input"
             />
           </div>
 
-          <button className="account-btn primary" onClick={saveAddress}>💾 Save Address</button>
+          <button className="account-btn primary" onClick={saveAddress} disabled={saving}>
+            {saving ? "Saving..." : "Save Address"}
+          </button>
         </div>
       )}
 
-      {/* PASSWORD TAB */}
       {tab === "password" && (
         <div className="account-card">
           <h3 style={{ marginBottom: "20px" }}>Change Password</h3>
 
           {passMsg && (
-            <div className={`account-alert ${passMsg.includes("✅") ? "success" : "danger"}`} style={{ marginBottom: "16px" }}>
+            <div className={`account-alert ${passMsg.toLowerCase().includes("success") ? "success" : "danger"}`} style={{ marginBottom: "16px" }}>
               {passMsg}
             </div>
           )}
 
           <div className="account-form-group">
             <label htmlFor="current">Current Password</label>
-            <input 
+            <input
               id="current"
-              type={show ? "text" : "password"} 
-              placeholder="Enter current password"
-              value={current} 
-              onChange={e => setCurrent(e.target.value)}
+              type={show ? "text" : "password"}
+              value={current}
+              onChange={(event) => setCurrent(event.target.value)}
               className="account-form-input"
             />
           </div>
 
           <div className="account-form-group">
             <label htmlFor="new">New Password</label>
-            <input 
+            <input
               id="new"
-              type={show ? "text" : "password"} 
-              placeholder="Enter new password"
-              value={newPass} 
-              onChange={e => setNewPass(e.target.value)}
+              type={show ? "text" : "password"}
+              value={newPass}
+              onChange={(event) => setNewPass(event.target.value)}
               className="account-form-input"
             />
           </div>
 
           <div className="account-form-group">
             <label htmlFor="confirm">Confirm Password</label>
-            <input 
+            <input
               id="confirm"
-              type={show ? "text" : "password"} 
-              placeholder="Confirm new password"
-              value={confirm} 
-              onChange={e => setConfirm(e.target.value)}
+              type={show ? "text" : "password"}
+              value={confirm}
+              onChange={(event) => setConfirm(event.target.value)}
               className="account-form-input"
             />
           </div>
 
           <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "20px" }}>
-            <input 
-              type="checkbox" 
-              id="show-pass"
-              onChange={() => setShow(!show)}
-              checked={show}
-            />
+            <input type="checkbox" id="show-pass" onChange={() => setShow((prev) => !prev)} checked={show} />
             <label htmlFor="show-pass" style={{ margin: 0 }}>Show Password</label>
           </div>
 
-          <button className="account-btn primary" onClick={updatePassword}>🔒 Update Password</button>
-        </div>
-      )}
-
-      {/* DANGER ZONE TAB */}
-      {tab === "danger" && (
-        <div className="account-card" style={{ borderColor: "var(--account-danger)", borderWidth: "2px" }}>
-          <h3 style={{ marginBottom: "16px", color: "var(--account-danger)" }}>⚠️ Danger Zone</h3>
-
-          <div className="account-alert danger" style={{ marginBottom: "20px" }}>
-            This action is permanent and cannot be undone. All your account data, bookings, and settings will be deleted from this device.
-          </div>
-
-          <p style={{ color: "#6b7280", marginBottom: "20px" }}>
-            Once you delete your account, there is no going back. Please be certain.
-          </p>
-
-          <button
-            className="account-btn danger"
-            onClick={() => {
-              const confirm1 = window.confirm("Are you sure you want to delete your account?");
-              if (!confirm1) return;
-
-              const confirm2 = window.confirm("This cannot be undone. All your data will be deleted. Confirm?");
-              if (!confirm2) return;
-
-              // CLEAR ALL USER DATA
-              localStorage.removeItem("auth");
-              localStorage.removeItem("name");
-              localStorage.removeItem("email");
-              localStorage.removeItem("phone");
-              localStorage.removeItem("address");
-              localStorage.removeItem("userProfile");
-              localStorage.removeItem("userAddresses");
-              localStorage.removeItem("walletBalance");
-              localStorage.removeItem("walletTransactions");
-
-              addToast("Account deleted successfully", 'success');
-              setTimeout(() => navigate('/signup'), 1500);
-            }}
-          >
-            🗑️ Permanently Delete Account
+          <button className="account-btn primary" onClick={changePassword} disabled={saving}>
+            {saving ? "Updating..." : "Update Password"}
           </button>
         </div>
       )}
 
+      {tab === "danger" && (
+        <div className="account-card" style={{ borderColor: "var(--account-danger)", borderWidth: "2px" }}>
+          <h3 style={{ marginBottom: "16px", color: "var(--account-danger)" }}>Danger Zone</h3>
+
+          <div className="account-alert danger" style={{ marginBottom: "20px" }}>
+            This action is permanent and cannot be undone.
+          </div>
+
+          <p style={{ color: "#6b7280", marginBottom: "20px" }}>
+            Deleting your account will remove your profile, bookings and reviews.
+          </p>
+
+          <button className="account-btn danger" onClick={removeAccount} disabled={saving}>
+            {saving ? "Deleting..." : "Permanently Delete Account"}
+          </button>
+        </div>
+      )}
     </div>
   );
 }

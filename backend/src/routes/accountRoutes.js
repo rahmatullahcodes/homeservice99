@@ -14,12 +14,12 @@ import {
   cancelBooking,
   downloadInvoice
 } from "../controllers/accountController.js";
-import { auth } from "../middleware/auth.js";
+import { userAuth } from "../middleware/userAuth.js";
 
 const router = express.Router();
 
 // All account routes require authentication
-router.use(auth);
+router.use(userAuth);
 
 // Dashboard Routes
 router.get("/dashboard", getDashboard);

@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+import { API_ENDPOINTS } from "../../config/api";
 
 export default function AdminUsers() {
 
@@ -18,6 +17,7 @@ export default function AdminUsers() {
     name: "",
     email: "",
     phone: "",
+    password: "",
     city: "",
     address: ""
   });
@@ -39,7 +39,7 @@ export default function AdminUsers() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.GET_USERS, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -75,6 +75,8 @@ export default function AdminUsers() {
         status: user.blocked ? "Blocked" : "Active",
         bookings: user.totalBookings || 0,
         rating: user.averageRating || 0,
+        walletBalance: user.walletBalance || 0,
+        paymentMethodsCount: Array.isArray(user.paymentMethods) ? user.paymentMethods.length : 0,
         city: user.city || "N/A",
         address: user.address || "N/A",
         joinedDate: user.createdAt ? new Date(user.createdAt).toISOString().split('T')[0] : new Date().toISOString().split('T')[0]
@@ -95,8 +97,13 @@ export default function AdminUsers() {
 
   async function handleCreateUser(e) {
     e.preventDefault();
-    if (!formData.name || !formData.email || !formData.phone || !formData.city || !formData.address) {
+    if (!formData.name || !formData.email || !formData.phone || !formData.password || !formData.city || !formData.address) {
       alert("Please fill all fields");
+      return;
+    }
+
+    if (formData.password.length < 6) {
+      alert("Password must be at least 6 characters");
       return;
     }
 
@@ -108,7 +115,7 @@ export default function AdminUsers() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/users`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.GET_USERS, {
         method: "POST",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -118,6 +125,7 @@ export default function AdminUsers() {
           name: formData.name,
           email: formData.email,
           phone: formData.phone,
+          password: formData.password,
           city: formData.city,
           address: formData.address
         })
@@ -136,10 +144,12 @@ export default function AdminUsers() {
         status: "Active",
         bookings: 0,
         rating: 0,
+        walletBalance: newUser.walletBalance || 0,
+        paymentMethodsCount: Array.isArray(newUser.paymentMethods) ? newUser.paymentMethods.length : 0,
         joinedDate: new Date().toISOString().split('T')[0]
       };
       setUsers([transformedUser, ...users]);
-      setFormData({ name: "", email: "", phone: "", city: "", address: "" });
+      setFormData({ name: "", email: "", phone: "", password: "", city: "", address: "" });
       setShowCreateForm(false);
       alert("User account created successfully!");
     } catch (err) {
@@ -163,7 +173,7 @@ export default function AdminUsers() {
       const newStatus = user.status === "Active" ? "Blocked" : "Active";
       const isBlocked = newStatus === "Blocked";
 
-      const response = await fetch(`${API_BASE_URL}/admin/users/${id}`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.UPDATE_USER(id), {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -203,7 +213,7 @@ export default function AdminUsers() {
         return;
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/users/${id}`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.DELETE_USER(id), {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -220,6 +230,58 @@ export default function AdminUsers() {
       alert("User deleted successfully!");
     } catch (err) {
       console.error("Error deleting user:", err);
+      alert(`Error: ${err.message}`);
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function adjustWallet(id, type) {
+    const amount = Number(window.prompt(`Enter amount to ${type === "Credit" ? "credit" : "debit"} wallet`, "100"));
+    if (!amount || amount <= 0) {
+      return;
+    }
+
+    const note = window.prompt("Enter note (optional)", "") || "";
+
+    try {
+      setIsSubmitting(true);
+      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
+      if (!token) {
+        alert("Please login first");
+        return;
+      }
+
+      const response = await fetch(API_ENDPOINTS.ADMIN.ADJUST_USER_WALLET(id), {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ amount, type, note })
+      });
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to update wallet");
+      }
+
+      setUsers((prev) =>
+        prev.map((user) =>
+          (user._id === id || user.id === id)
+            ? { ...user, walletBalance: data.walletBalance }
+            : user
+        )
+      );
+
+      setSelectedUser((prev) => {
+        if (!prev || (prev._id !== id && prev.id !== id)) return prev;
+        return { ...prev, walletBalance: data.walletBalance };
+      });
+
+      alert(`Wallet ${type.toLowerCase()} successful`);
+    } catch (err) {
+      console.error("Error updating wallet:", err);
       alert(`Error: ${err.message}`);
     } finally {
       setIsSubmitting(false);
@@ -291,17 +353,17 @@ export default function AdminUsers() {
         <div className="kpi-card" style={{padding: '16px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee'}}>
           <span style={{fontSize: 'clamp(12px, 3vw, 14px)', color: '#666', display: 'block', marginBottom: '8px'}}>Active Users</span>
           <h3 style={{fontSize: 'clamp(24px, 6vw, 32px)', margin: '8px 0'}}>{activeCount}</h3>
-          <small className="positive" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#28a745'}}>{Math.round((activeCount/users.length)*100)}% of total</small>
+          <small className="positive" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#28a745'}}>{users.length ? Math.round((activeCount/users.length)*100) : 0}% of total</small>
         </div>
         <div className="kpi-card" style={{padding: '16px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee'}}>
           <span style={{fontSize: 'clamp(12px, 3vw, 14px)', color: '#666', display: 'block', marginBottom: '8px'}}>Blocked Users</span>
           <h3 style={{fontSize: 'clamp(24px, 6vw, 32px)', margin: '8px 0'}}>{blockedCount}</h3>
-          <small className="neutral" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999'}}>{Math.round((blockedCount/users.length)*100)}% of total</small>
+          <small className="neutral" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999'}}>{users.length ? Math.round((blockedCount/users.length)*100) : 0}% of total</small>
         </div>
         <div className="kpi-card" style={{padding: '16px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee'}}>
           <span style={{fontSize: 'clamp(12px, 3vw, 14px)', color: '#666', display: 'block', marginBottom: '8px'}}>Total Bookings</span>
           <h3 style={{fontSize: 'clamp(24px, 6vw, 32px)', margin: '8px 0'}}>{totalBookings}</h3>
-          <small className="positive" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#28a745'}}>Avg: {(totalBookings/users.length).toFixed(1)}/user</small>
+          <small className="positive" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#28a745'}}>Avg: {users.length ? (totalBookings/users.length).toFixed(1) : "0.0"}/user</small>
         </div>
       </div>
 
@@ -461,6 +523,20 @@ export default function AdminUsers() {
               </div>
 
               <div>
+                <label style={{display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#333'}}>Password *</label>
+                <input
+                  type="password"
+                  name="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="Enter password (min 6 characters)"
+                  minLength="6"
+                  required
+                  style={{width: '100%', padding: '12px 14px', border: '1.5px solid #ddd', borderRadius: '8px', fontSize: 'clamp(13px, 4vw, 16px)', boxSizing: 'border-box', fontFamily: 'inherit'}}
+                />
+              </div>
+
+              <div>
                 <label style={{display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#333'}}>City *</label>
                 <select
                   name="city"
@@ -569,8 +645,40 @@ export default function AdminUsers() {
               </div>
 
               <div style={{borderTop: '1.5px solid #eee', paddingTop: '12px', marginTop: '8px'}}>
+                <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))', gap: '12px', marginBottom: '10px'}}>
+                  <div>
+                    <p style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999', margin: '0 0 4px 0'}}>Wallet Balance</p>
+                    <p style={{margin: 0, fontWeight: '600', fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#16a34a'}}>
+                      Rs {Number(selectedUser.walletBalance || 0).toLocaleString()}
+                    </p>
+                  </div>
+                  <div>
+                    <p style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999', margin: '0 0 4px 0'}}>Payment Methods</p>
+                    <p style={{margin: 0, fontWeight: '600', fontSize: 'clamp(13px, 3.5vw, 15px)'}}>{selectedUser.paymentMethodsCount || 0}</p>
+                  </div>
+                </div>
+
                 <p style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999', margin: '0 0 6px 0'}}>Address</p>
                 <p style={{margin: 0, fontSize: 'clamp(13px, 3.5vw, 15px)', wordBreak: 'break-word'}}>{selectedUser.address}</p>
+              </div>
+
+              <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '10px'}}>
+                <button
+                  className="btn-sm"
+                  onClick={() => adjustWallet(selectedUser._id || selectedUser.id, "Credit")}
+                  style={{fontSize: 'clamp(11px, 3vw, 13px)', padding: '8px 10px'}}
+                  disabled={isSubmitting}
+                >
+                  Credit Wallet
+                </button>
+                <button
+                  className="btn-sm outline"
+                  onClick={() => adjustWallet(selectedUser._id || selectedUser.id, "Debit")}
+                  style={{fontSize: 'clamp(11px, 3vw, 13px)', padding: '8px 10px'}}
+                  disabled={isSubmitting}
+                >
+                  Debit Wallet
+                </button>
               </div>
 
               <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px', marginTop: '10px'}}>

@@ -5,6 +5,16 @@ import "../../styles/vendor.css";
 
 export default function VendorLayout() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(() =>
+    typeof window !== "undefined" ? window.innerWidth <= 1023 : false
+  );
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(() => {
+    try {
+      return localStorage.getItem("vendorSidebarCollapsed") === "true";
+    } catch {
+      return false;
+    }
+  });
   const [isScrolled, setIsScrolled] = useState(false);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
   const navigate = useNavigate();
@@ -15,6 +25,27 @@ export default function VendorLayout() {
   useEffect(() => {
     setSidebarOpen(false);
   }, [location]);
+
+  useEffect(() => {
+    const onResize = () => {
+      const mobile = window.innerWidth <= 1023;
+      setIsMobile(mobile);
+      if (!mobile) {
+        setSidebarOpen(false);
+      }
+    };
+
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
+
+  useEffect(() => {
+    try {
+      localStorage.setItem("vendorSidebarCollapsed", sidebarCollapsed ? "true" : "false");
+    } catch {
+      // ignore storage errors
+    }
+  }, [sidebarCollapsed]);
 
   // Handle scroll effect for header shadow
   useEffect(() => {
@@ -129,6 +160,8 @@ export default function VendorLayout() {
     },
   ];
 
+  const isSidebarCollapsed = sidebarCollapsed && !isMobile;
+
   return (
     <div className="vendor-shell">
       {/* MOBILE HEADER - TOGGLE BAR */}
@@ -162,7 +195,7 @@ export default function VendorLayout() {
 
       {/* SIDEBAR NAVIGATION */}
       <aside 
-        className={`vendor-sidebar ${sidebarOpen ? "open" : ""}`} 
+        className={`vendor-sidebar ${sidebarOpen ? "open" : ""} ${isSidebarCollapsed ? "collapsed" : ""}`} 
         role="navigation" 
         aria-label="Main navigation"
         id="vendor-sidebar"
@@ -175,6 +208,14 @@ export default function VendorLayout() {
             </svg>
             <h2>HomeService</h2>
           </div>
+          <button
+            className="vendor-collapse-sidebar"
+            onClick={() => setSidebarCollapsed((c) => !c)}
+            aria-label={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+            title={isSidebarCollapsed ? "Expand sidebar" : "Collapse sidebar"}
+          >
+            {isSidebarCollapsed ? ">" : "<"}
+          </button>
           <button
             className="vendor-close-sidebar"
             onClick={() => setSidebarOpen(false)}
@@ -212,6 +253,7 @@ export default function VendorLayout() {
               end={item.path === "/vendor"}
               className={({ isActive }) => `vendor-nav-link ${isActive ? "active" : ""}`}
               role="menuitem"
+              title={isSidebarCollapsed ? item.label : undefined}
             >
               <span className="nav-icon">{item.icon}</span>
               <span className="nav-label">{item.label}</span>

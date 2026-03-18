@@ -1,5 +1,11 @@
-import { useState, useEffect } from "react";
+import { useEffect, useState } from "react";
 import { API_ENDPOINTS } from "../../config/api";
+
+function getAuthPreview(token) {
+  if (!token) return "Missing";
+  if (token.length <= 16) return token;
+  return `${token.slice(0, 12)}...${token.slice(-4)}`;
+}
 
 export default function AdminDiagnostics() {
   const [diagnostics, setDiagnostics] = useState(null);
@@ -12,45 +18,46 @@ export default function AdminDiagnostics() {
   async function runDiagnostics() {
     try {
       setLoading(true);
+
       const token = localStorage.getItem("adminToken");
       const adminUser = localStorage.getItem("adminUser");
-
       const diagnosticsData = {
         timestamp: new Date().toISOString(),
         localStorage: {
-          token: token ? `✅ Present (${token.slice(0, 20)}...)` : "❌ Missing",
-          adminUser: adminUser ? `✅ Present` : "❌ Missing",
+          adminToken: token ? `Present (${getAuthPreview(token)})` : "Missing",
+          adminUser: adminUser ? "Present" : "Missing"
         },
         apiEndpoints: {
-          baseUrl: API_ENDPOINTS.ADMIN?.GET_DASHBOARD?.replace("/dashboard", ""),
-          dashboard: API_ENDPOINTS.ADMIN?.GET_DASHBOARD,
-          bookings: API_ENDPOINTS.ADMIN?.GET_BOOKINGS,
-          payments: API_ENDPOINTS.ADMIN?.GET_PAYMENTS,
+          dashboard: API_ENDPOINTS.ADMIN.GET_DASHBOARD,
+          bookings: API_ENDPOINTS.ADMIN.GET_BOOKINGS,
+          payments: API_ENDPOINTS.ADMIN.GET_PAYMENTS,
+          paymentMethods: API_ENDPOINTS.PAYMENT_GATEWAYS.ADMIN_GET
         },
-        backend: { status: "Testing..." }
+        backend: {
+          health: "Checking...",
+          dashboardAPI: token ? "Checking..." : "Skipped (No token)"
+        }
       };
 
-      // Test health
+      const healthUrl = API_ENDPOINTS.ADMIN.GET_DASHBOARD.replace("/admin/dashboard", "/health");
+
       try {
-        const healthResponse = await fetch("http://localhost:5000/api/health");
-        if (healthResponse.ok) {
-          diagnosticsData.backend.status = "✅ Running";
-        } else {
-          diagnosticsData.backend.status = "❌ Error";
-        }
-      } catch (err) {
-        diagnosticsData.backend.status = "❌ Not reachable";
+        const healthResponse = await fetch(healthUrl);
+        diagnosticsData.backend.health = healthResponse.ok ? "Running" : `Error (${healthResponse.status})`;
+      } catch (error) {
+        diagnosticsData.backend.health = `Not reachable (${error.message})`;
       }
 
-      // Test dashboard if token exists
       if (token) {
         try {
-          const dashResponse = await fetch(API_ENDPOINTS.ADMIN.GET_DASHBOARD, {
-            headers: { "Authorization": `Bearer ${token}` }
+          const dashboardResponse = await fetch(API_ENDPOINTS.ADMIN.GET_DASHBOARD, {
+            headers: { Authorization: `Bearer ${token}` }
           });
-          diagnosticsData.backend.dashboardAPI = dashResponse.ok ? "✅ Working" : `❌ ${dashResponse.status}`;
-        } catch (err) {
-          diagnosticsData.backend.dashboardAPI = "❌ " + err.message;
+          diagnosticsData.backend.dashboardAPI = dashboardResponse.ok
+            ? "Working"
+            : `Failed (${dashboardResponse.status})`;
+        } catch (error) {
+          diagnosticsData.backend.dashboardAPI = `Error (${error.message})`;
         }
       }
 
@@ -61,31 +68,57 @@ export default function AdminDiagnostics() {
   }
 
   if (loading) {
-    return <div style={{ padding: "40px", textAlign: "center" }}>Running diagnostics...</div>;
+    return (
+      <div className="admin-page">
+        <div className="admin-page-head">
+          <h2>Diagnostics</h2>
+          <p className="admin-subtitle">Running platform checks...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
-    <div style={{ padding: "40px", fontFamily: "monospace", fontSize: "13px" }}>
-      <h2>Admin Diagnostics</h2>
-      
-      <div style={{ background: "#f5f5f5", padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
-        <h3>localStorage</h3>
-        <pre style={{ margin: 0 }}>{JSON.stringify(diagnostics?.localStorage, null, 2)}</pre>
+    <div className="admin-page">
+      <div className="admin-page-head">
+        <h2>Diagnostics</h2>
+        <p className="admin-subtitle">Quick health checks for admin auth and backend routes</p>
       </div>
 
-      <div style={{ background: "#f5f5f5", padding: "20px", borderRadius: "8px", marginBottom: "20px" }}>
-        <h3>API Endpoints</h3>
-        <pre style={{ margin: 0 }}>{JSON.stringify(diagnostics?.apiEndpoints, null, 2)}</pre>
+      <div className="admin-section">
+        <div className="admin-table card-mobile">
+          <div className="table-row head">
+            <span>Check</span>
+            <span>Value</span>
+            <span>Check</span>
+            <span>Value</span>
+          </div>
+          <div className="table-row">
+            <span data-label="Check">Timestamp</span>
+            <span data-label="Value">{diagnostics?.timestamp || "-"}</span>
+            <span data-label="Check">Backend Health</span>
+            <span data-label="Value">{diagnostics?.backend?.health || "-"}</span>
+          </div>
+          <div className="table-row">
+            <span data-label="Check">Admin Token</span>
+            <span data-label="Value">{diagnostics?.localStorage?.adminToken || "-"}</span>
+            <span data-label="Check">Dashboard API</span>
+            <span data-label="Value">{diagnostics?.backend?.dashboardAPI || "-"}</span>
+          </div>
+          <div className="table-row">
+            <span data-label="Check">Dashboard Endpoint</span>
+            <span data-label="Value">{diagnostics?.apiEndpoints?.dashboard || "-"}</span>
+            <span data-label="Check">Payment Methods Endpoint</span>
+            <span data-label="Value">{diagnostics?.apiEndpoints?.paymentMethods || "-"}</span>
+          </div>
+        </div>
       </div>
 
-      <div style={{ background: "#f5f5f5", padding: "20px", borderRadius: "8px" }}>
-        <h3>Backend Status</h3>
-        <pre style={{ margin: 0 }}>{JSON.stringify(diagnostics?.backend, null, 2)}</pre>
-      </div>
-
-      <div style={{ marginTop: "20px" }}>
-        <button onClick={runDiagnostics} style={{ padding: "10px 20px" }}>Re-run Diagnostics</button>
-        <button onClick={() => window.location.href = "/admin"} style={{ padding: "10px 20px", marginLeft: "10px" }}>Back to Dashboard</button>
+      <div className="quick-actions">
+        <button className="btn-sm" onClick={runDiagnostics}>Re-run Diagnostics</button>
+        <button className="btn-sm outline" onClick={() => window.location.assign("/admin")}>
+          Back to Dashboard
+        </button>
       </div>
     </div>
   );

@@ -10,12 +10,12 @@ import {
   getBookingStatusBreakdown,
   getCompleteReport
 } from "../controllers/reportsController.js";
-import { auth } from "../middleware/auth.js";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 const router = express.Router();
 
 // All report endpoints require admin authentication
-router.use(auth);
+router.use(adminAuth);
 
 // Dashboard stats
 router.get("/dashboard-stats", getDashboardStats);

@@ -2291,58 +2291,35 @@ export default function Services() {
   if (!selectedCategory) {
     // Show category selection grid
     return (
-      <div style={{ minHeight: '100vh', backgroundColor: '#f9fafb', padding: '20px' }}>
-        <div style={{ maxWidth: '1200px', margin: '0 auto', paddingTop: '40px' }}>
-          <h1 style={{ fontSize: '32px', fontWeight: 'bold', marginBottom: '10px', color: '#0f172a' }}>
-            What are you looking for?
-          </h1>
-          <p style={{ color: '#6b7280', marginBottom: '40px', fontSize: '16px' }}>
-            Select a service category to explore
-          </p>
-          <div style={{
-            display: 'grid',
-            gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
-            gap: '20px'
-          }}>
+      <section className="services-category-landing">
+        <div className="services-category-landing-inner">
+          <p className="services-category-eyebrow">HomeService99 Categories</p>
+          <h1 className="services-category-title">What are you looking for?</h1>
+          <p className="services-category-subtitle">Select a service category to explore</p>
+
+          <div className="services-category-meta">
+            <span>{Object.keys(SERVICES_DATA).length}+ categories</span>
+            <span>Verified professionals</span>
+            <span>Transparent pricing</span>
+          </div>
+
+          <div className="services-category-grid">
             {Object.entries(SERVICES_DATA).map(([key, data]) => (
-              <div
+              <button
                 key={key}
+                type="button"
+                className="services-category-card"
                 onClick={() => handleCategorySelect(key)}
-                style={{
-                  padding: '24px',
-                  backgroundColor: 'white',
-                  borderRadius: '12px',
-                  cursor: 'pointer',
-                  border: '2px solid transparent',
-                  transition: 'all 0.3s ease',
-                  textAlign: 'center',
-                  boxShadow: '0 1px 3px rgba(0,0,0,0.1)'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.transform = 'translateY(-5px)';
-                  e.currentTarget.style.boxShadow = '0 10px 25px rgba(0,0,0,0.15)';
-                  e.currentTarget.style.borderColor = '#2563eb';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.transform = 'translateY(0)';
-                  e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.1)';
-                  e.currentTarget.style.borderColor = 'transparent';
-                }}
+                aria-label={`Explore ${data.label}`}
               >
-                <div style={{ fontSize: '48px', marginBottom: '12px' }}>{data.icon}</div>
-                <p style={{
-                  fontSize: '16px',
-                  fontWeight: '600',
-                  color: '#0f172a',
-                  margin: '0'
-                }}>
-                  {data.label}
-                </p>
-              </div>
+                <span className="services-category-card-icon" aria-hidden="true">{data.icon}</span>
+                <span className="services-category-card-label">{data.label}</span>
+                <span className="services-category-card-hint">Tap to explore</span>
+              </button>
             ))}
           </div>
         </div>
-      </div>
+      </section>
     );
   }
 

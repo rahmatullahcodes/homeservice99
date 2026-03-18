@@ -1,140 +1,126 @@
-import { useState, useEffect } from "react";
+﻿import { useEffect, useMemo, useState } from "react";
+import { useToast } from "../../context/ToastContext";
+import {
+  createUserReview,
+  fetchReviewableBookings,
+  fetchUserReviews
+} from "../../utils/accountApi";
 import "../../styles/account.css";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const INITIAL_FORM = {
+  bookingId: "",
+  rating: 5,
+  title: "",
+  comment: ""
+};
 
 export default function AccountReviews() {
+  const { addToast } = useToast();
 
-  const [reviews, setReviews] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
-  const [filter, setFilter] = useState(null);
+  const [filter, setFilter] = useState(0);
   const [showForm, setShowForm] = useState(false);
-  
-  const [formData, setFormData] = useState({
-    rating: 5,
-    title: "",
-    comment: "",
-    vendorId: "",
-    serviceId: "",
-    bookingId: ""
-  });
+  const [reviews, setReviews] = useState([]);
+  const [reviewableBookings, setReviewableBookings] = useState([]);
+  const [formData, setFormData] = useState(INITIAL_FORM);
 
-  // Fetch user reviews on mount
   useEffect(() => {
-    fetchUserReviews();
+    loadData();
   }, []);
 
-  async function fetchUserReviews() {
+  async function loadData() {
     try {
       setLoading(true);
       setError("");
-      
-      const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("auth");
-      
-      if (!userId || !token) {
-        setError("Please login to view your reviews");
-        setLoading(false);
-        return;
-      }
-      
-      const response = await fetch(`${API_BASE_URL}/admin/reviews/user/${userId}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to load reviews");
-      }
-
-      const data = await response.json();
-      setReviews(data || []);
+      const [reviewsData, bookingData] = await Promise.all([
+        fetchUserReviews(),
+        fetchReviewableBookings()
+      ]);
+      setReviews(Array.isArray(reviewsData) ? reviewsData : []);
+      setReviewableBookings(Array.isArray(bookingData) ? bookingData : []);
     } catch (err) {
-      console.error("Fetch error:", err);
-      setError(err.message);
+      const message = err.message || "Failed to load reviews";
+      setError(message);
+      addToast(message, "error");
     } finally {
       setLoading(false);
     }
   }
 
+  const avgRating = useMemo(() => {
+    if (!reviews.length) return 0;
+    const total = reviews.reduce((sum, review) => sum + Number(review.rating || 0), 0);
+    return (total / reviews.length).toFixed(1);
+  }, [reviews]);
+
+  const fiveStarCount = useMemo(
+    () => reviews.filter((review) => Number(review.rating) === 5).length,
+    [reviews]
+  );
+
+  const filteredReviews = useMemo(() => {
+    if (!filter) return reviews;
+    return reviews.filter((review) => Number(review.rating) === filter);
+  }, [filter, reviews]);
+
   async function submitReview() {
-    if (!formData.comment || !formData.vendorId || !formData.serviceId) {
-      setError("Please fill all required fields");
+    if (!formData.bookingId || !formData.comment.trim()) {
+      addToast("Please select booking and enter comment", "warning");
       return;
     }
 
     try {
-      setLoading(true);
-      const userId = localStorage.getItem("userId");
-      const token = localStorage.getItem("auth");
-      
-      const response = await fetch(`${API_BASE_URL}/admin/reviews`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${token}`
-        },
-        body: JSON.stringify({
-          userId,
-          ...formData
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to submit review");
-      }
-
-      const newReview = await response.json();
-      setReviews(prev => [newReview, ...prev]);
-      setFormData({ rating: 5, title: "", comment: "", vendorId: "", serviceId: "", bookingId: "" });
+      setSubmitting(true);
+      const review = await createUserReview(formData);
+      setReviews((prev) => [review, ...prev]);
+      setReviewableBookings((prev) => prev.filter((booking) => booking._id !== formData.bookingId));
+      setFormData(INITIAL_FORM);
       setShowForm(false);
-      setError("");
+      addToast("Review submitted", "success");
     } catch (err) {
-      setError(err.message);
+      addToast(err.message || "Failed to submit review", "error");
     } finally {
-      setLoading(false);
+      setSubmitting(false);
     }
   }
 
-  // Calculate stats
-  const avgRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + r.rating, 0) / reviews.length).toFixed(1)
-    : 0;
-  const fiveStarCount = reviews.filter(r => r.rating === 5).length;
-  
-  const filteredReviews = filter ? reviews.filter(r => r.rating === filter) : reviews;
+  function selectedBookingMeta() {
+    const booking = reviewableBookings.find((item) => item._id === formData.bookingId);
+    if (!booking) return "";
+    const vendorName = booking.vendor?.businessName || booking.vendor?.name || "Vendor";
+    return `${booking.service || "Service"} | ${vendorName}`;
+  }
 
   return (
     <div className="dashboard-wrapper">
-
       <h2 className="dashboard-title">My Reviews</h2>
-      <p className="dashboard-subtitle">Feedback you've given on services</p>
+      <p className="dashboard-subtitle">Feedback you have shared on completed services</p>
 
-      {/* KPI CARDS */}
+      {error && <div className="account-alert danger">{error}</div>}
+
       <div className="dashboard-grid" style={{ marginBottom: "32px" }}>
         <div className="dash-card blue">
-          <div className="dash-icon">⭐</div>
+          <div className="dash-icon">AR</div>
           <div>
             <p className="dash-label">Average Rating</p>
             <h3>{avgRating}</h3>
-            <span className="dash-trend">Out of 5.0</span>
+            <span className="dash-trend">Out of 5</span>
           </div>
         </div>
+
         <div className="dash-card green">
-          <div className="dash-icon">📝</div>
+          <div className="dash-icon">TR</div>
           <div>
             <p className="dash-label">Total Reviews</p>
             <h3>{reviews.length}</h3>
             <span className="dash-trend">All time</span>
           </div>
         </div>
+
         <div className="dash-card yellow">
-          <div className="dash-icon">👍</div>
+          <div className="dash-icon">F5</div>
           <div>
             <p className="dash-label">5 Star Reviews</p>
             <h3>{fiveStarCount}</h3>
@@ -143,148 +129,141 @@ export default function AccountReviews() {
         </div>
       </div>
 
-      {/* WRITE REVIEW BUTTON */}
       <div style={{ marginBottom: "20px" }}>
-        <button 
-          className="account-btn primary"
-          onClick={() => setShowForm(!showForm)}
-        >
-          {showForm ? "✕ Cancel" : "✏️ Write a Review"}
+        <button className="account-btn primary" onClick={() => setShowForm((prev) => !prev)}>
+          {showForm ? "Cancel" : "Write a Review"}
         </button>
       </div>
 
-      {/* WRITE REVIEW FORM */}
       {showForm && (
         <div className="account-card" style={{ marginBottom: "20px", padding: "20px", backgroundColor: "#f9fafb" }}>
           <h3 style={{ marginBottom: "15px" }}>Write a New Review</h3>
-          
-          {error && <div style={{ color: "red", marginBottom: "10px", padding: "8px", backgroundColor: "#ffe6e6", borderRadius: "4px" }}>{error}</div>}
-          
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>Vendor ID *</label>
-            <input
-              type="text"
-              placeholder="Enter vendor ID"
-              value={formData.vendorId}
-              onChange={e => setFormData({ ...formData, vendorId: e.target.value })}
-              style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
-            />
-          </div>
 
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>Service ID *</label>
-            <input
-              type="text"
-              placeholder="Enter service ID"
-              value={formData.serviceId}
-              onChange={e => setFormData({ ...formData, serviceId: e.target.value })}
-              style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
-            />
-          </div>
+          {reviewableBookings.length === 0 ? (
+            <div className="account-alert info">No completed booking available for review.</div>
+          ) : (
+            <>
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ display: "block", marginBottom: "5px" }}>Completed Booking</label>
+                <select
+                  value={formData.bookingId}
+                  onChange={(event) => setFormData({ ...formData, bookingId: event.target.value })}
+                  className="account-form-input"
+                >
+                  <option value="">Select booking</option>
+                  {reviewableBookings.map((booking) => (
+                    <option key={booking._id} value={booking._id}>
+                      {booking.service || "Service"} - {new Date(booking.createdAt).toLocaleDateString()}
+                    </option>
+                  ))}
+                </select>
+                {formData.bookingId && (
+                  <small style={{ color: "#6b7280" }}>{selectedBookingMeta()}</small>
+                )}
+              </div>
 
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>Rating *</label>
-            <select
-              value={formData.rating}
-              onChange={e => setFormData({ ...formData, rating: Number(e.target.value) })}
-              style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
-            >
-              <option value={5}>⭐⭐⭐⭐⭐ Excellent</option>
-              <option value={4}>⭐⭐⭐⭐ Very Good</option>
-              <option value={3}>⭐⭐⭐ Good</option>
-              <option value={2}>⭐⭐ Fair</option>
-              <option value={1}>⭐ Poor</option>
-            </select>
-          </div>
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ display: "block", marginBottom: "5px" }}>Rating</label>
+                <select
+                  value={formData.rating}
+                  onChange={(event) => setFormData({ ...formData, rating: Number(event.target.value) })}
+                  className="account-form-input"
+                >
+                  <option value={5}>5 - Excellent</option>
+                  <option value={4}>4 - Very Good</option>
+                  <option value={3}>3 - Good</option>
+                  <option value={2}>2 - Fair</option>
+                  <option value={1}>1 - Poor</option>
+                </select>
+              </div>
 
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>Title (Optional)</label>
-            <input
-              type="text"
-              placeholder="Brief title for your review"
-              value={formData.title}
-              onChange={e => setFormData({ ...formData, title: e.target.value })}
-              style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px" }}
-            />
-          </div>
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ display: "block", marginBottom: "5px" }}>Title (Optional)</label>
+                <input
+                  type="text"
+                  placeholder="Short title"
+                  value={formData.title}
+                  onChange={(event) => setFormData({ ...formData, title: event.target.value })}
+                  className="account-form-input"
+                />
+              </div>
 
-          <div style={{ marginBottom: "15px" }}>
-            <label style={{ display: "block", marginBottom: "5px" }}>Your Review *</label>
-            <textarea
-              placeholder="Share your experience..."
-              value={formData.comment}
-              onChange={e => setFormData({ ...formData, comment: e.target.value })}
-              style={{ width: "100%", padding: "8px", border: "1px solid #ddd", borderRadius: "4px", minHeight: "100px", fontFamily: "inherit" }}
-            />
-          </div>
+              <div style={{ marginBottom: "15px" }}>
+                <label style={{ display: "block", marginBottom: "5px" }}>Your Review</label>
+                <textarea
+                  placeholder="Share your experience"
+                  value={formData.comment}
+                  onChange={(event) => setFormData({ ...formData, comment: event.target.value })}
+                  className="account-form-input"
+                  style={{ minHeight: "100px" }}
+                />
+              </div>
 
-          <button 
-            className="account-btn primary"
-            onClick={submitReview}
-            disabled={loading}
-          >
-            {loading ? "Submitting..." : "Submit Review"}
-          </button>
+              <button className="account-btn primary" onClick={submitReview} disabled={submitting}>
+                {submitting ? "Submitting..." : "Submit Review"}
+              </button>
+            </>
+          )}
         </div>
       )}
 
-      {/* FILTER */}
       <div style={{ marginBottom: "20px", display: "flex", gap: "8px", flexWrap: "wrap" }}>
         <button
-          className={`account-btn ${!filter ? "primary" : "secondary"}`}
-          onClick={() => setFilter(null)}
+          className={`account-btn ${filter === 0 ? "primary" : "secondary"}`}
+          onClick={() => setFilter(0)}
         >
           All ({reviews.length})
         </button>
-        {[5, 4, 3, 2, 1].map(rating => (
+        {[5, 4, 3, 2, 1].map((rating) => (
           <button
             key={rating}
             className={`account-btn ${filter === rating ? "primary" : "secondary"}`}
             onClick={() => setFilter(rating)}
             style={{ fontSize: "12px", padding: "8px 12px" }}
           >
-            {"⭐".repeat(rating)} ({reviews.filter(r => r.rating === rating).length})
+            {rating} Star ({reviews.filter((review) => Number(review.rating) === rating).length})
           </button>
         ))}
       </div>
 
-      {loading && <div style={{ textAlign: "center", padding: "20px" }}>Loading reviews...</div>}
-
-      {filteredReviews.length === 0 && !loading && (
+      {loading ? (
+        <div className="account-alert info">Loading reviews...</div>
+      ) : filteredReviews.length === 0 ? (
         <div className="account-alert info" style={{ textAlign: "center" }}>
-          {reviews.length === 0 ? "No reviews yet. Write your first review!" : "No reviews with this rating"}
+          {reviews.length === 0 ? "No reviews yet" : "No reviews for selected filter"}
+        </div>
+      ) : (
+        <div className="account-grid-2">
+          {filteredReviews.map((review) => (
+            <div key={review._id} className="account-card">
+              <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
+                <h3 style={{ margin: 0, fontSize: "16px" }}>{review.service?.title || review.booking?.service || "Service"}</h3>
+                <span className="account-badge green" style={{ fontSize: "12px" }}>
+                  {review.status || "Pending"}
+                </span>
+              </div>
+
+              <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
+                <span style={{ fontSize: "18px" }}>{"*".repeat(Number(review.rating || 0))}</span>
+                <span style={{ color: "#6b7280", fontSize: "12px" }}>{review.rating} out of 5</span>
+              </div>
+
+              {review.title && <p style={{ margin: "8px 0", fontWeight: 600, color: "#374151" }}>{review.title}</p>}
+              <p style={{ margin: "12px 0", color: "#6b7280", lineHeight: 1.5 }}>{review.comment}</p>
+
+              <small style={{ color: "#9ca3af" }}>
+                {new Date(review.createdAt).toLocaleDateString()}
+              </small>
+
+              <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid var(--account-border)" }}>
+                <small style={{ color: "#9ca3af" }}>
+                  Vendor: {review.vendor?.businessName || review.vendor?.name || "Unknown"}
+                </small>
+              </div>
+            </div>
+          ))}
         </div>
       )}
-
-      <div className="account-grid-2">
-        {filteredReviews.map(r => (
-          <div key={r._id} className="account-card">
-            <div style={{ display: "flex", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "12px" }}>
-              <h3 style={{ margin: 0, fontSize: "16px" }}>{r.service?.title || "Service"}</h3>
-              <span className="account-badge green" style={{ fontSize: "12px" }}>
-                {r.status || "Submitted"}
-              </span>
-            </div>
-
-            <div style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "12px" }}>
-              <span style={{ fontSize: "18px" }}>{"⭐".repeat(r.rating)}</span>
-              <span style={{ color: "#6b7280", fontSize: "12px" }}>{r.rating} out of 5</span>
-            </div>
-
-            {r.title && <p style={{ margin: "8px 0", fontWeight: "600", color: "#374151" }}>{r.title}</p>}
-            <p style={{ margin: "12px 0", color: "#6b7280", lineHeight: 1.5 }}>{r.comment}</p>
-            
-            <small style={{ color: "#9ca3af" }}>
-              📅 {new Date(r.createdAt).toLocaleDateString()}
-            </small>
-
-            <div style={{ marginTop: "12px", paddingTop: "12px", borderTop: "1px solid var(--account-border)" }}>
-              <small style={{ color: "#9ca3af" }}>Vendor: {r.vendor?.businessName || "Unknown"}</small>
-            </div>
-          </div>
-        ))}
-      </div>
-
     </div>
   );
 }

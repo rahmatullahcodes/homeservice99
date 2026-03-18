@@ -1,5 +1,5 @@
 import express from "express";
-import { auth } from "../middleware/auth.js";
+import { adminAuth } from "../middleware/adminAuth.js";
 import {
   getDashboardStats,
   getAllUsers,
@@ -11,13 +11,20 @@ import {
   getAllBookings,
   getAllPayments,
   getAllServicesAdmin,
+  getServiceTaxonomy,
   createService,
   updateService,
   toggleServiceStatus,
   deleteService,
+  renameServiceCategory,
+  setCategoryStatus,
+  renameServiceSubcategory,
+  setSubcategoryStatus,
   updateBookingStatus,
   updatePaymentStatus,
+  addManualVendorPayment,
   updateUser,
+  adjustUserWallet,
   deleteUser,
   getAllCoupons,
   createCoupon,
@@ -32,55 +39,78 @@ import {
   getVendorReviews,
   getUserReviews
 } from "../controllers/adminController.js";
+import {
+  getPaymentGatewaySettings,
+  getHomePageSettings,
+  updateHomePageSettings,
+  updatePaymentGatewaySettings
+} from "../controllers/settingsController.js";
 
 const router = express.Router();
 
-/* Admin routes - require admin authentication */
-router.get("/dashboard", auth, getDashboardStats);
-
-// User routes
-router.get("/users", auth, getAllUsers);
-router.post("/users", auth, createUser);
-router.patch("/users/:id", auth, updateUser);
-router.delete("/users/:id", auth, deleteUser);
-
-// Vendor routes
-router.get("/vendors", auth, getAllVendors);
-router.post("/vendors", auth, createVendor);
-router.patch("/vendors/:id/status", auth, updateVendorStatus);
-router.delete("/vendors/:id", auth, deleteVendor);
-
-// Booking routes
-router.get("/bookings", auth, getAllBookings);
-router.patch("/bookings/:id/status", auth, updateBookingStatus);
-
-// Payment routes
-router.get("/payments", auth, getAllPayments);
-router.patch("/payments/:id/status", auth, updatePaymentStatus);
-
-// Service routes
-router.get("/services", auth, getAllServicesAdmin);
-router.post("/services", auth, createService);
-router.patch("/services/:id", auth, updateService);
-router.patch("/services/:id/toggle", auth, toggleServiceStatus);
-router.delete("/services/:id", auth, deleteService);
-
-// Coupon routes
-router.get("/coupons", auth, getAllCoupons);
-router.post("/coupons", auth, createCoupon);
-router.patch("/coupons/:id", auth, updateCoupon);
-router.patch("/coupons/:id/toggle", auth, toggleCouponStatus);
-router.delete("/coupons/:id", auth, deleteCoupon);
-
-// Review routes
-router.get("/reviews", auth, getAllReviews);
-router.patch("/reviews/:id/status", auth, updateReviewStatus);
-router.delete("/reviews/:id", auth, deleteReview);
-router.get("/reviews/vendor/:vendorId", getVendorReviews);
-router.get("/reviews/user/:userId", getUserReviews);
-router.post("/reviews", auth, createReview);
-
 // Public coupon validation (for users)
 router.post("/validate-coupon", validateCoupon);
+
+/* Admin routes - require admin authentication */
+router.use(adminAuth);
+
+router.get("/dashboard", getDashboardStats);
+router.get("/settings/payment-methods", getPaymentGatewaySettings);
+router.patch("/settings/payment-methods", updatePaymentGatewaySettings);
+router.get("/settings/homepage", getHomePageSettings);
+router.patch("/settings/homepage", updateHomePageSettings);
+router.get("/payment-methods", getPaymentGatewaySettings);
+router.patch("/payment-methods", updatePaymentGatewaySettings);
+router.get("/homepage", getHomePageSettings);
+router.patch("/homepage", updateHomePageSettings);
+
+// User routes
+router.get("/users", getAllUsers);
+router.post("/users", createUser);
+router.patch("/users/:id", updateUser);
+router.post("/users/:id/wallet-adjust", adjustUserWallet);
+router.delete("/users/:id", deleteUser);
+
+// Vendor routes
+router.get("/vendors", getAllVendors);
+router.post("/vendors", createVendor);
+router.patch("/vendors/:id/status", updateVendorStatus);
+router.delete("/vendors/:id", deleteVendor);
+
+// Booking routes
+router.get("/bookings", getAllBookings);
+router.patch("/bookings/:id/status", updateBookingStatus);
+
+// Payment routes
+router.get("/payments", getAllPayments);
+router.patch("/payments/:id/status", updatePaymentStatus);
+router.post("/payments/manual-credit", addManualVendorPayment);
+
+// Service routes
+router.get("/services", getAllServicesAdmin);
+router.get("/services/taxonomy", getServiceTaxonomy);
+router.patch("/services/category/rename", renameServiceCategory);
+router.patch("/services/category/status", setCategoryStatus);
+router.patch("/services/subcategory/rename", renameServiceSubcategory);
+router.patch("/services/subcategory/status", setSubcategoryStatus);
+router.post("/services", createService);
+router.patch("/services/:id", updateService);
+router.patch("/services/:id/toggle", toggleServiceStatus);
+router.delete("/services/:id", deleteService);
+
+// Coupon routes
+router.get("/coupons", getAllCoupons);
+router.post("/coupons", createCoupon);
+router.patch("/coupons/:id", updateCoupon);
+router.patch("/coupons/:id/toggle", toggleCouponStatus);
+router.delete("/coupons/:id", deleteCoupon);
+
+// Review routes
+router.get("/reviews", getAllReviews);
+router.patch("/reviews/:id/status", updateReviewStatus);
+router.delete("/reviews/:id", deleteReview);
+router.get("/reviews/vendor/:vendorId", getVendorReviews);
+router.get("/reviews/user/:userId", getUserReviews);
+router.post("/reviews", createReview);
 
 export default router;

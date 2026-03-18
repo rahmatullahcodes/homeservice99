@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 // context/CartContext.jsx
 import { createContext, useContext, useState, useEffect } from 'react';
 
@@ -9,11 +10,28 @@ export function CartProvider({ children }) {
     const savedCart = localStorage.getItem('cart');
     return savedCart ? JSON.parse(savedCart) : [];
   });
+  const [appliedCoupon, setAppliedCoupon] = useState(() => {
+    const savedCart = localStorage.getItem('cart');
+    const parsedCart = savedCart ? JSON.parse(savedCart) : [];
+    if (parsedCart.length === 0) return null;
+
+    const savedCoupon = localStorage.getItem('appliedCoupon');
+    return savedCoupon ? JSON.parse(savedCoupon) : null;
+  });
 
   // Save cart to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('cart', JSON.stringify(cart));
   }, [cart]);
+
+  // Save applied coupon to localStorage whenever it changes
+  useEffect(() => {
+    if (appliedCoupon && cart.length > 0) {
+      localStorage.setItem('appliedCoupon', JSON.stringify(appliedCoupon));
+    } else {
+      localStorage.removeItem('appliedCoupon');
+    }
+  }, [appliedCoupon, cart.length]);
 
   const addToCart = (service) => {
     setCart(prevCart => {
@@ -34,7 +52,13 @@ export function CartProvider({ children }) {
   };
 
   const removeFromCart = (id) => {
-    setCart(prevCart => prevCart.filter(item => item.id !== id));
+    setCart(prevCart => {
+      const nextCart = prevCart.filter(item => item.id !== id);
+      if (nextCart.length === 0) {
+        setAppliedCoupon(null);
+      }
+      return nextCart;
+    });
   };
 
   const updateQuantity = (id, quantity) => {
@@ -52,7 +76,14 @@ export function CartProvider({ children }) {
 
   const clearCart = () => {
     setCart([]);
+    setAppliedCoupon(null);
   };
+
+  const clearAppliedCoupon = () => {
+    setAppliedCoupon(null);
+  };
+
+  const effectiveAppliedCoupon = cart.length > 0 ? appliedCoupon : null;
 
   const cartTotal = cart.reduce(
     (total, item) => total + (item.price * (item.quantity || 1)),
@@ -74,6 +105,9 @@ export function CartProvider({ children }) {
         removeFromCart,
         updateQuantity,
         clearCart,
+        appliedCoupon: effectiveAppliedCoupon,
+        setAppliedCoupon,
+        clearAppliedCoupon,
       }}
     >
       {children}

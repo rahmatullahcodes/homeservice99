@@ -33,7 +33,7 @@ export function useVendorServices() {
       if (response.status === 401) {
         setError('Session expired. Please login again.');
         localStorage.removeItem('vendorToken');
-        window.location.href = '/vendor/login';
+        window.location.href = '/vendor-login';
         return [];
       }
 
@@ -79,7 +79,7 @@ export function useVendorServices() {
       if (response.status === 401) {
         setError('Session expired. Please login again.');
         localStorage.removeItem('vendorToken');
-        window.location.href = '/vendor/login';
+        window.location.href = '/vendor-login';
         return null;
       }
 
@@ -123,7 +123,7 @@ export function useVendorServices() {
       if (response.status === 401) {
         setError('Session expired. Please login again.');
         localStorage.removeItem('vendorToken');
-        window.location.href = '/vendor/login';
+        window.location.href = '/vendor-login';
         return null;
       }
 
@@ -166,7 +166,7 @@ export function useVendorServices() {
       if (response.status === 401) {
         setError('Session expired. Please login again.');
         localStorage.removeItem('vendorToken');
-        window.location.href = '/vendor/login';
+        window.location.href = '/vendor-login';
         return false;
       }
 

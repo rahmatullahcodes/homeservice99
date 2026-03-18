@@ -1,512 +1,874 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import { API_ENDPOINTS } from "../../config/api";
+import { useToast } from "../../context/ToastContext";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
+const SECTION_KEYS = {
+  CATEGORIES: "categories",
+  SUBCATEGORIES: "subcategories",
+  SERVICES: "services",
+  CREATE: "create"
+};
+
+const SECTION_ITEMS = [
+  {
+    key: SECTION_KEYS.CATEGORIES,
+    title: "Categories",
+    subtitle: "Parent level taxonomy management"
+  },
+  {
+    key: SECTION_KEYS.SUBCATEGORIES,
+    title: "Subcategories",
+    subtitle: "Category-wise child groups"
+  },
+  {
+    key: SECTION_KEYS.SERVICES,
+    title: "Service List",
+    subtitle: "Search, filter and moderate services"
+  },
+  {
+    key: SECTION_KEYS.CREATE,
+    title: "Add Service",
+    subtitle: "Create or edit service details"
+  }
+];
+
+const INITIAL_FORM = {
+  id: null,
+  title: "",
+  category: "",
+  subcategory: "",
+  price: "",
+  image: "",
+  active: true
+};
+
+function normalizeText(value) {
+  return String(value || "").trim();
+}
+
+function getServiceId(service) {
+  return service?._id || service?.id;
+}
+
+function buildTaxonomyFromServices(services) {
+  const categoryMap = new Map();
+
+  for (const service of services) {
+    const categoryName = normalizeText(service.category) || "Uncategorized";
+    const subcategoryName = normalizeText(service.subcategory);
+    const active = Boolean(service.active);
+
+    if (!categoryMap.has(categoryName)) {
+      categoryMap.set(categoryName, {
+        name: categoryName,
+        totalServices: 0,
+        activeServices: 0,
+        subMap: new Map()
+      });
+    }
+
+    const categoryBucket = categoryMap.get(categoryName);
+    categoryBucket.totalServices += 1;
+    if (active) categoryBucket.activeServices += 1;
+
+    if (subcategoryName) {
+      if (!categoryBucket.subMap.has(subcategoryName)) {
+        categoryBucket.subMap.set(subcategoryName, {
+          name: subcategoryName,
+          totalServices: 0,
+          activeServices: 0
+        });
+      }
+      const subBucket = categoryBucket.subMap.get(subcategoryName);
+      subBucket.totalServices += 1;
+      if (active) subBucket.activeServices += 1;
+    }
+  }
+
+  return Array.from(categoryMap.values())
+    .map((category) => ({
+      name: category.name,
+      totalServices: category.totalServices,
+      activeServices: category.activeServices,
+      active: category.activeServices > 0,
+      subcategories: Array.from(category.subMap.values())
+        .map((sub) => ({
+          name: sub.name,
+          totalServices: sub.totalServices,
+          activeServices: sub.activeServices,
+          active: sub.activeServices > 0
+        }))
+        .sort((a, b) => a.name.localeCompare(b.name))
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name));
+}
+
+function readFileAsDataUrl(file) {
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result);
+    reader.onerror = () => reject(new Error("Failed to read image file"));
+    reader.readAsDataURL(file);
+  });
+}
 
 export default function AdminServices() {
+  const { addToast } = useToast();
+  const fileInputRef = useRef(null);
+
   const [services, setServices] = useState([]);
+  const [taxonomy, setTaxonomy] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState("");
 
-  const [showCreateForm, setShowCreateForm] = useState(false);
+  const [activeSection, setActiveSection] = useState(SECTION_KEYS.SERVICES);
+  const [search, setSearch] = useState("");
+  const [statusFilter, setStatusFilter] = useState("all");
+  const [categoryFilter, setCategoryFilter] = useState("all");
+  const [focusedCategory, setFocusedCategory] = useState("");
+
   const [selectedService, setSelectedService] = useState(null);
-  const [searchQuery, setSearchQuery] = useState("");
+  const [form, setForm] = useState(INITIAL_FORM);
+  const didBootstrap = useRef(false);
 
-  const [formData, setFormData] = useState({
-    title: "",
-    category: "",
-    price: ""
+  useEffect(() => {
+    if (didBootstrap.current) return;
+    didBootstrap.current = true;
+    loadData();
   });
 
-  // Fetch services from backend
   useEffect(() => {
-    fetchServices();
-  }, []);
+    if (!taxonomy.length) {
+      setFocusedCategory("");
+      return;
+    }
 
-  async function fetchServices() {
+    const exists = taxonomy.some((item) => item.name === focusedCategory);
+    if (!exists) {
+      setFocusedCategory(taxonomy[0].name);
+    }
+  }, [taxonomy, focusedCategory]);
+
+  async function apiRequest(url, options = {}) {
+    const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
+    if (!token) {
+      throw new Error("Admin authentication required. Please login first.");
+    }
+
+    const response = await fetch(url, {
+      method: options.method || "GET",
+      headers: {
+        Authorization: `Bearer ${token}`,
+        "Content-Type": "application/json"
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined
+    });
+
+    if (response.status === 401) {
+      localStorage.removeItem("adminToken");
+      localStorage.removeItem("token");
+      localStorage.removeItem("adminUser");
+      throw new Error("Session expired. Please login again.");
+    }
+
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+      throw new Error(data.message || `Request failed (${response.status})`);
+    }
+    return data;
+  }
+
+  async function refreshTaxonomy(serviceList) {
     try {
-      setLoading(true);
-      setError(null);
-      
-      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
-      if (!token) {
-        setError("Admin authentication required. Please login first.");
-        setLoading(false);
-        return;
+      const taxonomyData = await apiRequest(API_ENDPOINTS.ADMIN.GET_SERVICE_TAXONOMY);
+      if (Array.isArray(taxonomyData?.categories)) {
+        setTaxonomy(taxonomyData.categories);
+      } else {
+        setTaxonomy(buildTaxonomyFromServices(serviceList));
       }
+    } catch {
+      setTaxonomy(buildTaxonomyFromServices(serviceList));
+    }
+  }
 
-      const response = await fetch(`${API_BASE_URL}/admin/services`, {
-        method: "GET",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-      });
-
-      if (response.status === 401) {
-        setError("Session expired. Please login again.");
-        localStorage.removeItem("adminToken");
-        localStorage.removeItem("adminUser");
-        setLoading(false);
-        return;
-      }
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || `Server error: ${response.status}`);
-      }
-
-      const data = await response.json();
-      if (!Array.isArray(data)) {
-        throw new Error("Invalid data format from server");
-      }
-
-      setServices(data);
+  async function loadData() {
+    setLoading(true);
+    setError("");
+    try {
+      const serviceData = await apiRequest(API_ENDPOINTS.ADMIN.GET_SERVICES);
+      const safeServices = Array.isArray(serviceData) ? serviceData : [];
+      setServices(safeServices);
+      await refreshTaxonomy(safeServices);
     } catch (err) {
-      console.error("Error fetching services:", err);
-      setError(err.message || "Failed to load services. Make sure backend is running.");
+      const message = err.message || "Failed to load services";
+      setError(message);
+      addToast(message, "error");
     } finally {
       setLoading(false);
     }
   }
 
-  function handleInputChange(e) {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
+  function openCreateForm(prefill = {}) {
+    setForm({
+      ...INITIAL_FORM,
+      category: prefill.category || "",
+      subcategory: prefill.subcategory || ""
+    });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setActiveSection(SECTION_KEYS.CREATE);
+    setSelectedService(null);
   }
 
-  async function handleCreateService(e) {
-    e.preventDefault();
-    if (!formData.title || !formData.category || !formData.price) {
-      alert("Please fill all fields");
+  function openEditForm(service) {
+    setForm({
+      id: getServiceId(service),
+      title: normalizeText(service.title),
+      category: normalizeText(service.category),
+      subcategory: normalizeText(service.subcategory),
+      price: service.price ?? "",
+      image: normalizeText(service.image),
+      active: Boolean(service.active)
+    });
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+    setActiveSection(SECTION_KEYS.CREATE);
+    setSelectedService(null);
+  }
+
+  async function submitService(event) {
+    event.preventDefault();
+
+    const title = normalizeText(form.title);
+    const category = normalizeText(form.category);
+    const subcategory = normalizeText(form.subcategory);
+    const image = normalizeText(form.image);
+    const price = Number(form.price);
+
+    if (!title || !category || Number.isNaN(price) || price < 0) {
+      addToast("Title, category and valid price are required", "warning");
       return;
     }
 
+    const payload = {
+      title,
+      category,
+      subcategory: subcategory || null,
+      price,
+      image: image || null,
+      active: Boolean(form.active)
+    };
+
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
-      if (!token) {
-        alert("Please login first");
-        return;
+      if (form.id) {
+        const updated = await apiRequest(API_ENDPOINTS.ADMIN.UPDATE_SERVICE(form.id), {
+          method: "PATCH",
+          body: payload
+        });
+
+        setServices((prev) => {
+          const next = prev.map((item) => (getServiceId(item) === form.id ? updated : item));
+          void refreshTaxonomy(next);
+          return next;
+        });
+        addToast("Service updated", "success");
+      } else {
+        const created = await apiRequest(API_ENDPOINTS.ADMIN.CREATE_SERVICE, {
+          method: "POST",
+          body: payload
+        });
+
+        setServices((prev) => {
+          const next = [created, ...prev];
+          void refreshTaxonomy(next);
+          return next;
+        });
+        addToast("Service created", "success");
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/services`, {
-        method: "POST",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          title: formData.title,
-          category: formData.category,
-          price: Number(formData.price)
-        }),
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to create service");
+      setForm(INITIAL_FORM);
+      if (fileInputRef.current) {
+        fileInputRef.current.value = "";
       }
-
-      const newService = await response.json();
-      setServices([newService, ...services]);
-      setFormData({ title: "", category: "", price: "" });
-      setShowCreateForm(false);
-      alert("Service created successfully!");
+      setActiveSection(SECTION_KEYS.SERVICES);
     } catch (err) {
-      console.error("Error creating service:", err);
-      alert(`Error: ${err.message}`);
+      addToast(err.message || "Failed to save service", "error");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  async function toggleStatus(id) {
-    try {
-      setIsSubmitting(true);
-      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
-      if (!token) {
-        alert("Please login first");
-        return;
-      }
+  async function handleImageUpload(event) {
+    const file = event.target.files?.[0];
+    if (!file) return;
 
-      const response = await fetch(`${API_BASE_URL}/admin/services/${id}/toggle`, {
+    if (file.size > MAX_IMAGE_SIZE_BYTES) {
+      addToast("Image size should be 2MB or less", "warning");
+      event.target.value = "";
+      return;
+    }
+
+    try {
+      const dataUrl = await readFileAsDataUrl(file);
+      setForm((prev) => ({ ...prev, image: String(dataUrl || "") }));
+      addToast("Image attached", "success");
+    } catch (err) {
+      addToast(err.message || "Unable to read selected image", "error");
+    }
+  }
+
+  function removeImage() {
+    setForm((prev) => ({ ...prev, image: "" }));
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  }
+
+  async function toggleService(service) {
+    const id = getServiceId(service);
+    if (!id) return;
+
+    setIsSubmitting(true);
+    try {
+      const updated = await apiRequest(API_ENDPOINTS.ADMIN.TOGGLE_SERVICE(id), {
+        method: "PATCH"
+      });
+      setServices((prev) => {
+        const next = prev.map((item) => (getServiceId(item) === id ? updated : item));
+        void refreshTaxonomy(next);
+        return next;
+      });
+      if (selectedService && getServiceId(selectedService) === id) {
+        setSelectedService(updated);
+      }
+      addToast(updated.active ? "Service enabled" : "Service disabled", "success");
+    } catch (err) {
+      addToast(err.message || "Failed to update service status", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function removeService(service) {
+    const id = getServiceId(service);
+    if (!id) return;
+    if (!window.confirm(`Delete service "${service.title}"?`)) return;
+
+    setIsSubmitting(true);
+    try {
+      await apiRequest(API_ENDPOINTS.ADMIN.DELETE_SERVICE(id), { method: "DELETE" });
+      setServices((prev) => {
+        const next = prev.filter((item) => getServiceId(item) !== id);
+        void refreshTaxonomy(next);
+        return next;
+      });
+      if (selectedService && getServiceId(selectedService) === id) {
+        setSelectedService(null);
+      }
+      addToast("Service deleted", "success");
+    } catch (err) {
+      addToast(err.message || "Failed to delete service", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function renameCategory(categoryName) {
+    const newName = normalizeText(window.prompt("Rename category", categoryName));
+    if (!newName || newName.toLowerCase() === categoryName.toLowerCase()) return;
+
+    setIsSubmitting(true);
+    try {
+      await apiRequest(API_ENDPOINTS.ADMIN.RENAME_SERVICE_CATEGORY, {
         method: "PATCH",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+        body: { oldCategory: categoryName, newCategory: newName }
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to update service status");
-      }
-
-      const updatedService = await response.json();
-      
-      setServices(services.map(s =>
-        s._id === id || s.id === id ? updatedService : s
-      ));
-
-      // Update selected service if viewing
-      if (selectedService && (selectedService._id === id || selectedService.id === id)) {
-        setSelectedService(updatedService);
-      }
+      addToast("Category renamed", "success");
+      await loadData();
     } catch (err) {
-      console.error("Error updating service status:", err);
-      alert(`Error: ${err.message}`);
+      addToast(err.message || "Failed to rename category", "error");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  async function deleteServiceHandler(id) {
-    if (!window.confirm("Are you sure you want to delete this service?")) {
+  async function toggleCategory(categoryItem) {
+    const nextActive = !categoryItem.active;
+    if (!window.confirm(`This will ${nextActive ? "enable" : "disable"} all services in ${categoryItem.name}. Continue?`)) {
       return;
     }
 
+    setIsSubmitting(true);
     try {
-      setIsSubmitting(true);
-      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
-      if (!token) {
-        alert("Please login first");
-        return;
-      }
-
-      const response = await fetch(`${API_BASE_URL}/admin/services/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json",
-        },
+      await apiRequest(API_ENDPOINTS.ADMIN.TOGGLE_SERVICE_CATEGORY_STATUS, {
+        method: "PATCH",
+        body: { category: categoryItem.name, active: nextActive }
       });
-
-      if (!response.ok) {
-        throw new Error("Failed to delete service");
-      }
-
-      setServices(services.filter(s => s._id !== id && s.id !== id));
-      setSelectedService(null);
-      alert("Service deleted successfully!");
+      addToast(nextActive ? "Category enabled" : "Category disabled", "success");
+      await loadData();
     } catch (err) {
-      console.error("Error deleting service:", err);
-      alert(`Error: ${err.message}`);
+      addToast(err.message || "Failed to update category status", "error");
     } finally {
       setIsSubmitting(false);
     }
   }
 
-  const filteredServices = services.filter(s =>
-    s.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-    s.category.toLowerCase().includes(searchQuery.toLowerCase())
+  async function renameSubcategory(categoryName, subcategoryName) {
+    const newName = normalizeText(window.prompt("Rename subcategory", subcategoryName));
+    if (!newName || newName.toLowerCase() === subcategoryName.toLowerCase()) return;
+
+    setIsSubmitting(true);
+    try {
+      await apiRequest(API_ENDPOINTS.ADMIN.RENAME_SERVICE_SUBCATEGORY, {
+        method: "PATCH",
+        body: {
+          category: categoryName,
+          oldSubcategory: subcategoryName,
+          newSubcategory: newName
+        }
+      });
+      addToast("Subcategory renamed", "success");
+      await loadData();
+    } catch (err) {
+      addToast(err.message || "Failed to rename subcategory", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  async function toggleSubcategory(categoryName, subcategory) {
+    const nextActive = !subcategory.active;
+    if (!window.confirm(`This will ${nextActive ? "enable" : "disable"} all services in ${subcategory.name}. Continue?`)) {
+      return;
+    }
+
+    setIsSubmitting(true);
+    try {
+      await apiRequest(API_ENDPOINTS.ADMIN.TOGGLE_SERVICE_SUBCATEGORY_STATUS, {
+        method: "PATCH",
+        body: {
+          category: categoryName,
+          subcategory: subcategory.name,
+          active: nextActive
+        }
+      });
+      addToast(nextActive ? "Subcategory enabled" : "Subcategory disabled", "success");
+      await loadData();
+    } catch (err) {
+      addToast(err.message || "Failed to update subcategory status", "error");
+    } finally {
+      setIsSubmitting(false);
+    }
+  }
+
+  const activeCategory = useMemo(
+    () => taxonomy.find((item) => item.name === focusedCategory) || null,
+    [taxonomy, focusedCategory]
   );
 
-  const stats = {
-    total: services.length,
-    active: services.filter(s => s.active).length,
-    avgPrice: services.length > 0 ? (services.reduce((sum, s) => sum + s.price, 0) / services.length).toFixed(0) : 0
-  };
+  function startAddCategory() {
+    const categoryName = normalizeText(window.prompt("New category name"));
+    if (!categoryName) return;
+    openCreateForm({ category: categoryName });
+    addToast("Save service to persist this category", "info");
+  }
+
+  function startAddSubcategory() {
+    if (!activeCategory) {
+      addToast("Select a category first", "warning");
+      return;
+    }
+    const subcategoryName = normalizeText(window.prompt("New subcategory name"));
+    if (!subcategoryName) return;
+    openCreateForm({ category: activeCategory.name, subcategory: subcategoryName });
+    addToast("Save service to persist this subcategory", "info");
+  }
+
+  const categoryNames = useMemo(() => taxonomy.map((item) => item.name), [taxonomy]);
+
+  const allSubcategoryNames = useMemo(() => {
+    const names = new Set();
+    for (const categoryItem of taxonomy) {
+      for (const sub of categoryItem.subcategories || []) {
+        if (sub.name) names.add(sub.name);
+      }
+    }
+    return Array.from(names).sort((a, b) => a.localeCompare(b));
+  }, [taxonomy]);
+
+  const filteredServices = useMemo(() => {
+    const query = search.toLowerCase().trim();
+    return services.filter((service) => {
+      const text = `${normalizeText(service.title)} ${normalizeText(service.category)} ${normalizeText(service.subcategory)}`.toLowerCase();
+      const queryMatch = !query || text.includes(query);
+      const statusMatch =
+        statusFilter === "all" ||
+        (statusFilter === "active" && service.active) ||
+        (statusFilter === "inactive" && !service.active);
+      const categoryMatch =
+        categoryFilter === "all" ||
+        normalizeText(service.category).toLowerCase() === categoryFilter.toLowerCase();
+
+      return queryMatch && statusMatch && categoryMatch;
+    });
+  }, [services, search, statusFilter, categoryFilter]);
+
+  const stats = useMemo(() => {
+    const total = services.length;
+    const active = services.filter((item) => item.active).length;
+    const subcategories = taxonomy.reduce((sum, item) => sum + item.subcategories.length, 0);
+    return {
+      total,
+      active,
+      categories: taxonomy.length,
+      subcategories
+    };
+  }, [services, taxonomy]);
 
   return (
-    <div className="admin-page">
-
-      {/* PAGE HEADER */}
-      <div className="admin-page-head">
-        <h2>Services Management</h2>
-        <p className="admin-subtitle">Manage services available on the platform</p>
+    <div className="admin-page services-admin-page">
+      <div className="services-admin-hero">
+        <div>
+          <p className="services-admin-eyebrow">Services Catalog</p>
+          <h2>Services Management</h2>
+          <p className="admin-subtitle">
+            Clear workflow for category, subcategory, services list and add/edit service with image support
+          </p>
+        </div>
+        <div className="services-admin-hero-actions">
+          <button className="btn-sm" onClick={() => openCreateForm()} disabled={isSubmitting}>+ Add Service</button>
+          <button className="btn-sm outline" onClick={loadData} disabled={loading || isSubmitting}>Refresh</button>
+        </div>
       </div>
 
-      {/* ERROR MESSAGE */}
-      {error && (
-        <div style={{
-          backgroundColor: '#fee',
-          border: '1px solid #ffcccc',
-          color: '#c33',
-          padding: '12px 16px',
-          borderRadius: '8px',
-          marginBottom: '20px'
-        }}>
-          <strong>Error:</strong> {error}
-          <button
-            onClick={fetchServices}
-            style={{
-              marginLeft: 'auto',
-              marginRight: '0',
-              display: 'block',
-              marginTop: '8px',
-              padding: '6px 12px',
-              backgroundColor: '#c33',
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}
-          >
+      {error ? (
+        <div className="admin-alert error">
+          <span>{error}</span>
+          <button className="btn-retry" onClick={loadData}>
             Retry
           </button>
         </div>
-      )}
+      ) : null}
 
-      {/* STATS */}
-      <div className="admin-kpi-grid" style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '14px', marginBottom: '20px'}}>
-        <div className="kpi-card" style={{padding: '16px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee'}}>
-          <span style={{fontSize: 'clamp(12px, 3vw, 14px)', color: '#666', display: 'block', marginBottom: '8px'}}>Total Services</span>
-          <h3 style={{fontSize: 'clamp(24px, 6vw, 32px)', margin: '8px 0'}}>{stats.total}</h3>
-          <small className="positive" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#28a745'}}>All Available</small>
-        </div>
-        <div className="kpi-card" style={{padding: '16px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee'}}>
-          <span style={{fontSize: 'clamp(12px, 3vw, 14px)', color: '#666', display: 'block', marginBottom: '8px'}}>Active Services</span>
-          <h3 style={{fontSize: 'clamp(24px, 6vw, 32px)', margin: '8px 0'}}>{stats.active}</h3>
-          <small className="positive" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#28a745'}}>{Math.round((stats.active/stats.total)*100) || 0}% active</small>
-        </div>
-        <div className="kpi-card" style={{padding: '16px', backgroundColor: '#f9f9f9', borderRadius: '8px', border: '1px solid #eee'}}>
-          <span style={{fontSize: 'clamp(12px, 3vw, 14px)', color: '#666', display: 'block', marginBottom: '8px'}}>Average Price</span>
-          <h3 style={{fontSize: 'clamp(24px, 6vw, 32px)', margin: '8px 0'}}>₹{stats.avgPrice}</h3>
-          <small className="positive" style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#28a745'}}>Base Price</small>
-        </div>
+      <div className="admin-kpi-grid">
+        <div className="kpi-card"><span>Total Services</span><h3>{stats.total}</h3></div>
+        <div className="kpi-card"><span>Active</span><h3>{stats.active}</h3></div>
+        <div className="kpi-card"><span>Categories</span><h3>{stats.categories}</h3></div>
+        <div className="kpi-card"><span>Subcategories</span><h3>{stats.subcategories}</h3></div>
       </div>
 
-      {/* CONTROLS & SEARCH */}
-      <div className="admin-section" style={{display: 'grid', gap: '12px', gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))', alignItems: 'start'}}>
-        <div style={{display: 'flex', justifyContent: 'flex-start', gridColumn: 'auto'}}>
-          <button className="btn-sm" onClick={() => setShowCreateForm(true)} style={{fontSize: 'clamp(11px, 3vw, 13px)', padding: '8px 14px', whiteSpace: 'nowrap'}}>
-            + Create Service
+      <div className="services-admin-nav">
+        {SECTION_ITEMS.map((section) => (
+          <button
+            key={section.key}
+            className={`services-admin-nav-item ${activeSection === section.key ? "active" : ""}`}
+            onClick={() => setActiveSection(section.key)}
+            type="button"
+          >
+            <strong>{section.title}</strong>
+            <span>{section.subtitle}</span>
           </button>
-        </div>
-        <div style={{gridColumn: 'auto'}}>
-          <div className="admin-search" style={{maxWidth: '100%', width: 'clamp(200px, 100%, 500px)'}}>
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <circle cx="11" cy="11" r="8" stroke="currentColor" strokeWidth="2"/>
-              <path d="m21 21-4.35-4.35" stroke="currentColor" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-            <input 
-              placeholder="Search services..." 
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              style={{fontSize: 'clamp(13px, 4vw, 15px)'}}
-            />
-          </div>
-        </div>
+        ))}
       </div>
 
-      {/* SERVICES TABLE */}
-      <div className="admin-section" style={{'overflowX': 'auto'}}>
-        <div className="admin-table" style={{'minWidth': '600px'}}>
-          <div className="table-row head" style={{'display': 'grid', 'gridTemplateColumns': 'repeat(5, 1fr)', 'gap': '12px', 'padding': '12px', 'backgroundColor': '#f5f5f5', 'fontWeight': '600', 'fontSize': 'clamp(12px, 3vw, 14px)'}}>
-            <span>Service Name</span>
-            <span>Category</span>
-            <span>Base Price</span>
-            <span>Status</span>
-            <span>Action</span>
+      {activeSection === SECTION_KEYS.CATEGORIES ? (
+        <section className="admin-section">
+          <div className="services-panel-header">
+            <div>
+              <h3>Categories ({taxonomy.length})</h3>
+              <p className="text-muted">Manage top-level categories and directly create services under each category</p>
+            </div>
+            <button className="btn-sm outline" onClick={startAddCategory} disabled={isSubmitting}>+ Add Category</button>
           </div>
 
-          {loading ? (
-            <div style={{'padding': '20px', 'textAlign': 'center', 'color': '#999'}}>
-              Loading services...
-            </div>
-          ) : filteredServices.length > 0 ? filteredServices.map(service => (
-            <div className="table-row" key={service._id || service.id} style={{'display': 'grid', 'gridTemplateColumns': 'repeat(5, 1fr)', 'gap': '12px', 'padding': '12px', 'borderBottom': '1px solid #eee', 'fontSize': 'clamp(12px, 3vw, 13px)', 'alignItems': 'center'}}>
-              <span style={{'fontWeight': '600', 'fontSize': 'clamp(12px, 3vw, 14px)'}}>{service.title}</span>
-              <span style={{'fontSize': 'clamp(11px, 3vw, 13px)', 'color': '#999'}}>{service.category}</span>
-              <span style={{'fontWeight': '600'}}>₹{service.price}</span>
-              <span>
-                <span className={`tag ${service.active ? 'success' : 'danger'}`} style={{'fontSize': 'clamp(11px, 3vw, 12px)', 'padding': '4px 8px'}}>
-                  {service.active ? "Active" : "Disabled"}
-                </span>
-              </span>
-              <span style={{'display': 'flex', 'flexDirection': 'column', 'gap': '6px'}}>
-                <button
-                  className={`btn-sm ${service.active ? 'danger' : 'outline'}`}
-                  onClick={() => toggleStatus(service._id || service.id)}
-                  style={{'fontSize': 'clamp(11px, 3vw, 12px)', 'padding': '6px 10px', 'whiteSpace': 'nowrap'}}
-                  disabled={isSubmitting}
+          {!taxonomy.length ? (
+            <div className="admin-empty"><p>No categories yet. Create your first category with Add Category.</p></div>
+          ) : (
+            <div className="service-taxonomy-grid">
+              {taxonomy.map((categoryItem) => (
+                <article
+                  key={categoryItem.name}
+                  className={`service-taxonomy-card ${focusedCategory === categoryItem.name ? "focused" : ""}`}
                 >
-                  {service.active ? "Disable" : "Enable"}
-                </button>
-                <button
-                  className="btn-sm outline"
-                  onClick={() => setSelectedService(service)}
-                  style={{'fontSize': 'clamp(11px, 3vw, 12px)', 'padding': '6px 10px', 'whiteSpace': 'nowrap'}}
-                  disabled={isSubmitting}
-                >
-                  View
-                </button>
-                <button
-                  className="btn-sm danger"
-                  onClick={() => deleteServiceHandler(service._id || service.id)}
-                  style={{'fontSize': 'clamp(11px, 3vw, 12px)', 'padding': '6px 10px', 'whiteSpace': 'nowrap'}}
-                  disabled={isSubmitting}
-                >
-                  Delete
-                </button>
-              </span>
-            </div>
-          )) : (
-            <div style={{'padding': '20px', 'textAlign': 'center', 'color': '#999'}}>
-              No services found
+                  <div className="service-taxonomy-head">
+                    <h4>{categoryItem.name}</h4>
+                    <span className={`tag ${categoryItem.active ? "success" : "danger"}`}>
+                      {categoryItem.active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <p className="service-taxonomy-meta">
+                    {categoryItem.totalServices} services, {categoryItem.subcategories.length} subcategories
+                  </p>
+                  <div className="service-taxonomy-actions">
+                    <button
+                      className="btn-sm outline"
+                      onClick={() => {
+                        setFocusedCategory(categoryItem.name);
+                        setActiveSection(SECTION_KEYS.SUBCATEGORIES);
+                      }}
+                    >
+                      Subcategories
+                    </button>
+                    <button className="btn-sm outline" onClick={() => renameCategory(categoryItem.name)} disabled={isSubmitting}>Rename</button>
+                    <button className={`btn-sm ${categoryItem.active ? "danger" : ""}`} onClick={() => toggleCategory(categoryItem)} disabled={isSubmitting}>
+                      {categoryItem.active ? "Disable" : "Enable"}
+                    </button>
+                    <button className="btn-sm outline" onClick={() => openCreateForm({ category: categoryItem.name })}>Add Service</button>
+                  </div>
+                </article>
+              ))}
             </div>
           )}
-        </div>
-      </div>
+        </section>
+      ) : null}
 
-      {/* CREATE SERVICE MODAL */}
-      {showCreateForm && (
-        <div className="modal-backdrop" style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '16px'}} onClick={() => setShowCreateForm(false)}>
-          <div className="modal" style={{position: 'relative', maxWidth: '90vw', width: 'clamp(280px, 90vw, 500px)', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.15)', padding: 'clamp(20px, 5vw, 30px)', maxHeight: '90vh', overflowY: 'auto'}} onClick={(e) => e.stopPropagation()}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-              <h3 style={{margin: 0, fontSize: 'clamp(18px, 5vw, 22px)'}}>Create Service</h3>
-              <button
-                style={{background: 'none', border: 'none', fontSize: 'clamp(20px, 5vw, 28px)', cursor: 'pointer', color: '#333', padding: '0', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
-                onClick={() => setShowCreateForm(false)}
-              >
-                ✕
-              </button>
+      {activeSection === SECTION_KEYS.SUBCATEGORIES ? (
+        <section className="admin-section">
+          <div className="services-panel-header">
+            <div>
+              <h3>Subcategories {activeCategory ? `(${activeCategory.name})` : ""}</h3>
+              <p className="text-muted">Choose a category and manage its subcategories</p>
             </div>
+            <div className="services-panel-actions">
+              <select className="filter-select" value={focusedCategory} onChange={(event) => setFocusedCategory(event.target.value)}>
+                {!taxonomy.length ? <option value="">No categories</option> : null}
+                {categoryNames.map((name) => <option key={name} value={name}>{name}</option>)}
+              </select>
+              <button className="btn-sm outline" onClick={startAddSubcategory} disabled={isSubmitting || !activeCategory}>+ Add Subcategory</button>
+            </div>
+          </div>
 
-            <form onSubmit={handleCreateService} style={{display: 'flex', flexDirection: 'column', gap: '14px'}}>
+          {!activeCategory ? (
+            <div className="admin-empty"><p>Select a category to manage subcategories.</p></div>
+          ) : !activeCategory.subcategories.length ? (
+            <div className="admin-empty"><p>No subcategories under {activeCategory.name}. Add one to continue.</p></div>
+          ) : (
+            <div className="service-taxonomy-grid">
+              {activeCategory.subcategories.map((subcategory) => (
+                <article key={`${activeCategory.name}-${subcategory.name}`} className="service-taxonomy-card">
+                  <div className="service-taxonomy-head">
+                    <h4>{subcategory.name}</h4>
+                    <span className={`tag ${subcategory.active ? "success" : "danger"}`}>
+                      {subcategory.active ? "Active" : "Inactive"}
+                    </span>
+                  </div>
+                  <p className="service-taxonomy-meta">{subcategory.totalServices} services</p>
+                  <div className="service-taxonomy-actions">
+                    <button className="btn-sm outline" onClick={() => renameSubcategory(activeCategory.name, subcategory.name)} disabled={isSubmitting}>Rename</button>
+                    <button className={`btn-sm ${subcategory.active ? "danger" : ""}`} onClick={() => toggleSubcategory(activeCategory.name, subcategory)} disabled={isSubmitting}>
+                      {subcategory.active ? "Disable" : "Enable"}
+                    </button>
+                    <button className="btn-sm outline" onClick={() => openCreateForm({ category: activeCategory.name, subcategory: subcategory.name })}>Add Service</button>
+                  </div>
+                </article>
+              ))}
+            </div>
+          )}
+        </section>
+      ) : null}
+
+      {activeSection === SECTION_KEYS.SERVICES ? (
+        <>
+          <div className="admin-filters services-filter-grid">
+            <div className="filter-group">
+              <label>Search</label>
+              <input className="filter-input" value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search service/category/subcategory" />
+            </div>
+            <div className="filter-group">
+              <label>Status</label>
+              <select className="filter-select" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
+                <option value="all">All</option>
+                <option value="active">Active</option>
+                <option value="inactive">Inactive</option>
+              </select>
+            </div>
+            <div className="filter-group">
+              <label>Category</label>
+              <select className="filter-select" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}>
+                <option value="all">All Categories</option>
+                {categoryNames.map((item) => <option key={item} value={item}>{item}</option>)}
+              </select>
+            </div>
+            <button className="btn-reset" onClick={() => { setSearch(""); setStatusFilter("all"); setCategoryFilter("all"); }}>Reset</button>
+          </div>
+
+          <div className="admin-section">
+            <div className="services-panel-header">
               <div>
-                <label style={{display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#333'}}>Service Name *</label>
-                <input
-                  type="text"
-                  name="title"
-                  value={formData.title}
-                  onChange={handleInputChange}
-                  placeholder="e.g., AC Repair"
-                  required
-                  style={{width: '100%', padding: '12px 14px', border: '1.5px solid #ddd', borderRadius: '8px', fontSize: 'clamp(13px, 4vw, 16px)', boxSizing: 'border-box', fontFamily: 'inherit'}}
-                />
+                <h3>Service List ({filteredServices.length})</h3>
+                <p className="text-muted">Integrated list used for admin moderation and quick updates</p>
+              </div>
+              <button className="btn-sm outline" onClick={() => openCreateForm()}>+ Add Service</button>
+            </div>
+            <div className="admin-table card-mobile services-table">
+              <div className="table-row head services-table-row">
+                <span>Service</span>
+                <span>Category</span>
+                <span>Price</span>
+                <span>Status</span>
+                <span>Actions</span>
+              </div>
+              {loading ? (
+                <div className="admin-loading">Loading services...</div>
+              ) : !filteredServices.length ? (
+                <div className="admin-empty"><p>No services found</p></div>
+              ) : (
+                filteredServices.map((service) => (
+                  <div className="table-row services-table-row" key={getServiceId(service)}>
+                    <span data-label="Service">
+                      <div className="service-row-main">
+                        <div className="service-thumb">
+                          {service.image ? <img src={service.image} alt={service.title} loading="lazy" /> : <span>No Image</span>}
+                        </div>
+                        <div>
+                          <strong>{service.title}</strong>
+                          <small className="text-muted">{service.subcategory || "No subcategory"}</small>
+                        </div>
+                      </div>
+                    </span>
+                    <span data-label="Category"><strong>{service.category}</strong></span>
+                    <span data-label="Price">Rs {Number(service.price || 0)}</span>
+                    <span data-label="Status"><span className={`tag ${service.active ? "success" : "danger"}`}>{service.active ? "Active" : "Inactive"}</span></span>
+                    <span data-label="Actions">
+                      <div className="service-actions-wrap">
+                        <button className="btn-sm outline" onClick={() => setSelectedService(service)} disabled={isSubmitting}>View</button>
+                        <button className="btn-sm outline" onClick={() => openEditForm(service)} disabled={isSubmitting}>Edit</button>
+                        <button className={`btn-sm ${service.active ? "danger" : ""}`} onClick={() => toggleService(service)} disabled={isSubmitting}>{service.active ? "Disable" : "Enable"}</button>
+                        <button className="btn-sm danger" onClick={() => removeService(service)} disabled={isSubmitting}>Delete</button>
+                      </div>
+                    </span>
+                  </div>
+                ))
+              )}
+            </div>
+          </div>
+        </>
+      ) : null}
+
+      {activeSection === SECTION_KEYS.CREATE ? (
+        <section className="admin-section">
+          <div className="services-panel-header">
+            <div>
+              <h3>{form.id ? "Edit Service" : "Add Service"}</h3>
+              <p className="text-muted">
+                Define category, subcategory, pricing and image. This feeds service listing and checkout references.
+              </p>
+            </div>
+            {form.id ? (
+              <button className="btn-sm outline" onClick={() => { setForm(INITIAL_FORM); removeImage(); }} type="button">
+                Switch to New Service
+              </button>
+            ) : null}
+          </div>
+
+          <div className="service-form-layout">
+            <form className="service-form-card" onSubmit={submitService}>
+              <div className="service-form-grid">
+                <div className="filter-group">
+                  <label>Service title</label>
+                  <input className="filter-input" placeholder="Service title" value={form.title} onChange={(e) => setForm((prev) => ({ ...prev, title: e.target.value }))} required />
+                </div>
+                <div className="filter-group">
+                  <label>Category</label>
+                  <input className="filter-input" list="service-categories" placeholder="Category" value={form.category} onChange={(e) => setForm((prev) => ({ ...prev, category: e.target.value }))} required />
+                </div>
+                <div className="filter-group">
+                  <label>Subcategory (optional)</label>
+                  <input className="filter-input" list="service-subcategories" placeholder="Subcategory" value={form.subcategory} onChange={(e) => setForm((prev) => ({ ...prev, subcategory: e.target.value }))} />
+                </div>
+                <div className="filter-group">
+                  <label>Price</label>
+                  <input type="number" className="filter-input" min="0" placeholder="Price" value={form.price} onChange={(e) => setForm((prev) => ({ ...prev, price: e.target.value }))} required />
+                </div>
+                <div className="filter-group service-form-span-all">
+                  <label>Image URL</label>
+                  <input className="filter-input" placeholder="https://... or /assets/..." value={form.image} onChange={(e) => setForm((prev) => ({ ...prev, image: e.target.value }))} />
+                </div>
+                <div className="filter-group service-form-span-all">
+                  <label>Upload image (max 2MB)</label>
+                  <input ref={fileInputRef} type="file" className="filter-input" accept="image/*" onChange={handleImageUpload} />
+                </div>
+                <div className="service-form-span-all">
+                  <label className="service-active-toggle">
+                    <input type="checkbox" checked={form.active} onChange={(e) => setForm((prev) => ({ ...prev, active: e.target.checked }))} />
+                    Keep service active
+                  </label>
+                </div>
               </div>
 
-              <div>
-                <label style={{display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#333'}}>Category *</label>
-                <select
-                  name="category"
-                  value={formData.category}
-                  onChange={handleInputChange}
-                  required
-                  style={{width: '100%', padding: '12px 14px', border: '1.5px solid #ddd', borderRadius: '8px', fontSize: 'clamp(13px, 4vw, 16px)', boxSizing: 'border-box', fontFamily: 'inherit'}}
-                >
-                  <option value="">Select category</option>
-                  <option value="Appliances">Appliances</option>
-                  <option value="Cleaning">Cleaning</option>
-                  <option value="Home Repair">Home Repair</option>
-                  <option value="Plumbing">Plumbing</option>
-                  <option value="Electrical">Electrical</option>
-                  <option value="Carpentry">Carpentry</option>
-                  <option value="Gardening">Gardening</option>
-                </select>
-              </div>
-
-              <div>
-                <label style={{display: 'block', marginBottom: '6px', fontWeight: '500', fontSize: 'clamp(13px, 3.5vw, 15px)', color: '#333'}}>Base Price (₹) *</label>
-                <input
-                  type="number"
-                  name="price"
-                  value={formData.price}
-                  onChange={handleInputChange}
-                  placeholder="e.g., 699"
-                  min="0"
-                  step="100"
-                  required
-                  style={{width: '100%', padding: '12px 14px', border: '1.5px solid #ddd', borderRadius: '8px', fontSize: 'clamp(13px, 4vw, 16px)', boxSizing: 'border-box', fontFamily: 'inherit'}}
-                />
-              </div>
-
-              <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px', marginTop: '10px'}}>
-                <button
-                  type="submit"
-                  className="btn-sm"
-                  style={{fontSize: 'clamp(13px, 3.5vw, 15px)', padding: '10px 16px'}}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Creating..." : "Create Service"}
+              <div className="service-form-footer">
+                <button className="btn-secondary" type="button" onClick={() => { setForm(INITIAL_FORM); removeImage(); }}>
+                  Reset
                 </button>
-                <button
-                  type="button"
-                  className="btn-sm outline"
-                  onClick={() => setShowCreateForm(false)}
-                  style={{fontSize: 'clamp(13px, 3.5vw, 15px)', padding: '10px 16px'}}
-                  disabled={isSubmitting}
-                >
-                  Cancel
+                <button className="btn-primary" type="submit" disabled={isSubmitting}>
+                  {isSubmitting ? "Saving..." : form.id ? "Update Service" : "Create Service"}
                 </button>
               </div>
             </form>
+
+            <aside className="service-preview-card">
+              <h4>Live Preview</h4>
+              <div className="service-preview-media">
+                {form.image ? <img src={form.image} alt={form.title || "Service preview"} /> : <span>No image selected</span>}
+              </div>
+              <div className="service-preview-body">
+                <p><strong>{form.title || "Service title"}</strong></p>
+                <p className="text-muted">{form.category || "Category"} {form.subcategory ? ` / ${form.subcategory}` : ""}</p>
+                <p>Rs {Number(form.price || 0)}</p>
+                <span className={`tag ${form.active ? "success" : "danger"}`}>{form.active ? "Active" : "Inactive"}</span>
+              </div>
+              {form.image ? (
+                <button type="button" className="btn-sm outline" onClick={removeImage}>
+                  Remove Image
+                </button>
+              ) : null}
+            </aside>
           </div>
-        </div>
-      )}
+        </section>
+      ) : null}
 
-      {/* SERVICE DETAILS MODAL */}
-      {selectedService && (
-        <div className="modal-backdrop" style={{position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(0,0,0,0.5)', display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 1000, padding: '16px'}} onClick={() => setSelectedService(null)}>
-          <div className="modal" style={{position: 'relative', maxWidth: '90vw', width: 'clamp(280px, 90vw, 500px)', backgroundColor: 'white', borderRadius: '12px', boxShadow: '0 10px 40px rgba(0,0,0,0.15)', padding: 'clamp(20px, 5vw, 30px)', maxHeight: '90vh', overflowY: 'auto'}} onClick={(e) => e.stopPropagation()}>
-            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '20px'}}>
-              <h3 style={{margin: 0, fontSize: 'clamp(18px, 5vw, 22px)'}}>Service Details</h3>
-              <button
-                style={{background: 'none', border: 'none', fontSize: 'clamp(20px, 5vw, 28px)', cursor: 'pointer', color: '#333', padding: '0', width: '32px', height: '32px', display: 'flex', alignItems: 'center', justifyContent: 'center'}}
-                onClick={() => setSelectedService(null)}
-              >
-                ✕
-              </button>
+      {selectedService ? (
+        <div className="modal-overlay" onClick={() => setSelectedService(null)}>
+          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+            <div className="modal-header">
+              <h3>Service Details</h3>
+              <button className="btn-close" onClick={() => setSelectedService(null)}>x</button>
             </div>
-
-            <div style={{display: 'flex', flexDirection: 'column', gap: '12px'}}>
-              <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '12px'}}>
-                <div>
-                  <p style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999', margin: '0 0 4px 0'}}>Service Name</p>
-                  <p style={{margin: 0, fontWeight: '600', fontSize: 'clamp(13px, 3.5vw, 15px)'}}>{selectedService.title}</p>
+            <div className="modal-body">
+              {selectedService.image ? (
+                <div className="service-modal-image">
+                  <img src={selectedService.image} alt={selectedService.title} />
                 </div>
-                <div>
-                  <p style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999', margin: '0 0 4px 0'}}>Category</p>
-                  <p style={{margin: 0, fontWeight: '600', fontSize: 'clamp(13px, 3.5vw, 15px)'}}>{selectedService.category}</p>
-                </div>
-                <div>
-                  <p style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999', margin: '0 0 4px 0'}}>Base Price</p>
-                  <p style={{margin: 0, fontWeight: '600', fontSize: 'clamp(13px, 3.5vw, 15px)'}}>₹{selectedService.price}</p>
-                </div>
-                <div>
-                  <p style={{fontSize: 'clamp(11px, 3vw, 12px)', color: '#999', margin: '0 0 4px 0'}}>Status</p>
-                  <span className={`tag ${selectedService.active ? 'success' : 'danger'}`} style={{fontSize: 'clamp(11px, 3vw, 12px)', padding: '4px 8px', display: 'inline-block'}}>
-                    {selectedService.active ? 'Active' : 'Disabled'}
-                  </span>
-                </div>
+              ) : null}
+              <div className="details-grid">
+                <div className="detail-item"><label>Title</label><p>{selectedService.title}</p></div>
+                <div className="detail-item"><label>Category</label><p>{selectedService.category}</p></div>
+                <div className="detail-item"><label>Subcategory</label><p>{selectedService.subcategory || "-"}</p></div>
+                <div className="detail-item"><label>Price</label><p>Rs {Number(selectedService.price || 0)}</p></div>
+                <div className="detail-item"><label>Status</label><p>{selectedService.active ? "Active" : "Inactive"}</p></div>
+                <div className="detail-item"><label>Image</label><p>{selectedService.image ? "Configured" : "Not configured"}</p></div>
               </div>
-
-              <div style={{display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(120px, 1fr))', gap: '12px', marginTop: '10px'}}>
-                <button
-                  className="btn-sm outline"
-                  onClick={() => setSelectedService(null)}
-                  style={{fontSize: 'clamp(11px, 3vw, 13px)', padding: '8px 12px'}}
-                >
-                  Close
-                </button>
-                <button
-                  className={`btn-sm ${selectedService.active ? 'danger' : 'btn-sm'}`}
-                  onClick={() => {
-                    toggleStatus(selectedService._id || selectedService.id);
-                    setSelectedService(null);
-                  }}
-                  style={{fontSize: 'clamp(11px, 3vw, 13px)', padding: '8px 12px'}}
-                  disabled={isSubmitting}
-                >
-                  {selectedService.active ? "Disable" : "Enable"}
-                </button>
-                <button
-                  className="btn-sm danger"
-                  onClick={() => {
-                    deleteServiceHandler(selectedService._id || selectedService.id);
-                  }}
-                  style={{fontSize: 'clamp(11px, 3vw, 13px)', padding: '8px 12px'}}
-                  disabled={isSubmitting}
-                >
-                  {isSubmitting ? "Deleting..." : "Delete"}
-                </button>
-              </div>
+            </div>
+            <div className="modal-footer">
+              <button className="btn-secondary" onClick={() => setSelectedService(null)}>Close</button>
+              <button className="btn-secondary" onClick={() => openEditForm(selectedService)}>Edit</button>
+              <button className="btn-primary" onClick={() => toggleService(selectedService)}>{selectedService.active ? "Disable" : "Enable"}</button>
             </div>
           </div>
         </div>
-      )}
+      ) : null}
 
+      <datalist id="service-categories">
+        {categoryNames.map((item) => <option key={item} value={item} />)}
+      </datalist>
+      <datalist id="service-subcategories">
+        {allSubcategoryNames.map((item) => <option key={item} value={item} />)}
+      </datalist>
     </div>
   );
 }

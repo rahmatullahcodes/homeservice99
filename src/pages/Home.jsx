@@ -4,8 +4,94 @@ import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
 import { buildServicesUrl } from "../utils/serviceRouting";
 import CMSBanners from "../components/CMSBanners";
+import { API_ENDPOINTS } from "../config/api";
 
 const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.meta.url).href;
+
+const DEFAULT_HOME_PAGE_SETTINGS = {
+  heroTitle: "Trusted Home Services at Your Doorstep",
+  discoveryTitle: "What are you looking for?",
+  popularServicesTitle: "Popular Services",
+  getQuoteTitle: "Get Quote",
+  offersDiscountsTitle: "Offers & discounts",
+  heroStats: {
+    bookingsCompleted: "50k+ bookings completed",
+    averageRating: "4.8 average rating",
+    responseTime: "30 min avg. response"
+  },
+  sections: {
+    banners: true,
+    hero: true,
+    promoSlider: true,
+    popularServices: true,
+    getQuote: true,
+    offersDiscounts: true,
+    curatedServices: true,
+    promoBanner1: true,
+    promoBanner2: true,
+    promoBanner3: true
+  },
+  curatedSectionVisibility: {
+    salonMen: true,
+    massageMen: true,
+    homeRepairInstallation: true,
+    applianceServiceRepair: true,
+    cleaningEssentials: true,
+    spaWomen: true,
+    salonWomen: true
+  }
+};
+
+const CURATED_VISIBILITY_KEY_MAP = {
+  "salon-men": "salonMen",
+  "massage-men": "massageMen",
+  "home-repair-installation": "homeRepairInstallation",
+  "appliance-service-repair": "applianceServiceRepair",
+  "cleaning-essentials": "cleaningEssentials",
+  "spa-women": "spaWomen",
+  "salon-women": "salonWomen"
+};
+
+const HOME_PAGE_CACHE_KEY = "hs99_home_page_settings";
+
+function normalizeHomePageSettings(value = {}) {
+  const incoming = value && typeof value === "object" ? value : {};
+
+  return {
+    ...DEFAULT_HOME_PAGE_SETTINGS,
+    ...incoming,
+    heroStats: {
+      ...DEFAULT_HOME_PAGE_SETTINGS.heroStats,
+      ...(incoming.heroStats || {})
+    },
+    sections: {
+      ...DEFAULT_HOME_PAGE_SETTINGS.sections,
+      ...(incoming.sections || {})
+    },
+    curatedSectionVisibility: {
+      ...DEFAULT_HOME_PAGE_SETTINGS.curatedSectionVisibility,
+      ...(incoming.curatedSectionVisibility || {})
+    }
+  };
+}
+
+function readHomePageCache() {
+  try {
+    const raw = localStorage.getItem(HOME_PAGE_CACHE_KEY);
+    if (!raw) return null;
+    return normalizeHomePageSettings(JSON.parse(raw));
+  } catch {
+    return null;
+  }
+}
+
+function writeHomePageCache(value) {
+  try {
+    localStorage.setItem(HOME_PAGE_CACHE_KEY, JSON.stringify(normalizeHomePageSettings(value)));
+  } catch {
+    // Ignore storage failures
+  }
+}
 
 
 
@@ -13,6 +99,7 @@ const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.
 export default function Home() {
   const [location, setLocation] = useState("india");
   const [detecting, setDetecting] = useState(false);
+  const [homePageSettings, setHomePageSettings] = useState(DEFAULT_HOME_PAGE_SETTINGS);
   
   // Enhanced modal state to support subcategories
   const [modalOpen, setModalOpen] = useState(false);
@@ -45,8 +132,6 @@ const BEAUTY_SUBCATEGORIES = [
     icon: assetImage("Makeup & Styling Studio.png")
   }
 ];
-
-
 
   // Carousel refs for all horizontal scroll sections
   const popularServicesRef = useRef(null);
@@ -481,6 +566,104 @@ const BEAUTY_SUBCATEGORIES = [
     goToCategory(catKey);
   }
 
+  async function loadHomePageSettings() {
+    const adminToken = localStorage.getItem("adminToken") || localStorage.getItem("token");
+
+    async function fetchHomeConfig(endpoint, withAuth = false) {
+      const response = await fetch(endpoint, {
+        headers: {
+          "Content-Type": "application/json",
+          ...(withAuth && adminToken ? { Authorization: `Bearer ${adminToken}` } : {})
+        },
+        cache: "no-store"
+      });
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) return null;
+      return data;
+    }
+
+    try {
+      const publicData = await fetchHomeConfig(API_ENDPOINTS.HOME_PAGE.GET_PUBLIC, false);
+      if (publicData?.homePage) {
+        const normalized = normalizeHomePageSettings(publicData.homePage);
+        setHomePageSettings(normalized);
+        writeHomePageCache(normalized);
+        return;
+      }
+
+      if (adminToken) {
+        const adminDataPrimary = await fetchHomeConfig(API_ENDPOINTS.HOME_PAGE.ADMIN_GET, true);
+        if (adminDataPrimary?.homePage) {
+          const normalized = normalizeHomePageSettings(adminDataPrimary.homePage);
+          setHomePageSettings(normalized);
+          writeHomePageCache(normalized);
+          return;
+        }
+
+        const adminDataFallback = await fetchHomeConfig(API_ENDPOINTS.HOME_PAGE.ADMIN_GET_FALLBACK, true);
+        if (adminDataFallback?.homePage) {
+          const normalized = normalizeHomePageSettings(adminDataFallback.homePage);
+          setHomePageSettings(normalized);
+          writeHomePageCache(normalized);
+          return;
+        }
+
+        const settingsData = await fetchHomeConfig(API_ENDPOINTS.SETTINGS.GET_ALL, true);
+        const homePageFromSettings = settingsData?.homePage || settingsData?.data?.homePage;
+        if (homePageFromSettings) {
+          const normalized = normalizeHomePageSettings(homePageFromSettings);
+          setHomePageSettings(normalized);
+          writeHomePageCache(normalized);
+          return;
+        }
+      }
+
+      const cached = readHomePageCache();
+      if (cached) {
+        setHomePageSettings(cached);
+      }
+    } catch {
+      const cached = readHomePageCache();
+      if (cached) {
+        setHomePageSettings(cached);
+      }
+    }
+  }
+
+  useEffect(() => {
+    void loadHomePageSettings();
+
+    function handleHomePageSettingsUpdate() {
+      void loadHomePageSettings();
+    }
+
+    function handleStorageUpdate(event) {
+      if (event.key === HOME_PAGE_CACHE_KEY) {
+        void loadHomePageSettings();
+      }
+    }
+
+    window.addEventListener("hs99-homepage-settings-updated", handleHomePageSettingsUpdate);
+    window.addEventListener("focus", handleHomePageSettingsUpdate);
+    window.addEventListener("storage", handleStorageUpdate);
+
+    return () => {
+      window.removeEventListener("hs99-homepage-settings-updated", handleHomePageSettingsUpdate);
+      window.removeEventListener("focus", handleHomePageSettingsUpdate);
+      window.removeEventListener("storage", handleStorageUpdate);
+    };
+  }, []);
+
+  function isSectionVisible(key) {
+    return homePageSettings.sections?.[key] !== false;
+  }
+
+  function isCuratedSectionVisible(sectionKey) {
+    const visibilityKey = CURATED_VISIBILITY_KEY_MAP[sectionKey];
+    if (!visibilityKey) return true;
+    return homePageSettings.curatedSectionVisibility?.[visibilityKey] !== false;
+  }
+
   function handleAddToCart(service) {
     addToCart({ id: service.id, title: service.title, price: service.price, image: service.image });
     addToast(`${service.title} added to cart`, 'success');
@@ -832,20 +1015,21 @@ const BEAUTY_SUBCATEGORIES = [
 
   return (
     <div className="home-page-white">
-      <CMSBanners />
+      {isSectionVisible("banners") ? <CMSBanners /> : null}
 
 {/* HERO SECTION */}
+{isSectionVisible("hero") ? (
 <section className="container hero hero-home fade-in">
   <div className="hero-left-pane">
 
     {/* <span className="hero-badge">? 50,000+ Happy Customers in {location}</span> */}
 
-    <h4 className="hero-title">Trusted Home Services at Your Doorstep</h4>
+    <h4 className="hero-title">{homePageSettings.heroTitle}</h4>
 
     <div className="hero-metrics">
-      <span>50k+ bookings completed</span>
-      <span>4.8 average rating</span>
-      <span>30 min avg. response</span>
+      <span>{homePageSettings.heroStats.bookingsCompleted}</span>
+      <span>{homePageSettings.heroStats.averageRating}</span>
+      <span>{homePageSettings.heroStats.responseTime}</span>
     </div>
 
     {/* <p className="hero-subtitle">
@@ -868,7 +1052,7 @@ const BEAUTY_SUBCATEGORIES = [
     
 
     <div className="service-discovery-card">
-      <h5 className="service-discovery-title">What are you looking for?</h5>
+      <h5 className="service-discovery-title">{homePageSettings.discoveryTitle}</h5>
       <div className="service-discovery-grid">
         {homeDiscoveryTiles.map((tile) => (
           <button
@@ -912,6 +1096,7 @@ const BEAUTY_SUBCATEGORIES = [
     </div>
   </div>
 </section>
+) : null}
 
 {/* CATEGORY QUICK-MODAL WITH SUBCATEGORIES */}
 {modalOpen && (
@@ -2097,6 +2282,7 @@ const BEAUTY_SUBCATEGORIES = [
 )}
 
 {/* PROMOTIONAL SLIDER SECTION */}
+{isSectionVisible("promoSlider") ? (
 <section className="container slide-up" style={{ marginTop: "48px" }}>
   <div className="services-carousel-wrap">
     <div style={{ position: 'relative', overflow: 'hidden' }}>
@@ -2219,10 +2405,12 @@ const BEAUTY_SUBCATEGORIES = [
     </button>
   </div>
 </section>
+) : null}
 
 {/* FEATURED SERVICES CARDS - HORIZONTAL CAROUSEL */}
+{isSectionVisible("popularServices") ? (
 <section className="container slide-up" style={{ marginTop: "24px", marginBottom: "8px", paddingBottom: "4px" }}>
-  <h2 className="section-title">Popular Services</h2>
+  <h2 className="section-title">{homePageSettings.popularServicesTitle}</h2>
   
 
   <div className="services-carousel-wrap">
@@ -2390,10 +2578,12 @@ const BEAUTY_SUBCATEGORIES = [
     </button>
   </div>
 </section>
+) : null}
 
 {/* GET QUOTE - PROFESSIONAL SLIDER */}
+{isSectionVisible("getQuote") ? (
 <section className="container slide-up" style={{ marginTop: "24px", paddingTop: "4px" }}>
-  <h2 className="section-title">Get Quote</h2>
+  <h2 className="section-title">{homePageSettings.getQuoteTitle}</h2>
  
 
   <div className="services-carousel-wrap">
@@ -2489,10 +2679,12 @@ const BEAUTY_SUBCATEGORIES = [
     </button>
   </div>
 </section>
+) : null}
 
 {/* OFFERS & DISCOUNTS - PROFESSIONAL SLIDER */}
+{isSectionVisible("offersDiscounts") ? (
 <section className="container slide-up" style={{ marginTop: "24px", paddingTop: "6px" }}>
-  <h2 className="section-title">Offers & discounts</h2>
+  <h2 className="section-title">{homePageSettings.offersDiscountsTitle}</h2>
  
 
   <div className="services-carousel-wrap">
@@ -2588,12 +2780,18 @@ const BEAUTY_SUBCATEGORIES = [
     </button>
   </div>
 </section>
+) : null}
 
-{renderUnifiedServiceSection(curatedServiceSections[0])}
+{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[0]?.key)
+  ? renderUnifiedServiceSection(curatedServiceSections[0])
+  : null}
 
-{renderUnifiedServiceSection(curatedServiceSections[1])}
+{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[1]?.key)
+  ? renderUnifiedServiceSection(curatedServiceSections[1])
+  : null}
 
 {/* ADS BANNER - After Massage for Men */}
+{isSectionVisible("promoBanner1") ? (
 <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
   <div className="home-promo-banner-box" style={{
     borderRadius: '16px',
@@ -2618,14 +2816,22 @@ const BEAUTY_SUBCATEGORIES = [
     />
   </div>
 </section>
+) : null}
 
-{renderUnifiedServiceSection(curatedServiceSections[2])}
+{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[2]?.key)
+  ? renderUnifiedServiceSection(curatedServiceSections[2])
+  : null}
 
-{renderUnifiedServiceSection(curatedServiceSections[3])}
+{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[3]?.key)
+  ? renderUnifiedServiceSection(curatedServiceSections[3])
+  : null}
 
-{renderUnifiedServiceSection(curatedServiceSections[4])}
+{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[4]?.key)
+  ? renderUnifiedServiceSection(curatedServiceSections[4])
+  : null}
 
 {/* ADS BANNER - After Massage for Men */}
+{isSectionVisible("promoBanner2") ? (
 <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
   <div className="home-promo-banner-box" style={{
     borderRadius: '16px',
@@ -2650,12 +2856,18 @@ const BEAUTY_SUBCATEGORIES = [
     />
   </div>
 </section>
+) : null}
 
-{renderUnifiedServiceSection(curatedServiceSections[5])}
+{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[5]?.key)
+  ? renderUnifiedServiceSection(curatedServiceSections[5])
+  : null}
 
-{renderUnifiedServiceSection(curatedServiceSections[6])}
+{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[6]?.key)
+  ? renderUnifiedServiceSection(curatedServiceSections[6])
+  : null}
 
 {/* ADS BANNER - After Massage for Men */}
+{isSectionVisible("promoBanner3") ? (
 <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
   <div className="home-promo-banner-box" style={{
     borderRadius: '16px',
@@ -2680,6 +2892,7 @@ const BEAUTY_SUBCATEGORIES = [
     />
   </div>
 </section>
+) : null}
 
 
 

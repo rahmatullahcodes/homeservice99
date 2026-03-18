@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { API_ENDPOINTS } from "../../config/api";
 
 export default function AdminSettings() {
-  const [settings, setSettings] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
@@ -63,43 +62,12 @@ export default function AdminSettings() {
 
       const data = await response.json();
       setFormData(data);
-      setSettings(data);
     } catch (err) {
       console.error("Error fetching settings:", err);
       setError(err.message);
-      setFormData(getMockSettings());
-      setSettings(getMockSettings());
     } finally {
       setLoading(false);
     }
-  }
-
-  function getMockSettings() {
-    return {
-      platformCommission: 15,
-      gstTax: 18,
-      payoutCycle: "Weekly",
-      minimumPayoutAmount: 500,
-      maximumPayoutAmount: 100000,
-      maintenanceMode: false,
-      vendorSignupEnabled: true,
-      userSignupEnabled: true,
-      bookingsEnabled: true,
-      emailNotificationsEnabled: true,
-      smsNotificationsEnabled: true,
-      pushNotificationsEnabled: true,
-      emailService: "SendGrid",
-      emailFromAddress: "noreply@homeservice99.com",
-      smsService: "Twilio",
-      minBookingAdvanceHours: 2,
-      maxBookingAdvanceDays: 90,
-      cancellationDeadlineHours: 2,
-      cancellationRefundPercentage: 100,
-      reviewAllowedDaysAfter: 1,
-      minReviewLength: 10,
-      maxActiveBookingsPerUser: 10,
-      maxActiveListingsPerVendor: 50
-    };
   }
 
   async function handleSave() {
@@ -120,8 +88,7 @@ export default function AdminSettings() {
 
       if (!response.ok) throw new Error("Failed to save settings");
 
-      const data = await response.json();
-      setSettings(data.data || data);
+      await response.json().catch(() => ({}));
       setSuccessMessage("Settings saved successfully!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
@@ -148,10 +115,11 @@ export default function AdminSettings() {
 
       if (!response.ok) throw new Error("Failed to reset settings");
 
-      const data = await response.json();
-      const defaults = getMockSettings();
-      setFormData(defaults);
-      setSettings(defaults);
+      const data = await response.json().catch(() => ({}));
+      const nextSettings = data?.data || data;
+      if (nextSettings && typeof nextSettings === "object") {
+        setFormData((prev) => ({ ...prev, ...nextSettings }));
+      }
       setSuccessMessage("Settings reset to defaults!");
       setTimeout(() => setSuccessMessage(""), 3000);
     } catch (err) {
@@ -205,7 +173,7 @@ export default function AdminSettings() {
           marginBottom: "20px",
           fontSize: "14px"
         }}>
-          ⚠️ {error} - Using demo data
+          {error}
         </div>
       )}
 

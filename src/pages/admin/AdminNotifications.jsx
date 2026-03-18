@@ -16,7 +16,11 @@ export default function AdminNotifications() {
   const [type, setType] = useState("Push");
   const [priority, setPriority] = useState("Medium");
   const [imageUrl, setImageUrl] = useState("");
+  const [actionUrl, setActionUrl] = useState("");
+  const [actionLabel, setActionLabel] = useState("View Offer");
+  const [showAsPopup, setShowAsPopup] = useState(false);
   const [sending, setSending] = useState(false);
+  const [editingNotificationId, setEditingNotificationId] = useState(null);
 
   // Filter & Search
   const [searchTerm, setSearchTerm] = useState("");
@@ -24,7 +28,7 @@ export default function AdminNotifications() {
   const [filterType, setFilterType] = useState("all");
   const [filterAudience, setFilterAudience] = useState("all");
   const [sortBy, setSortBy] = useState("date-desc");
-  const [itemsPerPage, setItemsPerPage] = useState(10);
+  const itemsPerPage = 10;
   const [currentPage, setCurrentPage] = useState(1);
 
   useEffect(() => {
@@ -35,6 +39,35 @@ export default function AdminNotifications() {
   useEffect(() => {
     filterAndSortNotifications();
   }, [notifications, searchTerm, filterStatus, filterType, filterAudience, sortBy]);
+
+  function resetComposer() {
+    setTitle("");
+    setMessage("");
+    setAudience("Users");
+    setType("Push");
+    setPriority("Medium");
+    setCity("");
+    setImageUrl("");
+    setActionUrl("");
+    setActionLabel("View Offer");
+    setShowAsPopup(false);
+    setEditingNotificationId(null);
+  }
+
+  function handleEditNotification(notification) {
+    setEditingNotificationId(notification._id);
+    setTitle(notification.title || "");
+    setMessage(notification.message || "");
+    setAudience(notification.audience || "Users");
+    setType(notification.type || "Push");
+    setPriority(notification.priority || "Medium");
+    setCity(notification.city && notification.city !== "All" ? notification.city : "");
+    setImageUrl(notification.imageUrl || "");
+    setActionUrl(notification.actionUrl || "");
+    setActionLabel(notification.actionLabel || "View Offer");
+    setShowAsPopup(Boolean(notification.showAsPopup));
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   async function fetchNotifications() {
     try {
@@ -62,7 +95,7 @@ export default function AdminNotifications() {
     } catch (err) {
       console.error("Error fetching notifications:", err);
       setError(err.message);
-      setNotifications(getMockNotifications());
+      setNotifications([]);
     } finally {
       setLoading(false);
     }
@@ -134,44 +167,68 @@ export default function AdminNotifications() {
       setSending(true);
       const token = localStorage.getItem("adminToken");
 
+      if (!token) {
+        throw new Error("Admin authentication required");
+      }
+
       const headers = {
         "Authorization": `Bearer ${token}`,
         "Content-Type": "application/json"
       };
+      const payload = {
+        title,
+        message,
+        audience,
+        type,
+        city: city || "All",
+        priority,
+        imageUrl,
+        actionUrl,
+        actionLabel,
+        showAsPopup
+      };
 
-      // Create notification first
-      const createResponse = await fetch(API_ENDPOINTS.NOTIFICATIONS.CREATE, {
-        method: "POST",
-        headers,
-        body: JSON.stringify({
-          title,
-          message,
-          audience,
-          type,
-          city: city || "All",
-          priority,
-          imageUrl
-        })
-      });
+      if (editingNotificationId) {
+        const updateResponse = await fetch(API_ENDPOINTS.NOTIFICATIONS.UPDATE(editingNotificationId), {
+          method: "PATCH",
+          headers,
+          body: JSON.stringify(payload)
+        });
 
-      if (!createResponse.ok) throw new Error("Failed to create notification");
+        if (!updateResponse.ok) {
+          throw new Error("Failed to update notification");
+        }
 
-      const notification = await createResponse.json();
+        const updatedNotification = await updateResponse.json();
+        setNotifications((prev) =>
+          prev.map((item) => (item._id === updatedNotification._id ? updatedNotification : item))
+        );
+        alert("Notification updated successfully!");
+      } else {
+        const createResponse = await fetch(API_ENDPOINTS.NOTIFICATIONS.CREATE, {
+          method: "POST",
+          headers,
+          body: JSON.stringify(payload)
+        });
 
-      // Then send it
-      const sendResponse = await fetch(API_ENDPOINTS.NOTIFICATIONS.SEND + `/${notification._id}`, {
-        method: "POST",
-        headers
-      });
+        if (!createResponse.ok) throw new Error("Failed to create notification");
 
-      if (!sendResponse.ok) throw new Error("Failed to send notification");
+        const notification = await createResponse.json();
 
-      setNotifications([notification, ...notifications]);
-      setTitle("");
-      setMessage("");
-      setCity("");
-      setImageUrl("");
-      alert("Notification sent successfully!");
+        const sendResponse = await fetch(API_ENDPOINTS.NOTIFICATIONS.SEND(notification._id), {
+          method: "POST",
+          headers
+        });
+
+        if (!sendResponse.ok) throw new Error("Failed to send notification");
+
+        const sendData = await sendResponse.json().catch(() => ({}));
+        const sentNotification = sendData.notification || notification;
+        setNotifications((prev) => [sentNotification, ...prev]);
+        alert("Notification sent successfully!");
+      }
+
+      resetComposer();
       fetchStats();
     } catch (err) {
       alert("Error: " + err.message);
@@ -180,59 +237,34 @@ export default function AdminNotifications() {
     }
   }
 
-  function getMockNotifications() {
-    return [
-      {
-        _id: "1",
-        title: "New Year Offer",
-        message: "Get 50% off on all services this New Year",
-        audience: "Users",
-        type: "Push",
-        city: "All",
-        status: "Sent",
-        priority: "High",
-        deliveryStatus: { total: 2500, sent: 2500, failed: 0, read: 1850 },
-        createdAt: new Date(Date.now() - 5 * 24 * 60 * 60 * 1000)
-      },
-      {
-        _id: "2",
-        title: "Vendor Payment Update",
-        message: "₹50,000 credited to your wallet",
-        audience: "Vendors",
-        type: "Email",
-        city: "All",
-        status: "Sent",
-        priority: "Medium",
-        deliveryStatus: { total: 450, sent: 450, failed: 0, read: 280 },
-        createdAt: new Date(Date.now() - 2 * 24 * 60 * 60 * 1000)
-      },
-      {
-        _id: "3",
-        title: "Weekend Special",
-        message: "Special offers on house cleaning services",
-        audience: "Users",
-        type: "In-App",
-        city: "Delhi",
-        status: "Sent",
-        priority: "Medium",
-        deliveryStatus: { total: 800, sent: 800, failed: 0, read: 450 },
-        createdAt: new Date(Date.now() - 1 * 24 * 60 * 60 * 1000)
-      },
-      {
-        _id: "4",
-        title: "Service Request Received",
-        message: "New booking request waiting for approval",
-        audience: "Vendors",
-        type: "Push",
-        city: "Mumbai",
-        status: "Draft",
-        priority: "High",
-        deliveryStatus: { total: 0, sent: 0, failed: 0, read: 0 },
-        createdAt: new Date(Date.now() - 1 * 60 * 60 * 1000)
-      }
-    ];
-  }
+  async function handleTogglePopup(notification) {
+    try {
+      const token = localStorage.getItem("adminToken");
+      const headers = {
+        "Authorization": `Bearer ${token}`,
+        "Content-Type": "application/json"
+      };
 
+      const response = await fetch(API_ENDPOINTS.NOTIFICATIONS.UPDATE(notification._id), {
+        method: "PATCH",
+        headers,
+        body: JSON.stringify({
+          showAsPopup: !notification.showAsPopup
+        })
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to update popup status");
+      }
+
+      const updated = await response.json();
+      setNotifications((prev) =>
+        prev.map((item) => (item._id === updated._id ? updated : item))
+      );
+    } catch (err) {
+      alert("Error: " + err.message);
+    }
+  }
   const paginatedNotifications = filteredNotifications.slice(
     (currentPage - 1) * itemsPerPage,
     currentPage * itemsPerPage
@@ -289,7 +321,7 @@ export default function AdminNotifications() {
           marginBottom: "20px",
           fontSize: "14px"
         }}>
-          ⚠️ {error} - Using demo data
+          {error}
         </div>
       )}
 
@@ -353,9 +385,14 @@ export default function AdminNotifications() {
         marginBottom: "24px",
         boxShadow: "0 1px 3px rgba(0, 0, 0, 0.1)"
       }}>
-        <h3 style={{ marginTop: 0, marginBottom: "16px", fontSize: "18px", fontWeight: 700, color: "#1f2937" }}>
-          ✉️ Create & Send Notification
+        <h3 style={{ marginTop: 0, marginBottom: "8px", fontSize: "18px", fontWeight: 700, color: "#1f2937" }}>
+          {editingNotificationId ? "Edit Popup Notification" : "Create & Send Notification"}
         </h3>
+        {editingNotificationId && (
+          <p style={{ margin: "0 0 14px 0", fontSize: "13px", color: "#475569" }}>
+            Update fields and click save. You can disable popup from card actions.
+          </p>
+        )}
 
         <div style={{ marginBottom: "14px" }}>
           <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: 600, color: "#374151" }}>
@@ -519,25 +556,111 @@ export default function AdminNotifications() {
           />
         </div>
 
-        <button
-          onClick={handleSendNotification}
-          disabled={sending || !title || !message}
-          style={{
-            width: "100%",
-            padding: "12px 16px",
-            backgroundColor: "#4f46e5",
-            color: "white",
-            border: "none",
-            borderRadius: "8px",
-            fontSize: "14px",
-            fontWeight: 600,
-            cursor: sending ? "not-allowed" : "pointer",
-            opacity: sending || !title || !message ? 0.6 : 1,
-            transition: "all 0.2s"
-          }}
-        >
-          {sending ? "Sending..." : "📤 Send Notification"}
-        </button>
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))",
+          gap: "12px",
+          marginBottom: "14px"
+        }}>
+          <div>
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: 600, color: "#374151" }}>
+              Popup Button URL (Optional)
+            </label>
+            <input
+              type="url"
+              placeholder="https://example.com/offer"
+              value={actionUrl}
+              onChange={(event) => setActionUrl(event.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontFamily: "inherit",
+                boxSizing: "border-box"
+              }}
+            />
+          </div>
+          <div>
+            <label style={{ display: "block", marginBottom: "6px", fontSize: "13px", fontWeight: 600, color: "#374151" }}>
+              Popup Button Text
+            </label>
+            <input
+              type="text"
+              placeholder="View Offer"
+              value={actionLabel}
+              onChange={(event) => setActionLabel(event.target.value)}
+              style={{
+                width: "100%",
+                padding: "10px 12px",
+                border: "1px solid #d1d5db",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontFamily: "inherit",
+                boxSizing: "border-box"
+              }}
+            />
+          </div>
+        </div>
+
+        <div style={{
+          marginBottom: "16px",
+          padding: "10px 12px",
+          borderRadius: "8px",
+          border: "1px solid #dbeafe",
+          backgroundColor: "#eff6ff"
+        }}>
+          <label style={{ display: "flex", alignItems: "center", gap: "8px", cursor: "pointer", fontSize: "14px", color: "#1e3a8a", fontWeight: 600 }}>
+            <input
+              type="checkbox"
+              checked={showAsPopup}
+              onChange={(event) => setShowAsPopup(event.target.checked)}
+            />
+            Show this broadcast as first-visit website popup
+          </label>
+        </div>
+
+        <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+          <button
+            onClick={handleSendNotification}
+            disabled={sending || !title || !message}
+            style={{
+              flex: "1 1 240px",
+              padding: "12px 16px",
+              backgroundColor: "#4f46e5",
+              color: "white",
+              border: "none",
+              borderRadius: "8px",
+              fontSize: "14px",
+              fontWeight: 600,
+              cursor: sending ? "not-allowed" : "pointer",
+              opacity: sending || !title || !message ? 0.6 : 1,
+              transition: "all 0.2s"
+            }}
+          >
+            {sending ? (editingNotificationId ? "Saving..." : "Sending...") : (editingNotificationId ? "Save Changes" : "Send Notification")}
+          </button>
+          {editingNotificationId && (
+            <button
+              type="button"
+              onClick={resetComposer}
+              style={{
+                flex: "0 0 auto",
+                padding: "12px 16px",
+                backgroundColor: "#ffffff",
+                color: "#334155",
+                border: "1px solid #cbd5e1",
+                borderRadius: "8px",
+                fontSize: "14px",
+                fontWeight: 600,
+                cursor: "pointer"
+              }}
+            >
+              Cancel Edit
+            </button>
+          )}
+        </div>
       </div>
 
       {/* FILTERS */}
@@ -667,17 +790,32 @@ export default function AdminNotifications() {
                 <h4 style={{ margin: 0, fontSize: "15px", fontWeight: 700, color: "#1f2937", flex: 1 }}>
                   {notif.title}
                 </h4>
-                <span style={{
-                  fontSize: "11px",
-                  fontWeight: 700,
-                  color: getStatusColor(notif.status),
-                  backgroundColor: getStatusColor(notif.status) + "20",
-                  padding: "4px 8px",
-                  borderRadius: "4px",
-                  whiteSpace: "nowrap"
-                }}>
-                  {notif.status}
-                </span>
+                <div style={{ display: "flex", gap: "6px", alignItems: "center" }}>
+                  {notif.showAsPopup && (
+                    <span style={{
+                      fontSize: "10px",
+                      fontWeight: 700,
+                      color: "#1e40af",
+                      backgroundColor: "#dbeafe",
+                      padding: "4px 6px",
+                      borderRadius: "4px",
+                      whiteSpace: "nowrap"
+                    }}>
+                      POPUP
+                    </span>
+                  )}
+                  <span style={{
+                    fontSize: "11px",
+                    fontWeight: 700,
+                    color: getStatusColor(notif.status),
+                    backgroundColor: getStatusColor(notif.status) + "20",
+                    padding: "4px 8px",
+                    borderRadius: "4px",
+                    whiteSpace: "nowrap"
+                  }}>
+                    {notif.status}
+                  </span>
+                </div>
               </div>
               <p style={{
                 margin: 0,
@@ -757,6 +895,66 @@ export default function AdminNotifications() {
               </div>
             )}
 
+            <div style={{
+              marginBottom: "12px",
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "8px"
+            }}>
+              <button
+                type="button"
+                onClick={() => handleEditNotification(notif)}
+                style={{
+                  width: "100%",
+                  padding: "8px 10px",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1",
+                  backgroundColor: editingNotificationId === notif._id ? "#e0e7ff" : "#ffffff",
+                  color: "#334155",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  cursor: "pointer"
+                }}
+              >
+                {editingNotificationId === notif._id ? "Editing..." : "Edit Popup"}
+              </button>
+              <button
+                type="button"
+                onClick={() => handleTogglePopup(notif)}
+                style={{
+                  width: "100%",
+                  padding: "8px 10px",
+                  borderRadius: "6px",
+                  border: "1px solid #cbd5e1",
+                  backgroundColor: notif.showAsPopup ? "#dbeafe" : "#ffffff",
+                  color: notif.showAsPopup ? "#1e40af" : "#334155",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  cursor: "pointer"
+                }}
+              >
+                {notif.showAsPopup ? "Disable Popup" : "Enable Popup"}
+              </button>
+            </div>
+
+            {notif.actionUrl && (
+              <a
+                href={notif.actionUrl}
+                target="_blank"
+                rel="noreferrer"
+                style={{
+                  display: "inline-block",
+                  marginBottom: "10px",
+                  color: "#1d4ed8",
+                  fontSize: "12px",
+                  fontWeight: 600,
+                  textDecoration: "none"
+                }}
+              >
+                Popup Button: {notif.actionLabel || "View Offer"}
+              </a>
+            )}
+
             <p style={{
               margin: 0,
               fontSize: "12px",
@@ -815,3 +1013,6 @@ export default function AdminNotifications() {
     </div>
   );
 }
+
+
+

@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useToast } from "../../context/ToastContext";
-
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+import { API_ENDPOINTS } from "../../config/api";
 
 export default function AdminReviews() {
 
@@ -35,7 +34,7 @@ export default function AdminReviews() {
         return;
       }
       
-      let url = `${API_BASE_URL}/admin/reviews?page=${page}&limit=10`;
+      let url = `${API_ENDPOINTS.ADMIN.GET_REVIEWS}?page=${page}&limit=10`;
       if (filterStatus !== "All") {
         url += `&status=${filterStatus}`;
       }
@@ -82,7 +81,7 @@ export default function AdminReviews() {
       const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
       if (!token) return;
 
-      const response = await fetch(`${API_BASE_URL}/admin/reviews`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.GET_REVIEWS, {
         method: "GET",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -127,7 +126,7 @@ export default function AdminReviews() {
         return;
       }
       
-      const response = await fetch(`${API_BASE_URL}/admin/reviews/${id}/status`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.UPDATE_REVIEW_STATUS(id), {
         method: "PATCH",
         headers: {
           "Authorization": `Bearer ${token}`,
@@ -167,7 +166,7 @@ export default function AdminReviews() {
         return;
       }
       
-      const response = await fetch(`${API_BASE_URL}/admin/reviews/${id}`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.DELETE_REVIEW(id), {
         method: "DELETE",
         headers: {
           "Authorization": `Bearer ${token}`

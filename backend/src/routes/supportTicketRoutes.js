@@ -9,7 +9,7 @@ import {
   deleteTicket,
   getTicketStats
 } from "../controllers/supportTicketController.js";
-import { auth } from "../middleware/auth.js";
+import { adminAuth } from "../middleware/adminAuth.js";
 
 const router = express.Router();
 
@@ -17,7 +17,7 @@ const router = express.Router();
 router.post("/", createTicket);
 
 // Admin-only routes
-router.use(auth);
+router.use(adminAuth);
 
 router.get("/", getAllTickets);
 router.get("/stats", getTicketStats);

@@ -22,6 +22,8 @@ const vendorSchema = new mongoose.Schema({
   status: { type: String, enum: ["Active", "Pending", "Rejected"], default: "Pending" },
   verified: { type: Boolean, default: false },
   walletBalance: { type: Number, default: 0 },
+  totalEarnings: { type: Number, default: 0 },
+  totalWithdrawn: { type: Number, default: 0 },
   rating: { type: Number, default: 0 },
   totalBookings: { type: Number, default: 0 },
   averageRating: { type: Number, default: 0 }

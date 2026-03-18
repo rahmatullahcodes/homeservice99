@@ -6,6 +6,8 @@ import { API_ENDPOINTS } from "../../config/api";
 export default function VendorReviews() {
   const { vendor, loading: vendorLoading } = useVendor();
   const { addToast } = useToast();
+  const token = localStorage.getItem("vendorToken");
+
   const [reviews, setReviews] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
@@ -15,87 +17,136 @@ export default function VendorReviews() {
   const [replyingTo, setReplyingTo] = useState(null);
   const [submitting, setSubmitting] = useState({});
 
-  // Fetch vendor reviews on mount
   useEffect(() => {
-    if (vendor?._id) {
-      fetchVendorReviews();
-    }
-  }, [vendor?._id]);
+    if (!token) return;
+    fetchVendorReviews();
+  }, [token, vendor?._id]);
 
   async function fetchVendorReviews() {
     try {
       setLoading(true);
       setError("");
 
-      if (!vendor?._id) {
-        setError("Vendor information not available");
-        setLoading(false);
-        return;
-      }
-
-      const endpoint = `${API_ENDPOINTS.ADMIN.GET_VENDOR_REVIEWS(vendor._id)}`;
-      
-      const response = await fetch(endpoint, {
+      const response = await fetch(API_ENDPOINTS.VENDOR.GET_REVIEWS, {
         method: "GET",
         headers: {
-          "Content-Type": "application/json"
+          Authorization: `Bearer ${token}`
         }
       });
 
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to load reviews");
+      if (response.status === 404 && vendor?._id) {
+        await fetchVendorReviewsLegacy(vendor._id);
+        return;
       }
 
-      const data = await response.json();
-      setReviews(Array.isArray(data) ? data : data.reviews || []);
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to load reviews");
+      }
+
+      const list = Array.isArray(data) ? data : data.reviews || [];
+      setReviews(list);
     } catch (err) {
-      console.error("Fetch error:", err);
-      setError(err.message);
-      addToast(err.message, "error");
+      const isNetworkError = String(err?.message || "").toLowerCase().includes("failed to fetch");
+      const message = isNetworkError
+        ? "Backend server unreachable. Please start backend on port 5000."
+        : (err.message || "Failed to load reviews");
+
+      setError(message);
+      addToast(message, "error");
     } finally {
       setLoading(false);
     }
   }
 
-  // Calculate stats
-  const avgRating = reviews.length > 0
-    ? (reviews.reduce((sum, r) => sum + (r.rating || 0), 0) / reviews.length).toFixed(1)
-    : 0;
+  async function fetchVendorReviewsLegacy(vendorId) {
+    const endpoint = API_ENDPOINTS.ADMIN.GET_VENDOR_REVIEWS(vendorId);
+    const response = await fetch(endpoint, { method: "GET" });
+    const data = await response.json().catch(() => ({}));
 
-  const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
-  reviews.forEach(r => {
-    if (r.rating && ratingCounts.hasOwnProperty(r.rating)) {
-      ratingCounts[r.rating]++;
+    if (!response.ok) {
+      throw new Error(data.message || "Failed to load reviews");
     }
-  });
 
-  // Filter and sort reviews
-  let visible = reviews.filter(r => 
-    filter === "All" ? true : r.rating === (typeof filter === 'string' ? parseInt(filter) : filter)
-  );
-
-  if (sort === "rating") {
-    visible = [...visible].sort((a, b) => b.rating - a.rating);
-  } else {
-    visible = [...visible].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+    const list = Array.isArray(data) ? data : data.reviews || [];
+    setReviews(list);
+    setError("");
+    addToast("Using legacy reviews API. Please restart backend for latest vendor endpoints.", "warning");
   }
 
   async function handleReply(reviewId) {
-    if (!replyText[reviewId]?.trim()) {
+    const message = String(replyText[reviewId] || "").trim();
+    if (!message) {
       addToast("Reply cannot be empty", "error");
       return;
     }
 
-    // Note: Reply functionality can be implemented later with a dedicated backend endpoint
-    setSubmitting(prev => ({ ...prev, [reviewId]: false }));
-    addToast("Reply would be saved here", "success");
-    setReplyingTo(null);
+    try {
+      setSubmitting((prev) => ({ ...prev, [reviewId]: true }));
+
+      const response = await fetch(API_ENDPOINTS.VENDOR.REPLY_REVIEW(reviewId), {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        },
+        body: JSON.stringify({ message })
+      });
+
+      if (response.status === 404) {
+        throw new Error("Reply API is not available on current backend build. Please restart/update backend.");
+      }
+
+      const data = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(data.message || "Failed to save reply");
+      }
+
+      const updatedReview = data.review;
+      setReviews((prev) => prev.map((review) => (review._id === reviewId ? updatedReview : review)));
+      setReplyingTo(null);
+      setReplyText((prev) => {
+        const next = { ...prev };
+        delete next[reviewId];
+        return next;
+      });
+      addToast("Reply saved successfully", "success");
+    } catch (err) {
+      const isNetworkError = String(err?.message || "").toLowerCase().includes("failed to fetch");
+      const message = isNetworkError
+        ? "Backend server unreachable. Please start backend on port 5000."
+        : (err.message || "Failed to save reply");
+
+      addToast(message, "error");
+    } finally {
+      setSubmitting((prev) => ({ ...prev, [reviewId]: false }));
+    }
   }
 
-  const ratingPercentage = (star) => {
-    return reviews.length > 0 ? (ratingCounts[star] / reviews.length) * 100 : 0;
-  };
+  const avgRating = reviews.length > 0
+    ? (reviews.reduce((sum, review) => sum + (review.rating || 0), 0) / reviews.length).toFixed(1)
+    : "0.0";
+
+  const ratingCounts = { 5: 0, 4: 0, 3: 0, 2: 0, 1: 0 };
+  reviews.forEach((review) => {
+    if (review.rating >= 1 && review.rating <= 5) {
+      ratingCounts[review.rating] += 1;
+    }
+  });
+
+  let visible = reviews.filter((review) => (
+    filter === "All" ? true : review.rating === (typeof filter === "string" ? parseInt(filter, 10) : filter)
+  ));
+
+  if (sort === "rating") {
+    visible = [...visible].sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  } else {
+    visible = [...visible].sort((a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0));
+  }
+
+  const ratingPercentage = (star) => (
+    reviews.length > 0 ? (ratingCounts[star] / reviews.length) * 100 : 0
+  );
 
   if (vendorLoading) {
     return (
@@ -114,28 +165,32 @@ export default function VendorReviews() {
       </div>
 
       {error && (
-        <div style={{ 
-          color: "#dc2626", 
-          marginBottom: "20px", 
-          padding: "14px", 
-          backgroundColor: "#fee2e2", 
-          borderRadius: "8px",
-          border: "1px solid #fca5a5"
-        }}>
+        <div
+          style={{
+            color: "#dc2626",
+            marginBottom: "20px",
+            padding: "14px",
+            backgroundColor: "#fee2e2",
+            borderRadius: "8px",
+            border: "1px solid #fca5a5"
+          }}
+        >
           {error}
         </div>
       )}
 
       <div className="vendor-grid-2" style={{ marginBottom: "24px", gap: "16px" }}>
-        {/* Rating Summary Card */}
-        <div className="vendor-section" style={{ background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)", color: "white", padding: "24px" }}>
+        <div
+          className="vendor-section"
+          style={{ background: "linear-gradient(135deg, #f59e0b 0%, #d97706 100%)", color: "white", padding: "24px" }}
+        >
           <div style={{ textAlign: "center" }}>
             <p style={{ margin: "0 0 8px 0", fontSize: "13px", opacity: "0.9", fontWeight: "600" }}>Overall Rating</p>
             <h2 style={{ margin: "0 0 8px 0", fontSize: "56px", fontWeight: "700" }}>
               {avgRating}
             </h2>
             <p style={{ margin: "0 0 8px 0", fontSize: "16px", fontWeight: "600" }}>
-              {"⭐".repeat(Math.round(avgRating))}
+              {"*".repeat(Math.round(Number(avgRating)))}
             </p>
             <p style={{ margin: "0", fontSize: "13px", opacity: "0.9" }}>
               Based on {reviews.length} {reviews.length === 1 ? "review" : "reviews"}
@@ -143,21 +198,22 @@ export default function VendorReviews() {
           </div>
         </div>
 
-        {/* Rating Distribution Card */}
         <div className="vendor-section">
           <h3 style={{ margin: "0 0 14px 0", fontSize: "16px", fontWeight: "700" }}>Rating Distribution</h3>
-          {[5, 4, 3, 2, 1].map(star => (
+          {[5, 4, 3, 2, 1].map((star) => (
             <div key={star} style={{ display: "flex", alignItems: "center", gap: "8px", marginBottom: "10px" }}>
               <span style={{ fontSize: "13px", fontWeight: "600", minWidth: "40px", color: "#6b7280" }}>
-                {star} ⭐
+                {star}
               </span>
               <div style={{ flex: 1, height: "10px", background: "#e5e7eb", borderRadius: "5px", overflow: "hidden" }}>
-                <div style={{ 
-                  height: "100%", 
-                  background: `linear-gradient(90deg, #f59e0b, #d97706)`,
-                  width: `${ratingPercentage(star)}%`,
-                  transition: "width 0.3s ease"
-                }} />
+                <div
+                  style={{
+                    height: "100%",
+                    background: "linear-gradient(90deg, #f59e0b, #d97706)",
+                    width: `${ratingPercentage(star)}%`,
+                    transition: "width 0.3s ease"
+                  }}
+                />
               </div>
               <span style={{ fontSize: "12px", color: "#6b7280", minWidth: "35px", textAlign: "right", fontWeight: "600" }}>
                 {ratingCounts[star]}
@@ -167,25 +223,23 @@ export default function VendorReviews() {
         </div>
       </div>
 
-      {/* Filter and Sort Controls */}
       <div className="vendor-section" style={{ marginBottom: "20px" }}>
         <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "12px" }}>
           <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", alignItems: "center" }}>
             <span style={{ fontSize: "13px", fontWeight: "600", color: "#6b7280" }}>Filter:</span>
-            {["All", 5, 4, 3, 2, 1].map(f => (
+            {["All", 5, 4, 3, 2, 1].map((value) => (
               <button
-                key={f}
-                className={`vendor-btn ${filter === f ? "primary" : "outline"} small`}
-                onClick={() => setFilter(f)}
-                style={{ cursor: "pointer" }}
+                key={value}
+                className={`vendor-btn ${filter === value ? "primary" : "outline"} small`}
+                onClick={() => setFilter(value)}
               >
-                {f === "All" ? "All Reviews" : `${f} ⭐`}
+                {value === "All" ? "All Reviews" : `${value} Star`}
               </button>
             ))}
           </div>
           <select
             value={sort}
-            onChange={e => setSort(e.target.value)}
+            onChange={(event) => setSort(event.target.value)}
             style={{
               padding: "8px 12px",
               borderRadius: "6px",
@@ -203,7 +257,6 @@ export default function VendorReviews() {
         </div>
       </div>
 
-      {/* Reviews List */}
       <div className="vendor-section">
         {loading ? (
           <div style={{ textAlign: "center", padding: "40px 20px" }}>
@@ -213,7 +266,7 @@ export default function VendorReviews() {
         ) : visible.length === 0 ? (
           <div style={{ textAlign: "center", padding: "40px 20px", background: "#f9fafb", borderRadius: "8px" }}>
             <p style={{ fontSize: "16px", fontWeight: "600", color: "#374151", margin: "0 0 8px 0" }}>
-              {reviews.length === 0 ? "📭 No reviews yet" : "No reviews match this filter"}
+              {reviews.length === 0 ? "No reviews yet" : "No reviews match this filter"}
             </p>
             <p style={{ fontSize: "13px", color: "#6b7280", margin: "0" }}>
               {reviews.length === 0 ? "Complete more bookings to receive customer reviews" : "Try adjusting your filters"}
@@ -221,7 +274,7 @@ export default function VendorReviews() {
           </div>
         ) : (
           <div style={{ display: "flex", flexDirection: "column", gap: "16px" }}>
-            {visible.map(review => (
+            {visible.map((review) => (
               <div
                 key={review._id}
                 style={{
@@ -232,90 +285,121 @@ export default function VendorReviews() {
                   transition: "all 0.2s ease"
                 }}
               >
-                {/* Review Header */}
                 <div style={{ display: "flex", justifyContent: "space-between", alignItems: "start", marginBottom: "12px" }}>
                   <div>
                     <p style={{ margin: "0 0 4px 0", fontSize: "15px", fontWeight: "700", color: "#111827" }}>
-                      {review.user?.name || review.userName || "Anonymous"}
+                      {review.user?.name || "Anonymous"}
                     </p>
                     <p style={{ margin: "0", fontSize: "12px", color: "#6b7280" }}>
-                      {new Date(review.createdAt).toLocaleDateString('en-US', {
-                        year: 'numeric',
-                        month: 'short',
-                        day: 'numeric'
+                      {new Date(review.createdAt).toLocaleDateString("en-US", {
+                        year: "numeric",
+                        month: "short",
+                        day: "numeric"
                       })}
                     </p>
                   </div>
-                  <div style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "4px",
-                    backgroundColor: "#fef3c7",
-                    padding: "6px 10px",
-                    borderRadius: "6px"
-                  }}>
-                    <span style={{ fontSize: "16px" }}>⭐</span>
+                  <div
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "4px",
+                      backgroundColor: "#fef3c7",
+                      padding: "6px 10px",
+                      borderRadius: "6px"
+                    }}
+                  >
                     <span style={{ fontSize: "14px", fontWeight: "700", color: "#f59e0b" }}>
                       {review.rating || 0}
                     </span>
                   </div>
                 </div>
 
-                {/* Review Title and Comment */}
                 {review.title && (
-                  <p style={{
-                    margin: "0 0 8px 0",
-                    fontSize: "14px",
-                    fontWeight: "700",
-                    color: "#111827"
-                  }}>
+                  <p
+                    style={{
+                      margin: "0 0 8px 0",
+                      fontSize: "14px",
+                      fontWeight: "700",
+                      color: "#111827"
+                    }}
+                  >
                     {review.title}
                   </p>
                 )}
 
-                <p style={{
-                  margin: "0 0 12px 0",
-                  fontSize: "14px",
-                  color: "#374151",
-                  lineHeight: "1.6"
-                }}>
-                  {review.comment || review.description || "No comment provided"}
+                <p
+                  style={{
+                    margin: "0 0 12px 0",
+                    fontSize: "14px",
+                    color: "#374151",
+                    lineHeight: "1.6"
+                  }}
+                >
+                  {review.comment || "No comment provided"}
                 </p>
 
-                {/* Service Info */}
                 {review.service && (
-                  <div style={{
-                    fontSize: "12px",
-                    color: "#6b7280",
-                    marginBottom: "12px",
-                    padding: "8px 10px",
-                    backgroundColor: "#f3f4f6",
-                    borderRadius: "6px"
-                  }}>
-                    <strong>Service:</strong> {review.service?.title || review.service?.name || "Service"}
+                  <div
+                    style={{
+                      fontSize: "12px",
+                      color: "#6b7280",
+                      marginBottom: "12px",
+                      padding: "8px 10px",
+                      backgroundColor: "#f3f4f6",
+                      borderRadius: "6px"
+                    }}
+                  >
+                    <strong>Service:</strong> {review.service?.title || "Service"}
                   </div>
                 )}
 
-                {/* Reply Section */}
+                {review.vendorReply?.message && (
+                  <div
+                    style={{
+                      marginBottom: "12px",
+                      padding: "10px",
+                      borderRadius: "8px",
+                      background: "#eff6ff",
+                      border: "1px solid #bfdbfe"
+                    }}
+                  >
+                    <p style={{ margin: "0 0 6px 0", fontSize: "12px", fontWeight: "700", color: "#1d4ed8" }}>
+                      Your Reply
+                    </p>
+                    <p style={{ margin: "0", fontSize: "13px", color: "#1f2937" }}>
+                      {review.vendorReply.message}
+                    </p>
+                    {review.vendorReply.repliedAt && (
+                      <p style={{ margin: "6px 0 0 0", fontSize: "11px", color: "#6b7280" }}>
+                        {new Date(review.vendorReply.repliedAt).toLocaleString()}
+                      </p>
+                    )}
+                  </div>
+                )}
+
                 {replyingTo === review._id ? (
-                  <div style={{
-                    padding: "12px",
-                    background: "#f0f9ff",
-                    borderRadius: "8px",
-                    border: "1px solid #bfdbfe"
-                  }}>
-                    <label style={{
-                      display: "block",
-                      fontSize: "12px",
-                      fontWeight: "600",
-                      color: "#1e40af",
-                      marginBottom: "8px"
-                    }}>
+                  <div
+                    style={{
+                      padding: "12px",
+                      background: "#f0f9ff",
+                      borderRadius: "8px",
+                      border: "1px solid #bfdbfe"
+                    }}
+                  >
+                    <label
+                      style={{
+                        display: "block",
+                        fontSize: "12px",
+                        fontWeight: "600",
+                        color: "#1e40af",
+                        marginBottom: "8px"
+                      }}
+                    >
                       Your Reply
                     </label>
                     <textarea
                       value={replyText[review._id] || ""}
-                      onChange={e => setReplyText(prev => ({ ...prev, [review._id]: e.target.value }))}
+                      onChange={(event) => setReplyText((prev) => ({ ...prev, [review._id]: event.target.value }))}
                       placeholder="Write a response to this review..."
                       style={{
                         width: "100%",
@@ -335,21 +419,17 @@ export default function VendorReviews() {
                         className="vendor-btn primary small"
                         onClick={() => handleReply(review._id)}
                         disabled={submitting[review._id]}
-                        style={{
-                          cursor: submitting[review._id] ? "not-allowed" : "pointer",
-                          opacity: submitting[review._id] ? 0.6 : 1
-                        }}
                       >
-                        {submitting[review._id] ? "Sending..." : "Send Reply"}
+                        {submitting[review._id] ? "Saving..." : "Save Reply"}
                       </button>
                       <button
                         className="vendor-btn outline small"
                         onClick={() => {
                           setReplyingTo(null);
-                          setReplyText(prev => {
-                            const newState = { ...prev };
-                            delete newState[review._id];
-                            return newState;
+                          setReplyText((prev) => {
+                            const next = { ...prev };
+                            delete next[review._id];
+                            return next;
                           });
                         }}
                       >
@@ -360,10 +440,15 @@ export default function VendorReviews() {
                 ) : (
                   <button
                     className="vendor-btn outline small"
-                    onClick={() => setReplyingTo(review._id)}
-                    style={{ cursor: "pointer" }}
+                    onClick={() => {
+                      setReplyingTo(review._id);
+                      setReplyText((prev) => ({
+                        ...prev,
+                        [review._id]: review.vendorReply?.message || ""
+                      }));
+                    }}
                   >
-                    💬 Reply to Review
+                    {review.vendorReply?.message ? "Edit Reply" : "Reply to Review"}
                   </button>
                 )}
               </div>
@@ -371,36 +456,6 @@ export default function VendorReviews() {
           </div>
         )}
       </div>
-
-      {/* Stats Summary at Bottom */}
-      {reviews.length > 0 && (
-        <div className="vendor-section" style={{ marginTop: "24px", background: "#f9fafb", padding: "16px" }}>
-          <div style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-            gap: "16px"
-          }}>
-            <div style={{ textAlign: "center" }}>
-              <p style={{ margin: "0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>Total Reviews</p>
-              <p style={{ margin: "4px 0 0 0", fontSize: "24px", fontWeight: "700", color: "#1f2937" }}>
-                {reviews.length}
-              </p>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <p style={{ margin: "0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>Average Rating</p>
-              <p style={{ margin: "4px 0 0 0", fontSize: "24px", fontWeight: "700", color: "#f59e0b" }}>
-                {avgRating} ⭐
-              </p>
-            </div>
-            <div style={{ textAlign: "center" }}>
-              <p style={{ margin: "0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>5-Star Reviews</p>
-              <p style={{ margin: "4px 0 0 0", fontSize: "24px", fontWeight: "700", color: "#16a34a" }}>
-                {ratingCounts[5]}
-              </p>
-            </div>
-          </div>
-        </div>
-      )}
     </div>
   );
 }

@@ -1,10 +1,20 @@
-import { useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useToast } from "../context/ToastContext";
 import { API_ENDPOINTS } from "../config/api.js";
 
+const REFERRAL_STORAGE_KEY = "pendingReferralCode";
+
+function normalizeReferralCode(value) {
+  return String(value || "")
+    .trim()
+    .replace(/[^a-zA-Z0-9]/g, "")
+    .toUpperCase();
+}
+
 export default function Signup() {
   const navigate = useNavigate();
+  const location = useLocation();
 
   const [name, setName] = useState("");
   const [number, setNumber] = useState("");
@@ -12,7 +22,20 @@ export default function Signup() {
   const [pass, setPass] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [referralCode, setReferralCode] = useState("");
   const { addToast } = useToast();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const refFromQuery = normalizeReferralCode(params.get("ref"));
+    const refFromStorage = normalizeReferralCode(localStorage.getItem(REFERRAL_STORAGE_KEY));
+    const resolvedRef = refFromQuery || refFromStorage;
+
+    if (!resolvedRef) return;
+
+    setReferralCode(resolvedRef);
+    localStorage.setItem(REFERRAL_STORAGE_KEY, resolvedRef);
+  }, [location.search]);
 
   async function handleSignup() {
     if (!name || !number || !email || !pass) {
@@ -39,6 +62,7 @@ export default function Signup() {
           email,
           phone: number,
           password: pass,
+          referralCode: referralCode || undefined,
         }),
       });
 
@@ -52,6 +76,7 @@ export default function Signup() {
       // Store token and user info
       localStorage.setItem("token", data.token);
       localStorage.setItem("user", JSON.stringify(data.user));
+      localStorage.removeItem(REFERRAL_STORAGE_KEY);
       
       addToast("Account created ✅", "success");
       navigate("/");
@@ -113,6 +138,19 @@ export default function Signup() {
                 required
               />
             </div>
+
+            {referralCode && (
+              <div className="form-field">
+                <label htmlFor="signup-referral">Referral Code</label>
+                <input
+                  id="signup-referral"
+                  type="text"
+                  value={referralCode}
+                  readOnly
+                  disabled={loading}
+                />
+              </div>
+            )}
 
             <div className="form-field">
               <label htmlFor="signup-pass">Password</label>

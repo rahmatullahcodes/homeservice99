@@ -33,65 +33,27 @@ export default function AdminReports() {
         "Content-Type": "application/json"
       };
 
-      // Fetch all data in parallel
-      const [dashRes, servRes, vendRes, catRes, bookRes, userRes] = await Promise.all([
-        fetch(`${API_ENDPOINTS.REPORTS.DASHBOARD_STATS}?range=${range}`, { headers }),
-        fetch(`${API_ENDPOINTS.REPORTS.SERVICE_PERFORMANCE}?range=${range}`, { headers }),
-        fetch(`${API_ENDPOINTS.REPORTS.TOP_VENDORS}?range=${range}&limit=8`, { headers }),
-        fetch(`${API_ENDPOINTS.REPORTS.CATEGORY_PERFORMANCE}?range=${range}`, { headers }),
-        fetch(`${API_ENDPOINTS.REPORTS.BOOKING_STATUS}?range=${range}`, { headers }),
-        fetch(`${API_ENDPOINTS.REPORTS.USER_ANALYTICS}?range=${range}`, { headers })
-      ]);
-
-      // Check all responses
-      const responses = [
-        { name: "Dashboard", res: dashRes },
-        { name: "Services", res: servRes },
-        { name: "Vendors", res: vendRes },
-        { name: "Category", res: catRes },
-        { name: "Bookings", res: bookRes },
-        { name: "Users", res: userRes }
-      ];
-
-      let hasError = false;
-      let errorDetail = "";
-
-      for (const { name, res } of responses) {
-        if (!res.ok) {
-          hasError = true;
-          errorDetail += `${name}: ${res.status}, `;
-        }
+      const response = await fetch(`${API_ENDPOINTS.REPORTS.COMPLETE_REPORT}?range=${range}`, { headers });
+      const payload = await response.json().catch(() => ({}));
+      if (!response.ok) {
+        throw new Error(payload.error || payload.message || `Failed to fetch reports (${response.status})`);
       }
 
-      if (hasError) {
-        throw new Error(`Failed to fetch: ${errorDetail}`);
-      }
-
-      const [dashData, servData, vendData, catData, bookData, userData] = await Promise.all([
-        dashRes.json(),
-        servRes.json(),
-        vendRes.json(),
-        catRes.json(),
-        bookRes.json(),
-        userRes.json()
-      ]);
-
-      setDashStats(dashData);
-      setServicePerf(Array.isArray(servData) ? servData : []);
-      setTopVendors(Array.isArray(vendData) ? vendData : []);
-      setCategoryPerf(Array.isArray(catData) ? catData : []);
-      setBookingStatus(Array.isArray(bookData) ? bookData : []);
-      setUserAnalytics(userData);
+      setDashStats(payload?.stats || null);
+      setServicePerf(Array.isArray(payload?.services) ? payload.services : []);
+      setTopVendors(Array.isArray(payload?.vendors) ? payload.vendors.slice(0, 8) : []);
+      setCategoryPerf(Array.isArray(payload?.categories) ? payload.categories : []);
+      setBookingStatus(Array.isArray(payload?.bookingStatus) ? payload.bookingStatus : []);
+      setUserAnalytics(payload?.userAnalytics || null);
     } catch (err) {
       console.error("Error fetching reports:", err);
       setError(err.message);
-      // Set mock data for demo
-      setDashStats(getMockDashboardStats());
-      setServicePerf(getMockServicePerf());
-      setTopVendors(getMockTopVendors());
-      setCategoryPerf(getMockCategoryPerf());
-      setBookingStatus(getMockBookingStatus());
-      setUserAnalytics(getMockUserAnalytics());
+      setDashStats(null);
+      setServicePerf([]);
+      setTopVendors([]);
+      setCategoryPerf([]);
+      setBookingStatus([]);
+      setUserAnalytics(null);
     } finally {
       setLoading(false);
     }
@@ -160,62 +122,7 @@ export default function AdminReports() {
     link.href = "data:text/csv;charset=utf-8," + encodeURIComponent(csv);
     link.download = filename;
     link.click();
-  }
-
-  function getMockDashboardStats() {
-    return {
-      range,
-      totalRevenue: 2450000,
-      totalBookings: 512,
-      completedBookings: 456,
-      activeVendors: 38,
-      newUsers: 89,
-      conversionRate: 89.06
-    };
-  }
-
-  function getMockServicePerf() {
-    return [
-      { serviceName: "AC Repair", category: "Maintenance", totalBookings: 180, totalRevenue: 89000, averageRating: 4.5, totalReviews: 45 },
-      { serviceName: "Cleaning", category: "Cleaning", totalBookings: 220, totalRevenue: 112000, averageRating: 4.7, totalReviews: 58 },
-      { serviceName: "Plumbing", category: "Repairs", totalBookings: 112, totalRevenue: 44000, averageRating: 4.3, totalReviews: 28 }
-    ];
-  }
-
-  function getMockTopVendors() {
-    return [
-      { vendorName: "AC Experts", totalBookings: 84, totalRevenue: 48000, rating: 4.8, totalReviews: 23 },
-      { vendorName: "CleanPro", totalBookings: 76, totalRevenue: 52000, rating: 4.6, totalReviews: 19 },
-      { vendorName: "Plumb Masters", totalBookings: 52, totalRevenue: 36000, rating: 4.4, totalReviews: 14 }
-    ];
-  }
-
-  function getMockCategoryPerf() {
-    return [
-      { category: "Maintenance", bookings: 156, revenue: 145000, rating: 4.6 },
-      { category: "Cleaning", bookings: 189, revenue: 167000, rating: 4.5 },
-      { category: "Repairs", bookings: 167, revenue: 138000, rating: 4.3 }
-    ];
-  }
-
-  function getMockBookingStatus() {
-    return [
-      { status: "Completed", count: 456 },
-      { status: "Pending", count: 32 },
-      { status: "InProgress", count: 18 },
-      { status: "Cancelled", count: 6 }
-    ];
-  }
-
-  function getMockUserAnalytics() {
-    return {
-      totalUsers: 2847,
-      activeUsers: 1243,
-      newUsers: 89,
-      avgSessionDuration: "8:32"
-    };
-  }
-
+  }
   if (loading) {
     return (
       <div className="admin-reports">
@@ -261,7 +168,7 @@ export default function AdminReports() {
           marginBottom: "20px",
           fontSize: "14px"
         }}>
-          ⚠️ {error} - Using demo data
+          {error}
         </div>
       )}
 
@@ -523,3 +430,5 @@ export default function AdminReports() {
     </div>
   );
 }
+
+

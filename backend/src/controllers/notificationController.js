@@ -55,7 +55,9 @@ export async function createNotification(req, res) {
       priority,
       imageUrl,
       actionUrl,
-      scheduledFor
+      actionLabel,
+      scheduledFor,
+      showAsPopup
     } = req.body;
 
     // Validation
@@ -72,6 +74,8 @@ export async function createNotification(req, res) {
       priority: priority || "Medium",
       imageUrl,
       actionUrl,
+      actionLabel: actionLabel || "",
+      showAsPopup: Boolean(showAsPopup),
       status: scheduledFor ? "Scheduled" : "Draft",
       scheduledFor,
       deliveryStatus: {
@@ -146,29 +150,57 @@ export async function sendNotification(req, res) {
 export async function updateNotification(req, res) {
   try {
     const { id } = req.params;
-    const { title, message, audience, type, city, priority, imageUrl, actionUrl } = req.body;
+    const { title, message, audience, type, city, priority, imageUrl, actionUrl, actionLabel, showAsPopup } = req.body;
+    const updates = { updatedAt: new Date() };
 
-    const notification = await Notification.findByIdAndUpdate(
-      id,
-      {
-        title,
-        message,
-        audience,
-        type,
-        city,
-        priority,
-        imageUrl,
-        actionUrl,
-        updatedAt: new Date()
-      },
-      { new: true }
-    );
+    if (title !== undefined) updates.title = title;
+    if (message !== undefined) updates.message = message;
+    if (audience !== undefined) updates.audience = audience;
+    if (type !== undefined) updates.type = type;
+    if (city !== undefined) updates.city = city;
+    if (priority !== undefined) updates.priority = priority;
+    if (imageUrl !== undefined) updates.imageUrl = imageUrl;
+    if (actionUrl !== undefined) updates.actionUrl = actionUrl;
+    if (actionLabel !== undefined) updates.actionLabel = actionLabel;
+    if (showAsPopup !== undefined) updates.showAsPopup = Boolean(showAsPopup);
+
+    const notification = await Notification.findByIdAndUpdate(id, updates, { new: true });
 
     if (!notification) {
       return res.status(404).json({ error: "Notification not found" });
     }
 
     res.json(notification);
+  } catch (err) {
+    res.status(500).json({ error: err.message });
+  }
+}
+
+// Public endpoint: latest active popup broadcast for first-time visitors
+export async function getLatestPopupNotification(req, res) {
+  try {
+    const notification = await Notification.findOne({
+      status: "Sent",
+      audience: "Users",
+      showAsPopup: true
+    })
+      .sort({ sentAt: -1, createdAt: -1 })
+      .lean();
+
+    if (!notification) {
+      return res.json(null);
+    }
+
+    res.json({
+      _id: notification._id,
+      title: notification.title,
+      message: notification.message,
+      imageUrl: notification.imageUrl || "",
+      actionUrl: notification.actionUrl || "",
+      actionLabel: notification.actionLabel || "",
+      priority: notification.priority || "Medium",
+      sentAt: notification.sentAt || notification.createdAt
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }

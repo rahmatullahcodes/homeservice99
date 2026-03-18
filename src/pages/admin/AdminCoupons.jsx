@@ -1,14 +1,18 @@
-import { useState, useEffect } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useToast } from "../../context/ToastContext";
+import { API_ENDPOINTS } from "../../config/api";
 
-const API_BASE_URL = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
+function parseCoupons(payload) {
+  if (Array.isArray(payload?.coupons)) return payload.coupons;
+  if (Array.isArray(payload)) return payload;
+  return [];
+}
 
 export default function AdminCoupons() {
-
   const [coupons, setCoupons] = useState([]);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
-
   const [form, setForm] = useState({
     code: "",
     type: "Flat",
@@ -16,160 +20,62 @@ export default function AdminCoupons() {
     expiryDate: "",
     maxUsage: ""
   });
+
   const { addToast } = useToast();
 
-  // Fetch coupons on component mount
   useEffect(() => {
     fetchCoupons();
   }, []);
 
-  // Fetch all coupons from backend
   async function fetchCoupons() {
     try {
       setLoading(true);
       setError("");
-      
+
       const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
-      console.log("Token:", token ? "Found" : "Not found");
-      console.log("API Base URL:", API_BASE_URL);
-      
       if (!token) {
-        setError("Admin authentication required. Please login first.");
-        setLoading(false);
-        return;
+        throw new Error("Admin authentication required. Please login first.");
       }
-      
-      console.log("Fetching coupons from:", `${API_BASE_URL}/admin/coupons`);
-      
-      const response = await fetch(`${API_BASE_URL}/admin/coupons`, {
-        method: "GET",
+
+      const response = await fetch(API_ENDPOINTS.ADMIN.GET_COUPONS, {
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
         }
       });
-
-      console.log("Response status:", response.status);
-      console.log("Response ok:", response.ok);
-
-      if (response.status === 401) {
-        setError("Session expired. Please login again.");
-        localStorage.removeItem("adminToken");
-        localStorage.removeItem("token");
-        localStorage.removeItem("adminUser");
-        setLoading(false);
-        return;
-      }
+      const payload = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        console.error("Error response:", errorData);
-        throw new Error(errorData.message || `Server error: ${response.status}`);
+        throw new Error(payload?.message || `Failed to load coupons (${response.status})`);
       }
 
-      const data = await response.json();
-      console.log("Coupons received:", data);
-      setCoupons(data);
-    } catch (err) {
-      const message = err.message || "Failed to load coupons";
-      setError(message);
-      addToast(message, "error");
-      console.error("Fetch error details:", {
-        message: err.message,
-        name: err.name,
-        stack: err.stack
-      });
+      setCoupons(parseCoupons(payload));
+    } catch (requestError) {
+      setCoupons([]);
+      setError(requestError.message || "Failed to load coupons");
+      addToast(requestError.message || "Failed to load coupons", "error");
     } finally {
       setLoading(false);
     }
   }
 
-  // Toggle coupon status
-  async function toggleStatus(id) {
-    try {
-      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
-      if (!token) {
-        addToast("Authentication required", "error");
-        return;
-      }
-      
-      const response = await fetch(`${API_BASE_URL}/admin/coupons/${id}/toggle`, {
-        method: "PATCH",
-        headers: {
-          "Authorization": `Bearer ${token}`,
-          "Content-Type": "application/json"
-        }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to update coupon status");
-      }
-
-      const updatedCoupon = await response.json();
-      
-      setCoupons(prev =>
-        prev.map(c =>
-          c._id === id ? updatedCoupon : c
-        )
-      );
-
-      addToast(updatedCoupon.active ? "Coupon enabled" : "Coupon disabled", "success");
-    } catch (err) {
-      addToast(err.message, "error");
-      console.error("Toggle error:", err);
-    }
-  }
-
-  // Delete coupon
-  async function deleteCoupon(id, code) {
-    if (!window.confirm(`Delete coupon ${code}?`)) return;
-
-    try {
-      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
-      if (!token) {
-        addToast("Authentication required", "error");
-        return;
-      }
-      
-      const response = await fetch(`${API_BASE_URL}/admin/coupons/${id}`, {
-        method: "DELETE",
-        headers: {
-          "Authorization": `Bearer ${token}`
-        }
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to delete coupon");
-      }
-
-      setCoupons(prev => prev.filter(c => c._id !== id));
-      addToast("Coupon deleted", "success");
-    } catch (err) {
-      addToast(err.message, "error");
-      console.error("Delete error:", err);
-    }
-  }
-
-  // Create coupon
   async function createCoupon() {
-    if (!form.code || !form.value) {
+    if (!form.code.trim() || !form.value) {
       addToast("Code and value are required", "warning");
       return;
     }
 
     try {
-      setLoading(true);
+      setSaving(true);
+      setError("");
+
       const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
       if (!token) {
-        addToast("Authentication required", "error");
-        setLoading(false);
-        return;
+        throw new Error("Admin authentication required. Please login first.");
       }
-      
+
       const payload = {
-        code: form.code,
+        code: form.code.trim().toUpperCase(),
         type: form.type,
         value: Number(form.value)
       };
@@ -177,125 +83,175 @@ export default function AdminCoupons() {
       if (form.expiryDate) {
         payload.expiryDate = form.expiryDate;
       }
-
       if (form.maxUsage) {
         payload.maxUsage = Number(form.maxUsage);
       }
 
-      const response = await fetch(`${API_BASE_URL}/admin/coupons`, {
+      const response = await fetch(API_ENDPOINTS.ADMIN.CREATE_COUPON, {
         method: "POST",
         headers: {
-          "Authorization": `Bearer ${token}`,
+          Authorization: `Bearer ${token}`,
           "Content-Type": "application/json"
         },
         body: JSON.stringify(payload)
       });
+      const data = await response.json().catch(() => ({}));
 
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || "Failed to create coupon");
+        throw new Error(data?.message || "Failed to create coupon");
       }
 
-      const newCoupon = await response.json();
-      setCoupons(prev => [newCoupon, ...prev]);
-
+      setCoupons((prev) => [data, ...prev]);
       setForm({ code: "", type: "Flat", value: "", expiryDate: "", maxUsage: "" });
       addToast("Coupon created successfully", "success");
-    } catch (err) {
-      addToast(err.message, "error");
-      console.error("Create error:", err);
+    } catch (requestError) {
+      setError(requestError.message || "Failed to create coupon");
+      addToast(requestError.message || "Failed to create coupon", "error");
     } finally {
-      setLoading(false);
+      setSaving(false);
     }
   }
 
+  async function toggleStatus(id) {
+    try {
+      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Admin authentication required. Please login first.");
+      }
+
+      const response = await fetch(API_ENDPOINTS.ADMIN.TOGGLE_COUPON(id), {
+        method: "PATCH",
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+      const data = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(data?.message || "Failed to update coupon");
+      }
+
+      setCoupons((prev) => prev.map((coupon) => (coupon._id === id ? data : coupon)));
+    } catch (requestError) {
+      setError(requestError.message || "Failed to update coupon");
+      addToast(requestError.message || "Failed to update coupon", "error");
+    }
+  }
+
+  async function deleteCoupon(couponId, code) {
+    if (!window.confirm(`Delete coupon ${code}?`)) {
+      return;
+    }
+
+    try {
+      const token = localStorage.getItem("adminToken") || localStorage.getItem("token");
+      if (!token) {
+        throw new Error("Admin authentication required. Please login first.");
+      }
+
+      const response = await fetch(API_ENDPOINTS.ADMIN.DELETE_COUPON(couponId), {
+        method: "DELETE",
+        headers: { Authorization: `Bearer ${token}` }
+      });
+      const payload = await response.json().catch(() => ({}));
+
+      if (!response.ok) {
+        throw new Error(payload?.message || "Failed to delete coupon");
+      }
+
+      setCoupons((prev) => prev.filter((coupon) => coupon._id !== couponId));
+      addToast("Coupon deleted", "success");
+    } catch (requestError) {
+      setError(requestError.message || "Failed to delete coupon");
+      addToast(requestError.message || "Failed to delete coupon", "error");
+    }
+  }
+
+  const stats = useMemo(() => ({
+    total: coupons.length,
+    active: coupons.filter((coupon) => coupon.active).length,
+    expired: coupons.filter((coupon) => coupon.expiryDate && new Date(coupon.expiryDate) < new Date()).length
+  }), [coupons]);
+
   return (
     <div className="admin-page">
-
-      <h2>Coupons</h2>
-      <p className="admin-subtitle">
-        Create and manage discount coupons
-      </p>
-
-      {/* DEBUG INFO */}
-      <div style={{ 
-        backgroundColor: "#f8f9fa", 
-        padding: "10px", 
-        borderRadius: "4px", 
-        marginBottom: "15px", 
-        fontSize: "0.85em",
-        border: "1px solid #dee2e6"
-      }}>
-        <strong>Debug Info:</strong>
-        <div>API URL: {API_BASE_URL}</div>
-        <div>Token: {localStorage.getItem("adminToken") ? "✓ Found" : "✗ Not found"}</div>
-        <div>Loading: {loading ? "Yes" : "No"}</div>
+      <div className="admin-page-head">
+        <h2>Coupons</h2>
+        <p className="admin-subtitle">Create and manage discount coupons</p>
       </div>
 
-      {error && <div className="error-message" style={{ color: "red", marginBottom: "15px", padding: "10px", backgroundColor: "#ffe6e6", borderRadius: "4px" }}>{error}</div>}
+      {error && <div className="admin-alert error">{error}</div>}
 
-      {/* CREATE COUPON */}
-      <div className="detail-box">
+      <div className="admin-kpi-grid">
+        <div className="kpi-card">
+          <span>Total Coupons</span>
+          <h3>{stats.total}</h3>
+          <small className="neutral">All coupon records</small>
+        </div>
+        <div className="kpi-card">
+          <span>Active</span>
+          <h3>{stats.active}</h3>
+          <small className="positive">Currently available</small>
+        </div>
+        <div className="kpi-card">
+          <span>Expired</span>
+          <h3>{stats.expired}</h3>
+          <small className="negative">Past expiry date</small>
+        </div>
+      </div>
+
+      <div className="admin-section detail-box">
         <h3>Create Coupon</h3>
-
         <div className="form-row">
           <input
             placeholder="Coupon Code"
             value={form.code}
-            onChange={e => setForm({ ...form, code: e.target.value })}
-            disabled={loading}
+            onChange={(event) => setForm((prev) => ({ ...prev, code: event.target.value }))}
+            disabled={saving}
           />
-
           <select
             value={form.type}
-            onChange={e => setForm({ ...form, type: e.target.value })}
-            disabled={loading}
+            onChange={(event) => setForm((prev) => ({ ...prev, type: event.target.value }))}
+            disabled={saving}
           >
-            <option value="Flat">Flat (₹)</option>
+            <option value="Flat">Flat (Rs)</option>
             <option value="Percent">Percent (%)</option>
           </select>
-
           <input
             type="number"
             placeholder="Value"
             value={form.value}
-            onChange={e => setForm({ ...form, value: e.target.value })}
-            disabled={loading}
+            onChange={(event) => setForm((prev) => ({ ...prev, value: event.target.value }))}
+            disabled={saving}
           />
-
           <input
             type="date"
-            placeholder="Expiry Date (Optional)"
             value={form.expiryDate}
-            onChange={e => setForm({ ...form, expiryDate: e.target.value })}
-            disabled={loading}
+            onChange={(event) => setForm((prev) => ({ ...prev, expiryDate: event.target.value }))}
+            disabled={saving}
           />
-
           <input
             type="number"
             placeholder="Max Usage (Optional)"
             value={form.maxUsage}
-            onChange={e => setForm({ ...form, maxUsage: e.target.value })}
-            disabled={loading}
+            onChange={(event) => setForm((prev) => ({ ...prev, maxUsage: event.target.value }))}
+            disabled={saving}
           />
-
-          <button className="btn-primary" onClick={createCoupon} disabled={loading}>
-            {loading ? "Creating..." : "Create"}
+          <button className="btn-primary" onClick={createCoupon} disabled={saving}>
+            {saving ? "Creating..." : "Create"}
           </button>
         </div>
       </div>
 
-      {/* COUPON LIST */}
       <div className="admin-section">
         <h3>All Coupons ({coupons.length})</h3>
-
-        {loading && !coupons.length ? (
-          <p>Loading coupons...</p>
+        {loading ? (
+          <div className="admin-loading">Loading coupons...</div>
         ) : coupons.length === 0 ? (
-          <p>No coupons created yet</p>
+          <div className="admin-empty"><p>No coupons created yet</p></div>
         ) : (
-          <div className="admin-table">
-
+          <div className="admin-table card-mobile">
             <div className="table-row head">
               <span>Code</span>
               <span>Type</span>
@@ -307,41 +263,36 @@ export default function AdminCoupons() {
               <span>Action</span>
             </div>
 
-            {coupons.map(c => (
-              <div className="table-row" key={c._id}>
-                <span><strong>{c.code}</strong></span>
-                <span>{c.type}</span>
-                <span>{c.type === "Flat" ? `₹${c.value}` : `${c.value}%`}</span>
-                <span>{c.usage}</span>
-                <span>{c.maxUsage ? c.maxUsage : "Unlimited"}</span>
-                <span>
-                  {c.expiryDate ? new Date(c.expiryDate).toLocaleDateString() : "No expiry"}
+            {coupons.map((coupon) => (
+              <div className="table-row" key={coupon._id}>
+                <span data-label="Code"><strong>{coupon.code}</strong></span>
+                <span data-label="Type">{coupon.type}</span>
+                <span data-label="Value">
+                  {coupon.type === "Flat" ? `Rs ${coupon.value}` : `${coupon.value}%`}
                 </span>
-                <span className={c.active ? "status-success" : "status-pending"}>
-                  {c.active ? "Active" : "Inactive"}
+                <span data-label="Usage">{coupon.usage}</span>
+                <span data-label="Max Usage">{coupon.maxUsage || "Unlimited"}</span>
+                <span data-label="Expiry">
+                  {coupon.expiryDate ? new Date(coupon.expiryDate).toLocaleDateString() : "No expiry"}
                 </span>
-                <span style={{ display: "flex", gap: "5px" }}>
-                  <button
-                    className="btn-outline"
-                    onClick={() => toggleStatus(c._id)}
-                  >
-                    {c.active ? "Disable" : "Enable"}
+                <span data-label="Status">
+                  <span className={`tag ${coupon.active ? "success" : "pending"}`}>
+                    {coupon.active ? "Active" : "Inactive"}
+                  </span>
+                </span>
+                <span data-label="Action" style={{ display: "flex", gap: "6px", flexWrap: "wrap" }}>
+                  <button className="btn-outline" onClick={() => toggleStatus(coupon._id)}>
+                    {coupon.active ? "Disable" : "Enable"}
                   </button>
-                  <button
-                    className="btn-outline"
-                    onClick={() => deleteCoupon(c._id, c.code)}
-                    style={{ color: "red" }}
-                  >
+                  <button className="btn-outline" onClick={() => deleteCoupon(coupon._id, coupon.code)} style={{ color: "red" }}>
                     Delete
                   </button>
                 </span>
               </div>
             ))}
-
           </div>
         )}
       </div>
-
     </div>
   );
 }

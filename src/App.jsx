@@ -1,6 +1,7 @@
-import { Routes, Route } from "react-router-dom";
+import { Routes, Route, useLocation } from "react-router-dom";
 
 import Navbar from "./components/Navbar.jsx";
+import BroadcastPopup from "./components/BroadcastPopup.jsx";
 import Footer from "./components/Footer.jsx";
 import ServiceCategory from "./components/ServiceCategory.jsx";
 
@@ -23,6 +24,7 @@ import Disclaimer from "./pages/Disclaimer.jsx";
 import CancellationRefund from "./pages/CancellationRefund.jsx";
 import TermsConditions from "./pages/TermsConditions.jsx";
 import PrivacyPolicy from "./pages/PrivacyPolicy.jsx";
+import ReferralEntry from "./pages/ReferralEntry.jsx";
 
 /* USER ACCOUNT MODULE */
 import AccountLayout from "./pages/account/AccountLayout.jsx";
@@ -64,18 +66,45 @@ import AdminWallet from "./pages/admin/AdminWallet.jsx";
 import AdminCoupons from "./pages/admin/AdminCoupons.jsx";
 import AdminReviews from "./pages/admin/AdminReviews.jsx";
 import AdminCMS from "./pages/admin/AdminCMS.jsx";
+import AdminHomePage from "./pages/admin/AdminHomePage.jsx";
 import AdminReports from "./pages/admin/AdminReports.jsx";
 import AdminSettings from "./pages/admin/AdminSettings.jsx";
+import AdminPaymentMethods from "./pages/admin/AdminPaymentMethods.jsx";
 import AdminSupport from "./pages/admin/AdminSupport.jsx";
 import AdminNotifications from "./pages/admin/AdminNotifications.jsx";
 import AdminContacts from "./pages/admin/AdminContacts.jsx";
+import AdminDiagnostics from "./pages/admin/AdminDiagnostics.jsx";
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx";
 
 export default function App() {
+  const location = useLocation();
+  const isVendorRoute =
+    location.pathname.startsWith("/vendor") ||
+    location.pathname === "/vendor-login" ||
+    location.pathname === "/vendor-signup";
+  const isAdminRoute =
+    location.pathname.startsWith("/admin") ||
+    location.pathname === "/admin-login";
+  const isAccountRoute = location.pathname.startsWith("/account");
+  const hidePublicChrome = isVendorRoute || isAdminRoute || isAccountRoute;
+  const showBroadcastPopup = !isVendorRoute && !isAdminRoute;
+  const authToken = localStorage.getItem("token");
+  let popupUserKey = "guest";
+  if (authToken) {
+    try {
+      const user = JSON.parse(localStorage.getItem("user") || "{}");
+      popupUserKey = String(user?._id || user?.id || user?.email || authToken.slice(-12));
+    } catch {
+      popupUserKey = authToken.slice(-12);
+    }
+  }
+  const broadcastPopupKey = authToken ? `auth-${popupUserKey}` : "guest";
+
   return (
     <div className="app-root">
-      <Navbar />
+      {!hidePublicChrome && <Navbar />}
+      {showBroadcastPopup && <BroadcastPopup key={broadcastPopupKey} />}
 
       <main className="main-content">
         <Routes>
@@ -95,6 +124,7 @@ export default function App() {
           <Route path="/cancellation-refund" element={<CancellationRefund />} />
           <Route path="/terms-conditions" element={<TermsConditions />} />
           <Route path="/privacy-policy" element={<PrivacyPolicy />} />
+          <Route path="/ref/:code" element={<ReferralEntry />} />
           
           {/* CMS Pages (Catchall for dynamic pages) */}
           <Route path="/:slug" element={<CMSPage />} />
@@ -175,17 +205,20 @@ export default function App() {
             <Route path="coupons" element={<AdminCoupons />} />
             <Route path="reviews" element={<AdminReviews />} />
             <Route path="cms" element={<AdminCMS />} />
+            <Route path="home-page" element={<AdminHomePage />} />
             <Route path="reports" element={<AdminReports />} />
+            <Route path="payment-methods" element={<AdminPaymentMethods />} />
             <Route path="settings" element={<AdminSettings />} />
             <Route path="support" element={<AdminSupport />} />
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="contacts" element={<AdminContacts />} />
+            <Route path="diagnostics" element={<AdminDiagnostics />} />
           </Route>
 
         </Routes>
       </main>
 
-      <Footer />
+      {!hidePublicChrome && <Footer />}
     </div>
   );
 }

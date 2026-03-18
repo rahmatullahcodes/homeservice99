@@ -7,6 +7,14 @@ import Coupon from "../models/Coupon.js";
 import Review from "../models/Review.js";
 import bcrypt from "bcrypt";
 
+function normalizeText(value) {
+  return String(value || "").trim();
+}
+
+function escapeRegex(value) {
+  return String(value || "").replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
 /* Get dashboard stats */
 export async function getDashboardStats(req, res) {
   try {
@@ -96,8 +104,65 @@ export async function getDashboardStats(req, res) {
 /* Get all users */
 export async function getAllUsers(req, res) {
   try {
-    const users = await User.find().select("-password").sort({ createdAt: -1 });
-    res.json(users);
+    const [users, bookingStats, reviewStats] = await Promise.all([
+      User.find().select("-password").sort({ createdAt: -1 }),
+      Booking.aggregate([
+        {
+          $group: {
+            _id: "$user",
+            totalBookings: { $sum: 1 },
+            completedBookings: {
+              $sum: {
+                $cond: [{ $eq: ["$status", "Completed"] }, 1, 0]
+              }
+            },
+            totalSpent: {
+              $sum: {
+                $cond: [
+                  { $in: ["$status", ["Scheduled", "InProgress", "Completed"]] },
+                  { $ifNull: ["$price", 0] },
+                  0
+                ]
+              }
+            }
+          }
+        }
+      ]),
+      Review.aggregate([
+        {
+          $group: {
+            _id: "$user",
+            averageRating: { $avg: "$rating" },
+            totalReviews: { $sum: 1 }
+          }
+        }
+      ])
+    ]);
+
+    const bookingMap = new Map(
+      bookingStats.map((entry) => [String(entry._id), entry])
+    );
+    const reviewMap = new Map(
+      reviewStats.map((entry) => [String(entry._id), entry])
+    );
+
+    const enriched = users.map((user) => {
+      const bookingEntry = bookingMap.get(String(user._id));
+      const reviewEntry = reviewMap.get(String(user._id));
+
+      return {
+        ...user.toObject(),
+        totalBookings: bookingEntry?.totalBookings || 0,
+        completedBookings: bookingEntry?.completedBookings || 0,
+        totalSpent: bookingEntry?.totalSpent || 0,
+        averageRating: reviewEntry?.averageRating
+          ? Number(reviewEntry.averageRating.toFixed(1))
+          : 0,
+        totalReviews: reviewEntry?.totalReviews || 0
+      };
+    });
+
+    res.json(enriched);
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -119,11 +184,18 @@ export async function createUser(req, res) {
       return res.status(400).json({ message: "User with this email already exists" });
     }
 
+    const rawPassword = String(password || "defaultPassword123").trim();
+    if (rawPassword.length < 6) {
+      return res.status(400).json({ message: "Password must be at least 6 characters long" });
+    }
+
+    const hashedPassword = await bcrypt.hash(rawPassword, 10);
+
     const user = new User({
       name,
       email,
       phone,
-      password: password || "defaultPassword123", // Default password if not provided
+      password: hashedPassword,
       city: city || "N/A",
       address: address || "N/A",
       role: "user"
@@ -299,10 +371,236 @@ export async function getAllServicesAdmin(req, res) {
   }
 }
 
+/* Get category/subcategory taxonomy from services */
+export async function getServiceTaxonomy(req, res) {
+  try {
+    const grouped = await Service.aggregate([
+      {
+        $project: {
+          category: { $ifNull: ["$category", "Uncategorized"] },
+          subcategory: { $ifNull: ["$subcategory", ""] },
+          active: { $ifNull: ["$active", false] }
+        }
+      },
+      {
+        $group: {
+          _id: {
+            category: "$category",
+            subcategory: "$subcategory"
+          },
+          totalServices: { $sum: 1 },
+          activeServices: {
+            $sum: {
+              $cond: [{ $eq: ["$active", true] }, 1, 0]
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          "_id.category": 1,
+          "_id.subcategory": 1
+        }
+      }
+    ]);
+
+    const categoryMap = new Map();
+
+    grouped.forEach((entry) => {
+      const categoryName = normalizeText(entry?._id?.category) || "Uncategorized";
+      const subcategoryName = normalizeText(entry?._id?.subcategory);
+
+      if (!categoryMap.has(categoryName)) {
+        categoryMap.set(categoryName, {
+          name: categoryName,
+          totalServices: 0,
+          activeServices: 0,
+          subcategories: []
+        });
+      }
+
+      const bucket = categoryMap.get(categoryName);
+      bucket.totalServices += Number(entry.totalServices || 0);
+      bucket.activeServices += Number(entry.activeServices || 0);
+
+      if (subcategoryName) {
+        bucket.subcategories.push({
+          name: subcategoryName,
+          totalServices: Number(entry.totalServices || 0),
+          activeServices: Number(entry.activeServices || 0),
+          active: Number(entry.activeServices || 0) > 0
+        });
+      }
+    });
+
+    const categories = Array.from(categoryMap.values()).map((category) => ({
+      ...category,
+      active: category.activeServices > 0
+    }));
+
+    res.json({
+      categories,
+      totalCategories: categories.length,
+      totalSubcategories: categories.reduce(
+        (sum, category) => sum + category.subcategories.length,
+        0
+      )
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+/* Rename a category for all services */
+export async function renameServiceCategory(req, res) {
+  try {
+    const oldCategory = normalizeText(req.body.oldCategory);
+    const newCategory = normalizeText(req.body.newCategory);
+
+    if (!oldCategory || !newCategory) {
+      return res.status(400).json({ message: "Old and new category names are required" });
+    }
+
+    if (oldCategory.toLowerCase() === newCategory.toLowerCase()) {
+      return res.status(400).json({ message: "Category name is unchanged" });
+    }
+
+    const categoryRegex = new RegExp(`^${escapeRegex(oldCategory)}$`, "i");
+    const update = await Service.updateMany(
+      { category: categoryRegex },
+      { $set: { category: newCategory, updatedAt: Date.now() } }
+    );
+
+    if (!update.matchedCount) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.json({
+      message: "Category renamed successfully",
+      matched: update.matchedCount,
+      updated: update.modifiedCount
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+/* Enable/disable all services in category */
+export async function setCategoryStatus(req, res) {
+  try {
+    const category = normalizeText(req.body.category);
+    const active = Boolean(req.body.active);
+
+    if (!category) {
+      return res.status(400).json({ message: "Category is required" });
+    }
+
+    const categoryRegex = new RegExp(`^${escapeRegex(category)}$`, "i");
+    const update = await Service.updateMany(
+      { category: categoryRegex },
+      {
+        $set: {
+          active,
+          status: active ? "active" : "inactive",
+          updatedAt: Date.now()
+        }
+      }
+    );
+
+    if (!update.matchedCount) {
+      return res.status(404).json({ message: "Category not found" });
+    }
+
+    res.json({
+      message: active ? "Category enabled" : "Category disabled",
+      matched: update.matchedCount,
+      updated: update.modifiedCount
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+/* Rename a subcategory under a category */
+export async function renameServiceSubcategory(req, res) {
+  try {
+    const category = normalizeText(req.body.category);
+    const oldSubcategory = normalizeText(req.body.oldSubcategory);
+    const newSubcategory = normalizeText(req.body.newSubcategory);
+
+    if (!category || !oldSubcategory || !newSubcategory) {
+      return res.status(400).json({ message: "Category, old subcategory and new subcategory are required" });
+    }
+
+    if (oldSubcategory.toLowerCase() === newSubcategory.toLowerCase()) {
+      return res.status(400).json({ message: "Subcategory name is unchanged" });
+    }
+
+    const categoryRegex = new RegExp(`^${escapeRegex(category)}$`, "i");
+    const subcategoryRegex = new RegExp(`^${escapeRegex(oldSubcategory)}$`, "i");
+
+    const update = await Service.updateMany(
+      { category: categoryRegex, subcategory: subcategoryRegex },
+      { $set: { subcategory: newSubcategory, updatedAt: Date.now() } }
+    );
+
+    if (!update.matchedCount) {
+      return res.status(404).json({ message: "Subcategory not found for this category" });
+    }
+
+    res.json({
+      message: "Subcategory renamed successfully",
+      matched: update.matchedCount,
+      updated: update.modifiedCount
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+/* Enable/disable all services in a subcategory */
+export async function setSubcategoryStatus(req, res) {
+  try {
+    const category = normalizeText(req.body.category);
+    const subcategory = normalizeText(req.body.subcategory);
+    const active = Boolean(req.body.active);
+
+    if (!category || !subcategory) {
+      return res.status(400).json({ message: "Category and subcategory are required" });
+    }
+
+    const categoryRegex = new RegExp(`^${escapeRegex(category)}$`, "i");
+    const subcategoryRegex = new RegExp(`^${escapeRegex(subcategory)}$`, "i");
+
+    const update = await Service.updateMany(
+      { category: categoryRegex, subcategory: subcategoryRegex },
+      {
+        $set: {
+          active,
+          status: active ? "active" : "inactive",
+          updatedAt: Date.now()
+        }
+      }
+    );
+
+    if (!update.matchedCount) {
+      return res.status(404).json({ message: "Subcategory not found for this category" });
+    }
+
+    res.json({
+      message: active ? "Subcategory enabled" : "Subcategory disabled",
+      matched: update.matchedCount,
+      updated: update.modifiedCount
+    });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
 /* Create service */
 export async function createService(req, res) {
   try {
-    const { title, category, price } = req.body;
+    const { title, category, subcategory, price, image } = req.body;
 
     // Validation
     if (!title || !category || price === undefined || price === null || price === "") {
@@ -318,7 +616,9 @@ export async function createService(req, res) {
     const newService = new Service({
       title: String(title).trim(),
       category: String(category).trim(),
+      subcategory: normalizeText(subcategory) || null,
       price: priceNum,
+      image: normalizeText(image) || null,
       active: true
     });
 
@@ -334,17 +634,33 @@ export async function createService(req, res) {
 export async function updateService(req, res) {
   try {
     const { id } = req.params;
-    const { title, category, price, active } = req.body;
+    const { title, category, subcategory, price, image, active } = req.body;
 
     const service = await Service.findById(id);
     if (!service) {
       return res.status(404).json({ message: "Service not found" });
     }
 
-    if (title) service.title = title;
-    if (category) service.category = category;
-    if (price) service.price = Number(price);
-    if (active !== undefined) service.active = active;
+    if (title !== undefined) service.title = normalizeText(title);
+    if (category !== undefined) service.category = normalizeText(category);
+    if (subcategory !== undefined) {
+      const normalizedSubcategory = normalizeText(subcategory);
+      service.subcategory = normalizedSubcategory || null;
+    }
+    if (price !== undefined && price !== null && price !== "") {
+      const priceNum = Number(price);
+      if (isNaN(priceNum) || priceNum < 0) {
+        return res.status(400).json({ message: "Price must be a valid positive number" });
+      }
+      service.price = priceNum;
+    }
+    if (image !== undefined) {
+      service.image = normalizeText(image) || null;
+    }
+    if (active !== undefined) {
+      service.active = Boolean(active);
+      service.status = service.active ? "active" : "inactive";
+    }
 
     await service.save();
     res.json(service);
@@ -364,6 +680,7 @@ export async function toggleServiceStatus(req, res) {
     }
 
     service.active = !service.active;
+    service.status = service.active ? "active" : "inactive";
     await service.save();
     res.json(service);
   } catch (err) {
@@ -425,18 +742,101 @@ export async function updatePaymentStatus(req, res) {
     if (!validStatuses.includes(status)) {
       return res.status(400).json({ message: "Invalid status" });
     }
-    
-    const payment = await Transaction.findByIdAndUpdate(
-      id,
-      { status },
-      { new: true }
-    ).populate("vendor", "businessName email");
-    
+
+    const payment = await Transaction.findById(id).populate("vendor", "businessName email");
+
     if (!payment) {
       return res.status(404).json({ message: "Payment not found" });
     }
-    
-    res.json({ message: "Payment status updated", payment });
+
+    const previousStatus = payment.status;
+    payment.status = status;
+    await payment.save();
+    await payment.populate("vendor", "businessName email");
+
+    let walletBalance;
+
+    // Apply wallet changes for vendor top-up approvals/reversals.
+    if (payment.vendor && payment.type === "Credit" && previousStatus !== status) {
+      if (previousStatus !== "Success" && status === "Success") {
+        const vendor = await Vendor.findByIdAndUpdate(
+          payment.vendor._id,
+          { $inc: { walletBalance: payment.amount } },
+          { new: true }
+        );
+        walletBalance = vendor?.walletBalance;
+      } else if (previousStatus === "Success" && status !== "Success") {
+        const vendor = await Vendor.findByIdAndUpdate(
+          payment.vendor._id,
+          { $inc: { walletBalance: -payment.amount } },
+          { new: true }
+        );
+        walletBalance = vendor?.walletBalance;
+      }
+    }
+
+    // Refund wallet automatically if a withdrawal is marked as failed.
+    if (
+      payment.vendor &&
+      payment.type === "Debit" &&
+      /withdrawal/i.test(payment.source || "") &&
+      previousStatus !== "Failed" &&
+      status === "Failed"
+    ) {
+      const vendor = await Vendor.findByIdAndUpdate(
+        payment.vendor._id,
+        { $inc: { walletBalance: payment.amount } },
+        { new: true }
+      );
+      walletBalance = vendor?.walletBalance;
+    }
+
+    res.json({ message: "Payment status updated", payment, walletBalance });
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+/* Admin - Manual add payment to vendor wallet */
+export async function addManualVendorPayment(req, res) {
+  try {
+    const { vendorId, amount, note } = req.body;
+    const amountNum = Number(amount);
+
+    if (!vendorId) {
+      return res.status(400).json({ message: "vendorId is required" });
+    }
+    if (!Number.isFinite(amountNum) || amountNum <= 0) {
+      return res.status(400).json({ message: "Amount must be greater than 0" });
+    }
+
+    const vendor = await Vendor.findById(vendorId);
+    if (!vendor) {
+      return res.status(404).json({ message: "Vendor not found" });
+    }
+
+    vendor.walletBalance = (vendor.walletBalance || 0) + amountNum;
+    await vendor.save();
+
+    const source = String(note || "").trim()
+      ? `Admin manual credit: ${String(note).trim()}`
+      : "Admin manual credit";
+
+    const payment = await Transaction.create({
+      vendor: vendorId,
+      type: "Credit",
+      amount: amountNum,
+      source,
+      status: "Success"
+    });
+
+    await payment.populate("vendor", "businessName email");
+
+    res.status(201).json({
+      message: "Manual payment added successfully",
+      payment,
+      walletBalance: vendor.walletBalance
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -463,6 +863,49 @@ export async function updateUser(req, res) {
     const userWithoutPassword = user.toObject();
     delete userWithoutPassword.password;
     res.json(userWithoutPassword);
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+}
+
+/* Admin - Manual adjust user wallet balance */
+export async function adjustUserWallet(req, res) {
+  try {
+    const { id } = req.params;
+    const amountNum = Number(req.body.amount);
+    const type = req.body.type === "Debit" ? "Debit" : "Credit";
+    const note = String(req.body.note || "").trim();
+
+    if (!Number.isFinite(amountNum) || amountNum <= 0) {
+      return res.status(400).json({ message: "Amount must be greater than 0" });
+    }
+
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: "User not found" });
+    }
+
+    if (type === "Debit" && Number(user.walletBalance || 0) < amountNum) {
+      return res.status(400).json({ message: "Insufficient wallet balance for debit" });
+    }
+
+    const delta = type === "Credit" ? amountNum : -amountNum;
+    user.walletBalance = Number(user.walletBalance || 0) + delta;
+    user.walletTransactions.push({
+      type,
+      amount: amountNum,
+      note: note || `Admin manual ${type.toLowerCase()}`,
+      source: "Admin manual adjustment",
+      status: "Success"
+    });
+
+    await user.save();
+
+    res.json({
+      message: `Wallet ${type.toLowerCase()} successful`,
+      walletBalance: user.walletBalance,
+      lastTransaction: user.walletTransactions[user.walletTransactions.length - 1]
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
@@ -498,14 +941,15 @@ export async function getAllCoupons(req, res) {
 export async function createCoupon(req, res) {
   try {
     const { code, type, value, expiryDate, maxUsage } = req.body;
+    const normalizedCode = String(code || "").trim().toUpperCase();
 
     // Validate required fields
-    if (!code || !type || value === undefined || value === null || value === "") {
+    if (!normalizedCode || !type || value === undefined || value === null || value === "") {
       return res.status(400).json({ message: "Code, type, and value are required" });
     }
 
     // Check if coupon already exists
-    const existingCoupon = await Coupon.findOne({ code: code.toUpperCase() });
+    const existingCoupon = await Coupon.findOne({ code: normalizedCode });
     if (existingCoupon) {
       return res.status(400).json({ message: "Coupon code already exists" });
     }
@@ -516,7 +960,7 @@ export async function createCoupon(req, res) {
     }
 
     const coupon = new Coupon({
-      code: code.toUpperCase(),
+      code: normalizedCode,
       type,
       value: Number(value),
       active: true,
@@ -537,13 +981,14 @@ export async function updateCoupon(req, res) {
   try {
     const { id } = req.params;
     const { code, type, value, expiryDate, maxUsage, active } = req.body;
+    const normalizedCode = code !== undefined ? String(code).trim().toUpperCase() : undefined;
 
     const coupon = await Coupon.findById(id);
     if (!coupon) {
       return res.status(404).json({ message: "Coupon not found" });
     }
 
-    if (code) coupon.code = code.toUpperCase();
+    if (normalizedCode) coupon.code = normalizedCode;
     if (type) coupon.type = type;
     if (value !== undefined) coupon.value = Number(value);
     if (expiryDate !== undefined) coupon.expiryDate = expiryDate ? new Date(expiryDate) : null;
@@ -597,12 +1042,13 @@ export async function deleteCoupon(req, res) {
 export async function validateCoupon(req, res) {
   try {
     const { code } = req.body;
+    const normalizedCode = String(code || "").trim().toUpperCase();
 
-    if (!code) {
+    if (!normalizedCode) {
       return res.status(400).json({ message: "Coupon code is required" });
     }
 
-    const coupon = await Coupon.findOne({ code: code.toUpperCase() });
+    const coupon = await Coupon.findOne({ code: normalizedCode });
     if (!coupon) {
       return res.status(404).json({ message: "Coupon not found" });
     }

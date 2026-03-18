@@ -1,13 +1,11 @@
 import { useState, useEffect } from "react";
 import { useVendor } from "../../context/VendorContext";
 import { useToast } from "../../context/ToastContext";
-import { useNavigate } from "react-router-dom";
 import { API_ENDPOINTS } from "../../config/api";
 
 export default function VendorTransactions() {
-  const { vendor, loading: vendorLoading } = useVendor();
+  const { loading: vendorLoading } = useVendor();
   const { addToast } = useToast();
-  const navigate = useNavigate();
   const token = localStorage.getItem('vendorToken');
   
   const [filter, setFilter] = useState("All");
@@ -23,7 +21,7 @@ export default function VendorTransactions() {
     if (token) {
       fetchTransactions();
     }
-  }, [page, token]);
+  }, [page, token, filter, sort]);
 
   async function fetchTransactions() {
     try {
@@ -33,6 +31,10 @@ export default function VendorTransactions() {
       const url = new URL(API_ENDPOINTS.VENDOR.GET_TRANSACTIONS);
       url.searchParams.append('page', page);
       url.searchParams.append('limit', 10);
+      url.searchParams.append('sort', sort);
+      if (filter !== "All") {
+        url.searchParams.append('type', filter);
+      }
 
       const response = await fetch(url.toString(), {
         headers: {
@@ -68,6 +70,15 @@ export default function VendorTransactions() {
     });
   };
 
+  if (vendorLoading) {
+    return (
+      <div style={{ padding: "24px", textAlign: "center" }}>
+        <div className="vendor-loading-spinner" />
+        <p style={{ marginTop: "16px", color: "#6b7280" }}>Loading vendor profile...</p>
+      </div>
+    );
+  }
+
   return (
     <div>
       <div className="vendor-page-head">
@@ -99,21 +110,43 @@ export default function VendorTransactions() {
           <h3 style={{ margin: "0", fontSize: "18px", fontWeight: "700" }}>
             All Transactions
           </h3>
-          <select
-            value={sort}
-            onChange={(e) => setSort(e.target.value)}
-            style={{
-              padding: "8px 12px",
-              borderRadius: "6px",
-              border: "1px solid #e5e7eb",
-              fontSize: "14px"
-            }}
-          >
-            <option value="latest">Latest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="highest">Highest Amount</option>
-            <option value="lowest">Lowest Amount</option>
-          </select>
+          <div style={{ display: "flex", gap: "8px", flexWrap: "wrap" }}>
+            <select
+              value={filter}
+              onChange={(e) => {
+                setFilter(e.target.value);
+                setPage(1);
+              }}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "6px",
+                border: "1px solid #e5e7eb",
+                fontSize: "14px"
+              }}
+            >
+              <option value="All">All Types</option>
+              <option value="Credit">Credit</option>
+              <option value="Debit">Debit</option>
+            </select>
+            <select
+              value={sort}
+              onChange={(e) => {
+                setSort(e.target.value);
+                setPage(1);
+              }}
+              style={{
+                padding: "8px 12px",
+                borderRadius: "6px",
+                border: "1px solid #e5e7eb",
+                fontSize: "14px"
+              }}
+            >
+              <option value="latest">Latest First</option>
+              <option value="oldest">Oldest First</option>
+              <option value="highest">Highest Amount</option>
+              <option value="lowest">Lowest Amount</option>
+            </select>
+          </div>
         </div>
 
         {loading ? (

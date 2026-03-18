@@ -168,12 +168,17 @@ export async function updateContactStatus(req, res) {
       return res.status(400).json({ message: "Status is required" });
     }
 
+    const existing = await Contact.findById(req.params.id);
+    if (!existing) {
+      return res.status(404).json({ message: "Contact not found" });
+    }
+
     const contact = await Contact.findByIdAndUpdate(
       req.params.id,
       {
         status,
-        response: response || contact?.response,
-        respondedBy: status !== "New" ? req.user._id : null,
+        response: response || existing.response || null,
+        respondedBy: status !== "New" ? req.user?._id || null : null,
         resolvedAt: status === "Resolved" ? new Date() : null,
         updatedAt: new Date()
       },

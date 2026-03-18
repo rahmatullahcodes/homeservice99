@@ -48,6 +48,14 @@ const notificationSchema = new mongoose.Schema({
   },
   imageUrl: String,
   actionUrl: String,
+  actionLabel: {
+    type: String,
+    default: ""
+  },
+  showAsPopup: {
+    type: Boolean,
+    default: false
+  },
   priority: {
     type: String,
     enum: ["Low", "Medium", "High"],

@@ -1,7 +1,11 @@
 import express from "express";
-import { auth } from "../middleware/auth.js";
+import { adminAuth } from "../middleware/adminAuth.js";
 import {
   getSettings,
+  getPaymentGatewaySettings,
+  updatePaymentGatewaySettings,
+  getHomePageSettings,
+  updateHomePageSettings,
   updateSettings,
   resetToDefaults,
   getSettingsStats
@@ -10,7 +14,12 @@ import {
 const router = express.Router();
 
 // Protect all routes with auth middleware
-router.use(auth);
+router.use(adminAuth);
+
+router.get("/payment-methods", getPaymentGatewaySettings);
+router.patch("/payment-methods", updatePaymentGatewaySettings);
+router.get("/homepage", getHomePageSettings);
+router.patch("/homepage", updateHomePageSettings);
 
 // GET all settings
 router.get("/", async (req, res) => {
