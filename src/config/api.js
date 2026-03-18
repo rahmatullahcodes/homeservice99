@@ -1,5 +1,6 @@
 // Frontend API Configuration
 const LOCAL_API_BASE_URL = "http://localhost:5000/api";
+const DEFAULT_PROD_API_BASE_URL = "/api";
 const envApiUrl = String(import.meta.env.VITE_API_URL || "").trim();
 const envLocalApiUrl = String(import.meta.env.VITE_API_URL_LOCAL || "").trim();
 
@@ -10,9 +11,14 @@ function isLocalHost(hostname) {
 const browserHostname = typeof window !== "undefined" ? window.location.hostname : "";
 const useLocalApi = isLocalHost(browserHostname);
 
+const browserOrigin = typeof window !== "undefined" ? window.location.origin : "";
+const prodFallbackApiUrl = browserOrigin
+  ? `${browserOrigin}/api`
+  : DEFAULT_PROD_API_BASE_URL;
+
 const API_BASE_URL = useLocalApi
   ? (envLocalApiUrl || LOCAL_API_BASE_URL)
-  : (envApiUrl || LOCAL_API_BASE_URL);
+  : (envApiUrl || prodFallbackApiUrl);
 
 export const API_ENDPOINTS = {
   // User Authentication

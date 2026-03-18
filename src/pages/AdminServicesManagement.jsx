@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-const API_URL = "http://localhost:5000/api";
+import API_BASE_URL from "../config/api";
 
 export default function AdminServicesManagement() {
   const [services, setServices] = useState([]);
@@ -21,7 +20,7 @@ export default function AdminServicesManagement() {
       const params = {};
       if (filter !== "all") params.status = filter;
       
-      const response = await axios.get(`${API_URL}/services/admin/services/all`, { params });
+      const response = await axios.get(`${API_BASE_URL}/services/admin/services/all`, { params });
       setServices(response.data);
     } catch (err) {
       console.error("Error fetching services:", err);
@@ -32,7 +31,7 @@ export default function AdminServicesManagement() {
 
   const handleApproveService = async (serviceId) => {
     try {
-      await axios.put(`${API_URL}/services/admin/services/${serviceId}/approve`, {
+      await axios.put(`${API_BASE_URL}/services/admin/services/${serviceId}/approve`, {
         adminNotes: "Approved by admin"
       });
       fetchServices();
@@ -48,7 +47,7 @@ export default function AdminServicesManagement() {
     if (!reason) return;
 
     try {
-      await axios.put(`${API_URL}/services/admin/services/${serviceId}/reject`, {
+      await axios.put(`${API_BASE_URL}/services/admin/services/${serviceId}/reject`, {
         reason
       });
       fetchServices();
@@ -63,7 +62,7 @@ export default function AdminServicesManagement() {
     if (!window.confirm("Are you sure you want to delete this service?")) return;
 
     try {
-      await axios.delete(`${API_URL}/services/admin/services/${serviceId}/delete`);
+      await axios.delete(`${API_BASE_URL}/services/admin/services/${serviceId}/delete`);
       fetchServices();
       alert("Service deleted successfully!");
     } catch (err) {

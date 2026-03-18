@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import axios from "axios";
-
-const API_URL = "http://localhost:5000/api";
+import API_BASE_URL from "../config/api";
 
 export default function VendorServicesManagement() {
   const [services, setServices] = useState([]);
@@ -30,7 +29,7 @@ export default function VendorServicesManagement() {
   const fetchServices = async () => {
     setLoading(true);
     try {
-      const response = await axios.get(`${API_URL}/services/vendor/my-services`, {
+      const response = await axios.get(`${API_BASE_URL}/services/vendor/my-services`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setServices(response.data);
@@ -43,7 +42,7 @@ export default function VendorServicesManagement() {
 
   const fetchStats = async () => {
     try {
-      const response = await axios.get(`${API_URL}/services/vendor/services/stats`, {
+      const response = await axios.get(`${API_BASE_URL}/services/vendor/services/stats`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       setStats(response.data);
@@ -63,14 +62,14 @@ export default function VendorServicesManagement() {
 
       if (editingService) {
         await axios.put(
-          `${API_URL}/services/vendor/services/${editingService._id}/update`,
+          `${API_BASE_URL}/services/vendor/services/${editingService._id}/update`,
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
         alert("Service updated successfully!");
       } else {
         await axios.post(
-          `${API_URL}/services/vendor/services/create`,
+          `${API_BASE_URL}/services/vendor/services/create`,
           payload,
           { headers: { Authorization: `Bearer ${token}` } }
         );
@@ -114,7 +113,7 @@ export default function VendorServicesManagement() {
     if (!window.confirm("Are you sure you want to delete this service?")) return;
 
     try {
-      await axios.delete(`${API_URL}/services/vendor/services/${serviceId}/delete`, {
+      await axios.delete(`${API_BASE_URL}/services/vendor/services/${serviceId}/delete`, {
         headers: { Authorization: `Bearer ${token}` }
       });
       alert("Service deleted successfully!");
