@@ -10,6 +10,7 @@ import {
   getUserContacts
 } from "../controllers/contactController.js";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { requireAdminPermission } from "../middleware/adminPermissions.js";
 import { userAuth } from "../middleware/userAuth.js";
 
 const router = express.Router();
@@ -21,10 +22,10 @@ router.post("/submit", submitContact);
 router.get("/my-contacts", userAuth, getUserContacts);
 
 // Admin routes
-router.get("/", adminAuth, getAllContacts);
-router.get("/stats", adminAuth, getContactStats);
-router.get("/:id", adminAuth, getContactById);
-router.patch("/:id/status", adminAuth, updateContactStatus);
-router.delete("/:id", adminAuth, deleteContact);
+router.get("/", adminAuth, requireAdminPermission("contacts"), getAllContacts);
+router.get("/stats", adminAuth, requireAdminPermission("contacts"), getContactStats);
+router.get("/:id", adminAuth, requireAdminPermission("contacts"), getContactById);
+router.patch("/:id/status", adminAuth, requireAdminPermission("contacts"), updateContactStatus);
+router.delete("/:id", adminAuth, requireAdminPermission("contacts"), deleteContact);
 
 export default router;

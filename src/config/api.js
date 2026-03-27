@@ -114,6 +114,10 @@ export const API_ENDPOINTS = {
   // Admin
   ADMIN: {
     GET_DASHBOARD: `${API_BASE_URL}/admin/dashboard`,
+    ME: `${API_BASE_URL}/admin/me`,
+    ADMINS: `${API_BASE_URL}/admin/admins`,
+    UPDATE_ADMIN: (id) => `${API_BASE_URL}/admin/admins/${id}`,
+    DELETE_ADMIN: (id) => `${API_BASE_URL}/admin/admins/${id}`,
     GET_USERS: `${API_BASE_URL}/admin/users`,
     GET_VENDORS: `${API_BASE_URL}/admin/vendors`,
     CREATE_VENDOR: `${API_BASE_URL}/admin/vendors`,

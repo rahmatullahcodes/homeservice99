@@ -7,6 +7,7 @@ import {
   verifyVendor
 } from "../controllers/vendorAuthController.js";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { requireAdminPermission } from "../middleware/adminPermissions.js";
 import { vendorAuth } from "../middleware/vendorAuth.js";
 
 const router = express.Router();
@@ -18,6 +19,6 @@ router.post("/login", vendorLogin);
 /* Protected routes */
 router.get("/profile", vendorAuth, getVendorProfile);
 router.patch("/profile", vendorAuth, updateVendorProfile);
-router.patch("/verify", adminAuth, verifyVendor);
+router.patch("/verify", adminAuth, requireAdminPermission("vendors"), verifyVendor);
 
 export default router;

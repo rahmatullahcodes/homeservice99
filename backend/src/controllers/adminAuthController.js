@@ -4,7 +4,7 @@ import jwt from "jsonwebtoken";
 
 function generateToken(admin) {
   return jwt.sign(
-    { id: admin._id, email: admin.email, role: "admin" },
+    { id: admin._id, email: admin.email, role: admin.role },
     process.env.JWT_SECRET,
     { expiresIn: "7d" }
   );
@@ -24,7 +24,11 @@ export async function adminLogin(req, res) {
       return res.status(400).json({ message: "Invalid credentials" });
 
     const token = generateToken(admin);
-    res.json({ token, admin });
+    const adminData = admin.toObject ? admin.toObject() : admin;
+    if (adminData.password) {
+      delete adminData.password;
+    }
+    res.json({ token, admin: adminData });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }

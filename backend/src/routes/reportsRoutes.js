@@ -11,11 +11,12 @@ import {
   getCompleteReport
 } from "../controllers/reportsController.js";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { requireAdminPermission } from "../middleware/adminPermissions.js";
 
 const router = express.Router();
 
 // All report endpoints require admin authentication
-router.use(adminAuth);
+router.use(adminAuth, requireAdminPermission("reports"));
 
 // Dashboard stats
 router.get("/dashboard-stats", getDashboardStats);

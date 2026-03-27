@@ -10,11 +10,12 @@ import {
   getNotificationStats
 } from "../controllers/notificationController.js";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { requireAdminPermission } from "../middleware/adminPermissions.js";
 
 const router = express.Router();
 
 // All notification routes require admin auth
-router.use(adminAuth);
+router.use(adminAuth, requireAdminPermission("notifications"));
 
 router.get("/", getAllNotifications);
 router.get("/stats", getNotificationStats);

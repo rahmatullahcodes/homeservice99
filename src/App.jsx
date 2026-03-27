@@ -74,6 +74,7 @@ import AdminSupport from "./pages/admin/AdminSupport.jsx";
 import AdminNotifications from "./pages/admin/AdminNotifications.jsx";
 import AdminContacts from "./pages/admin/AdminContacts.jsx";
 import AdminDiagnostics from "./pages/admin/AdminDiagnostics.jsx";
+import AdminAdmins from "./pages/admin/AdminAdmins.jsx";
 import AdminLogin from "./pages/admin/AdminLogin.jsx";
 import AdminProtectedRoute from "./components/AdminProtectedRoute.jsx";
 
@@ -213,6 +214,7 @@ export default function App() {
             <Route path="notifications" element={<AdminNotifications />} />
             <Route path="contacts" element={<AdminContacts />} />
             <Route path="diagnostics" element={<AdminDiagnostics />} />
+            <Route path="admins" element={<AdminAdmins />} />
           </Route>
 
         </Routes>

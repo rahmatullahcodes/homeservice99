@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { setAdminUser } from "../../utils/adminAccess";
 import { API_ENDPOINTS } from "../../config/api.js";
 
 export default function AdminLogin() {
@@ -52,7 +53,7 @@ export default function AdminLogin() {
 
       // Store token and admin info
       localStorage.setItem("adminToken", data.token);
-      localStorage.setItem("adminUser", JSON.stringify(data.admin));
+      setAdminUser(data.admin);
       navigate("/admin");
     } catch (err) {
       setError("Connection error. Please check if backend is running on port 5000.");

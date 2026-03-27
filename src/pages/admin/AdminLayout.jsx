@@ -1,50 +1,58 @@
-import { NavLink, Outlet, useNavigate } from "react-router-dom";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { NavLink, Outlet, useLocation, useNavigate } from "react-router-dom";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { API_ENDPOINTS } from "../../config/api";
+import {
+  getAdminUser,
+  getPermissionForPath,
+  hasAdminPermission,
+  normalizeAdminUser,
+  setAdminUser
+} from "../../utils/adminAccess";
 import "../../styles/admin.css";
 
 const NAV_SECTIONS = [
   {
     label: "Main",
     items: [
-      { to: "/admin", label: "Dashboard", end: true, icon: "grid" },
-      { to: "/admin/bookings", label: "Bookings", icon: "calendar" },
-      { to: "/admin/payments", label: "Payments", icon: "card" }
+      { to: "/admin", label: "Dashboard", end: true, icon: "grid", permission: "dashboard" },
+      { to: "/admin/bookings", label: "Bookings", icon: "calendar", permission: "bookings" },
+      { to: "/admin/payments", label: "Payments", icon: "card", permission: "payments" }
     ]
   },
   {
     label: "Management",
     items: [
-      { to: "/admin/users", label: "Users", icon: "users" },
-      { to: "/admin/vendors", label: "Vendors", icon: "shield" },
-      { to: "/admin/services", label: "Services", icon: "service" }
+      { to: "/admin/users", label: "Users", icon: "users", permission: "users" },
+      { to: "/admin/vendors", label: "Vendors", icon: "shield", permission: "vendors" },
+      { to: "/admin/services", label: "Services", icon: "service", permission: "services" }
     ]
   },
   {
     label: "Platform",
     items: [
-      { to: "/admin/coupons", label: "Coupons", icon: "list" },
-      { to: "/admin/reviews", label: "Reviews", icon: "star" },
-      { to: "/admin/wallet", label: "Wallet", icon: "wallet" }
+      { to: "/admin/coupons", label: "Coupons", icon: "list", permission: "coupons" },
+      { to: "/admin/reviews", label: "Reviews", icon: "star", permission: "reviews" },
+      { to: "/admin/wallet", label: "Wallet", icon: "wallet", permission: "wallet" }
     ]
   },
   {
     label: "Content & Reports",
     items: [
-      { to: "/admin/cms", label: "CMS", icon: "gear" },
-      { to: "/admin/home-page", label: "Home Page", icon: "grid" },
-      { to: "/admin/contacts", label: "Contacts", icon: "message" },
-      { to: "/admin/reports", label: "Reports", icon: "chart" },
-      { to: "/admin/support", label: "Support", icon: "message" }
+      { to: "/admin/cms", label: "CMS", icon: "gear", permission: "cms" },
+      { to: "/admin/home-page", label: "Home Page", icon: "grid", permission: "homePage" },
+      { to: "/admin/contacts", label: "Contacts", icon: "message", permission: "contacts" },
+      { to: "/admin/reports", label: "Reports", icon: "chart", permission: "reports" },
+      { to: "/admin/support", label: "Support", icon: "message", permission: "support" }
     ]
   },
   {
     label: "Settings",
     items: [
-      { to: "/admin/notifications", label: "Notifications", icon: "bell" },
-      { to: "/admin/payment-methods", label: "Payment Methods", icon: "card" },
-      { to: "/admin/settings", label: "Settings", icon: "settings" },
-      { to: "/admin/diagnostics", label: "Diagnostics", icon: "pulse" }
+      { to: "/admin/notifications", label: "Notifications", icon: "bell", permission: "notifications" },
+      { to: "/admin/payment-methods", label: "Payment Methods", icon: "card", permission: "paymentMethods" },
+      { to: "/admin/settings", label: "Settings", icon: "settings", permission: "settings" },
+      { to: "/admin/diagnostics", label: "Diagnostics", icon: "pulse", permission: "diagnostics" },
+      { to: "/admin/admins", label: "Sub Admins", icon: "shield", permission: "adminTeam" }
     ]
   }
 ];
@@ -174,6 +182,7 @@ function renderIcon(type) {
 }
 
 export default function AdminLayout() {
+  const location = useLocation();
   const navigate = useNavigate();
   const dropdownRef = useRef(null);
 
@@ -192,11 +201,109 @@ export default function AdminLayout() {
   const [userDropdownOpen, setUserDropdownOpen] = useState(false);
   const [moduleQuery, setModuleQuery] = useState("");
 
-  const adminUser = JSON.parse(localStorage.getItem("adminUser") || "{}");
+  const [adminSnapshot, setAdminSnapshot] = useState(() => getAdminUser());
+  const [permissionsReady, setPermissionsReady] = useState(false);
+  const [syncMessage, setSyncMessage] = useState("");
+  const adminUser = adminSnapshot || {};
+  const canViewDashboard = hasAdminPermission(adminUser, "dashboard");
+  const requiredPermission = getPermissionForPath(location.pathname);
+  const canAccessRoute = hasAdminPermission(adminUser, requiredPermission);
+
+  const syncAdminProfile = useCallback(async () => {
+    const token = localStorage.getItem("adminToken");
+    if (!token) {
+      setAdminSnapshot(getAdminUser());
+      setPermissionsReady(true);
+      return;
+    }
+
+    try {
+      setSyncMessage("");
+      const response = await fetch(API_ENDPOINTS.ADMIN.ME, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          "Content-Type": "application/json"
+        }
+      });
+
+      if (!response.ok) {
+        if (response.status === 401 || response.status === 403) {
+          localStorage.removeItem("adminToken");
+          localStorage.removeItem("adminUser");
+          setAdminSnapshot(null);
+          setPermissionsReady(true);
+          return;
+        }
+
+        setSyncMessage(`Permissions sync failed (${response.status})`);
+        // Fallback to cached permissions if backend is outdated / unavailable.
+        setAdminSnapshot(getAdminUser());
+        setPermissionsReady(true);
+        return;
+      }
+
+      const payload = await response.json().catch(() => ({}));
+      if (payload && Object.keys(payload).length > 0) {
+        const normalized = setAdminUser(payload);
+        setAdminSnapshot(normalized);
+      } else {
+        setAdminSnapshot(getAdminUser());
+      }
+      setPermissionsReady(true);
+    } catch (error) {
+      console.error("Admin profile sync error:", error);
+      setSyncMessage("Permissions sync failed");
+      setAdminSnapshot(getAdminUser());
+      setPermissionsReady(true);
+    }
+  }, []);
 
   useEffect(() => {
-    fetchDashboardStats();
+    let isActive = true;
+    syncAdminProfile();
+    const intervalId = setInterval(() => {
+      if (isActive) {
+        syncAdminProfile();
+      }
+    }, 30000);
+
+    return () => {
+      isActive = false;
+      clearInterval(intervalId);
+    };
+  }, [syncAdminProfile]);
+
+  useEffect(() => {
+    syncAdminProfile();
+  }, [location.pathname, syncAdminProfile]);
+
+  useEffect(() => {
+    function handleFocus() {
+      syncAdminProfile();
+    }
+
+    window.addEventListener("focus", handleFocus);
+    return () => window.removeEventListener("focus", handleFocus);
+  }, [syncAdminProfile]);
+
+  useEffect(() => {
+    function handleAdminUserUpdated(event) {
+      if (event?.detail) {
+        setAdminSnapshot(normalizeAdminUser(event.detail));
+      }
+    }
+
+    window.addEventListener("admin-user-updated", handleAdminUserUpdated);
+    return () => {
+      window.removeEventListener("admin-user-updated", handleAdminUserUpdated);
+    };
   }, []);
+
+  useEffect(() => {
+    if (canViewDashboard) {
+      fetchDashboardStats();
+    }
+  }, [canViewDashboard]);
 
   useEffect(() => {
     const onResize = () => {
@@ -280,22 +387,42 @@ export default function AdminLayout() {
     }
   }
 
+  const allowedNavSections = useMemo(() => {
+    return NAV_SECTIONS
+      .map((section) => ({
+        ...section,
+        items: section.items.filter((item) => hasAdminPermission(adminUser, item.permission))
+      }))
+      .filter((section) => section.items.length > 0);
+  }, [adminUser]);
+
   const filteredNavSections = useMemo(() => {
     const searchTerm = moduleQuery.trim().toLowerCase();
     if (!searchTerm) {
-      return NAV_SECTIONS;
+      return allowedNavSections;
     }
 
-    return NAV_SECTIONS
+    return allowedNavSections
       .map((section) => ({
         ...section,
         items: section.items.filter((item) => item.label.toLowerCase().includes(searchTerm))
       }))
       .filter((section) => section.items.length > 0);
-  }, [moduleQuery]);
+  }, [moduleQuery, allowedNavSections]);
 
   const isSidebarCollapsed = sidebarCollapsed && !isMobile;
   const hasFilteredResults = filteredNavSections.some((section) => section.items.length > 0);
+  const firstAllowedRoute = allowedNavSections[0]?.items?.[0]?.to || "/admin";
+
+  useEffect(() => {
+    if (
+      !canAccessRoute &&
+      firstAllowedRoute &&
+      (location.pathname === "/admin" || location.pathname === "/admin/dashboard")
+    ) {
+      navigate(firstAllowedRoute, { replace: true });
+    }
+  }, [canAccessRoute, firstAllowedRoute, location.pathname, navigate]);
 
   return (
     <div className="admin-layout">
@@ -332,37 +459,39 @@ export default function AdminLayout() {
         </div>
 
         <div className="topbar-right">
-          <div className="topbar-stats">
-            <div className="stat-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <div className="stat-content">
-                <span className="stat-label">Users</span>
-                <span className="stat-value">{stats?.totalUsers?.toLocaleString() || 0}</span>
+          {canViewDashboard && (
+            <div className="topbar-stats">
+              <div className="stat-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2M12 11a4 4 0 1 0 0-8 4 4 0 0 0 0 8Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div className="stat-content">
+                  <span className="stat-label">Users</span>
+                  <span className="stat-value">{stats?.totalUsers?.toLocaleString() || 0}</span>
+                </div>
               </div>
-            </div>
 
-            <div className="stat-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <div className="stat-content">
-                <span className="stat-label">Vendors</span>
-                <span className="stat-value">{stats?.totalVendors?.toLocaleString() || 0}</span>
+              <div className="stat-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M12 2L2 7v10c0 5.55 3.84 10.74 9 12 5.16-1.26 9-6.45 9-12V7l-10-5Z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div className="stat-content">
+                  <span className="stat-label">Vendors</span>
+                  <span className="stat-value">{stats?.totalVendors?.toLocaleString() || 0}</span>
+                </div>
               </div>
-            </div>
 
-            <div className="stat-item">
-              <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                <path d="M16 21v-2a4 4 0 0 0-4-4H4a4 4 0 0 0-4 4v2M10 8a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM18 9h-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-              </svg>
-              <div className="stat-content">
-                <span className="stat-label">Bookings</span>
-                <span className="stat-value">{stats?.totalBookings?.toLocaleString() || 0}</span>
+              <div className="stat-item">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
+                  <path d="M16 21v-2a4 4 0 0 0-4-4H4a4 4 0 0 0-4 4v2M10 8a4 4 0 1 0 0-8 4 4 0 0 0 0 8ZM18 9h-6" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
+                </svg>
+                <div className="stat-content">
+                  <span className="stat-label">Bookings</span>
+                  <span className="stat-value">{stats?.totalBookings?.toLocaleString() || 0}</span>
+                </div>
               </div>
             </div>
-          </div>
+          )}
 
           <div className="topbar-profile" ref={dropdownRef}>
             <button
@@ -393,27 +522,31 @@ export default function AdminLayout() {
 
                 <div className="dropdown-divider" />
 
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    setUserDropdownOpen(false);
-                    navigate("/admin/settings");
-                  }}
-                >
-                  {renderIcon("settings")}
-                  Settings
-                </button>
+                {hasAdminPermission(adminUser, "settings") && (
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      navigate("/admin/settings");
+                    }}
+                  >
+                    {renderIcon("settings")}
+                    Settings
+                  </button>
+                )}
 
-                <button
-                  className="dropdown-item"
-                  onClick={() => {
-                    setUserDropdownOpen(false);
-                    navigate("/admin");
-                  }}
-                >
-                  {renderIcon("grid")}
-                  Dashboard
-                </button>
+                {hasAdminPermission(adminUser, "dashboard") && (
+                  <button
+                    className="dropdown-item"
+                    onClick={() => {
+                      setUserDropdownOpen(false);
+                      navigate("/admin");
+                    }}
+                  >
+                    {renderIcon("grid")}
+                    Dashboard
+                  </button>
+                )}
 
                 <div className="dropdown-divider" />
 
@@ -458,7 +591,9 @@ export default function AdminLayout() {
           </div>
 
           <nav className="admin-nav">
-            {!hasFilteredResults ? (
+            {!permissionsReady ? (
+              <p className="admin-nav-empty">Loading permissions...</p>
+            ) : !hasFilteredResults ? (
               <p className="admin-nav-empty">No module found for "{moduleQuery.trim()}"</p>
             ) : (
               filteredNavSections.map((section) => (
@@ -496,7 +631,47 @@ export default function AdminLayout() {
       )}
 
       <main className={`admin-main ${isSidebarCollapsed ? "collapsed" : ""}`}>
-        <Outlet />
+        {!permissionsReady ? (
+          <div className="admin-page">
+            <div className="admin-page-head">
+              <h2>Loading permissions...</h2>
+              <p className="admin-subtitle">Syncing your access rights.</p>
+            </div>
+          </div>
+        ) : canAccessRoute ? (
+          <Outlet />
+        ) : (
+          <div className="admin-page">
+            <div className="admin-page-head">
+              <h2>Access Denied</h2>
+              <p className="admin-subtitle">You do not have permission to view this module.</p>
+            </div>
+            <div className="admin-section">
+              <p style={{ color: "var(--admin-muted)", marginBottom: "8px" }}>
+                Required permission: <strong>{requiredPermission || "None"}</strong>
+              </p>
+              <p style={{ color: "var(--admin-muted)", marginBottom: "16px" }}>
+                Your permissions: {(adminUser?.permissions || []).length ? adminUser.permissions.join(", ") : "None"}
+              </p>
+              {syncMessage && (
+                <p style={{ color: "#b45309", marginBottom: "16px" }}>
+                  {syncMessage}. Please refresh permissions.
+                </p>
+              )}
+              <p style={{ color: "var(--admin-muted)", marginBottom: "16px" }}>
+                Please contact the super admin to request access.
+              </p>
+              <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
+                <button className="btn-sm" onClick={() => navigate(firstAllowedRoute)}>
+                  Go to allowed module
+                </button>
+                <button className="btn-sm outline" onClick={syncAdminProfile}>
+                  Refresh permissions
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </main>
     </div>
   );

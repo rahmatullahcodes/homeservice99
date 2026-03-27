@@ -1,8 +1,9 @@
 import { useParams, useNavigate, useLocation } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
-import { useState } from "react";
-import { SERVICES_DATA as ALL_SERVICES } from "./Services.jsx";
+import { useEffect, useState } from "react";
+import { API_ENDPOINTS } from "../config/api";
+import { coerceServicesList, normalizeServiceRecord } from "../utils/serviceData";
 
 export default function ServiceDetail() {
   const { id } = useParams();
@@ -12,67 +13,144 @@ export default function ServiceDetail() {
   const { addToast } = useToast();
   const [quantity, setQuantity] = useState(1);
   
-  // Get service from location state or find it in SERVICES_DATA
   const stateService = location.state?.service;
-  
-  // Find service from the complete database
-  let service = null;
-  let currentCategory = null;
-  let relatedServices = [];
+  const [service, setService] = useState(() =>
+    stateService ? normalizeServiceRecord(stateService) : null
+  );
+  const [relatedServices, setRelatedServices] = useState([]);
+  const [loading, setLoading] = useState(!stateService);
+  const [error, setError] = useState(null);
 
-  const findServiceContext = (targetServiceId) => {
-    if (!targetServiceId) {
-      return null;
+  useEffect(() => {
+    if (stateService) {
+      setService(normalizeServiceRecord(stateService));
+    }
+  }, [stateService]);
+
+  useEffect(() => {
+    if (!id) {
+      return;
     }
 
-    for (const [catKey, catData] of Object.entries(ALL_SERVICES)) {
-      for (const [subcatKey, services] of Object.entries(catData.subcategories)) {
-        const found = services.find((s) => s.id === targetServiceId);
-        if (found) {
-          return {
-            service: found,
-            category: catKey,
-            subcategory: subcatKey,
-            related: services.filter((s) => s.id !== targetServiceId),
-          };
-        }
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const fetchService = async () => {
+      if (!stateService) {
+        setService(null);
       }
-    }
+      setLoading(true);
+      setError(null);
 
-    return null;
-  };
+      try {
+        const response = await fetch(
+          API_ENDPOINTS.SERVICES.GET_BY_ID(encodeURIComponent(id)),
+          { signal: controller.signal }
+        );
 
-  const serviceContext = findServiceContext(stateService?.id || id);
+        if (!response.ok) {
+          if (response.status === 404) {
+            throw new Error("Service not found");
+          }
+          throw new Error(`Failed to load service (${response.status})`);
+        }
 
-  if (serviceContext) {
-    service = stateService || serviceContext.service;
-    currentCategory = serviceContext.category;
-    relatedServices = serviceContext.related;
-  }
-
-  if (service && currentCategory === "Plumber") {
-    const plumberRelatedServices = [];
-    const seenIds = new Set();
-
-    Object.values(ALL_SERVICES.Plumber?.subcategories || {}).forEach((services) => {
-      services.forEach((item) => {
-        if (item.id === service.id || seenIds.has(item.id)) {
+        const payload = await response.json();
+        if (!isMounted) {
           return;
         }
-        seenIds.add(item.id);
-        plumberRelatedServices.push(item);
-      });
-    });
 
-    if (plumberRelatedServices.length > 0) {
-      relatedServices = plumberRelatedServices;
+        setService(normalizeServiceRecord(payload));
+      } catch (err) {
+        if (!isMounted || err?.name === "AbortError") {
+          return;
+        }
+
+        console.error("Error fetching service:", err);
+        setError(err?.message || "Failed to load service");
+        if (!stateService) {
+          setService(null);
+        }
+      } finally {
+        if (isMounted) {
+          setLoading(false);
+        }
+      }
+    };
+
+    fetchService();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [id, stateService]);
+
+  useEffect(() => {
+    if (!service?.category) {
+      setRelatedServices([]);
+      return;
     }
+
+    let isMounted = true;
+    const controller = new AbortController();
+
+    const fetchRelated = async () => {
+      try {
+        const categoryParam = encodeURIComponent(service.category);
+        const baseUrl = API_ENDPOINTS.SERVICES.GET_BY_CATEGORY(categoryParam);
+        const shouldUseCategoryOnly = service.category === "Plumber" || !service.subcategory;
+        const relatedUrl = shouldUseCategoryOnly
+          ? baseUrl
+          : `${baseUrl}/subcategory/${encodeURIComponent(service.subcategory)}`;
+
+        const response = await fetch(relatedUrl, { signal: controller.signal });
+        if (!response.ok) {
+          throw new Error(`Failed to load related services (${response.status})`);
+        }
+
+        const payload = await response.json();
+        const serviceList = coerceServicesList(payload).map(normalizeServiceRecord);
+        const currentIds = new Set(
+          [service.id, service._id].filter(Boolean)
+        );
+        const filtered = serviceList.filter(
+          (item) => !currentIds.has(item.id) && !currentIds.has(item._id)
+        );
+
+        if (isMounted) {
+          setRelatedServices(filtered);
+        }
+      } catch (err) {
+        if (!isMounted || err?.name === "AbortError") {
+          return;
+        }
+
+        console.error("Error fetching related services:", err);
+        setRelatedServices([]);
+      }
+    };
+
+    fetchRelated();
+
+    return () => {
+      isMounted = false;
+      controller.abort();
+    };
+  }, [service?.category, service?.subcategory, service?.id]);
+
+  if (loading && !service) {
+    return (
+      <div style={{ textAlign: 'center', padding: '40px', minHeight: '100vh' }}>
+        <h2 style={{ color: '#6b7280' }}>Loading service...</h2>
+      </div>
+    );
   }
 
   if (!service) {
     return (
       <div style={{ textAlign: 'center', padding: '40px', minHeight: '100vh' }}>
-        <h2 style={{ color: '#6b7280' }}>Service not found</h2>
+        <h2 style={{ color: '#6b7280' }}>{error || "Service not found"}</h2>
         <button
           onClick={() => navigate('/services')}
           style={{
@@ -98,7 +176,9 @@ export default function ServiceDetail() {
       title: service.title,
       price: service.price,
       image: service.image,
-      quantity: quantity
+      quantity: quantity,
+      category: service.category || "",
+      subcategory: service.subcategory || "",
     });
     addToast(`${service.title} (Qty: ${quantity}) added to cart!`, 'success');
   };
@@ -518,7 +598,9 @@ export default function ServiceDetail() {
                             title: relService.title,
                             price: relService.price,
                             image: relService.image,
-                            quantity: 1
+                            quantity: 1,
+                            category: relService.category || "",
+                            subcategory: relService.subcategory || "",
                           });
                           addToast(`${relService.title} added to cart!`, 'success');
                         }}

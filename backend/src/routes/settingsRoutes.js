@@ -1,5 +1,6 @@
 import express from "express";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { requireAdminPermission } from "../middleware/adminPermissions.js";
 import {
   getSettings,
   getPaymentGatewaySettings,
@@ -16,13 +17,13 @@ const router = express.Router();
 // Protect all routes with auth middleware
 router.use(adminAuth);
 
-router.get("/payment-methods", getPaymentGatewaySettings);
-router.patch("/payment-methods", updatePaymentGatewaySettings);
-router.get("/homepage", getHomePageSettings);
-router.patch("/homepage", updateHomePageSettings);
+router.get("/payment-methods", requireAdminPermission("paymentMethods"), getPaymentGatewaySettings);
+router.patch("/payment-methods", requireAdminPermission("paymentMethods"), updatePaymentGatewaySettings);
+router.get("/homepage", requireAdminPermission("homePage"), getHomePageSettings);
+router.patch("/homepage", requireAdminPermission("homePage"), updateHomePageSettings);
 
 // GET all settings
-router.get("/", async (req, res) => {
+router.get("/", requireAdminPermission("settings"), async (req, res) => {
   try {
     const result = await getSettings();
     if (result.success) {
@@ -36,12 +37,12 @@ router.get("/", async (req, res) => {
 });
 
 // GET settings statistics
-router.get("/stats", getSettingsStats);
+router.get("/stats", requireAdminPermission("settings"), getSettingsStats);
 
 // UPDATE settings
-router.patch("/", updateSettings);
+router.patch("/", requireAdminPermission("settings"), updateSettings);
 
 // RESET to defaults
-router.post("/reset", resetToDefaults);
+router.post("/reset", requireAdminPermission("settings"), resetToDefaults);
 
 export default router;

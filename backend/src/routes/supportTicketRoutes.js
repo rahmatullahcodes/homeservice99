@@ -10,6 +10,7 @@ import {
   getTicketStats
 } from "../controllers/supportTicketController.js";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { requireAdminPermission } from "../middleware/adminPermissions.js";
 
 const router = express.Router();
 
@@ -17,7 +18,7 @@ const router = express.Router();
 router.post("/", createTicket);
 
 // Admin-only routes
-router.use(adminAuth);
+router.use(adminAuth, requireAdminPermission("support"));
 
 router.get("/", getAllTickets);
 router.get("/stats", getTicketStats);

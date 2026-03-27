@@ -1,5 +1,6 @@
 import express from "express";
 import { adminAuth } from "../middleware/adminAuth.js";
+import { adminOnly, requireAdminPermission } from "../middleware/adminPermissions.js";
 import {
   getDashboardStats,
   getAllUsers,
@@ -40,6 +41,13 @@ import {
   getUserReviews
 } from "../controllers/adminController.js";
 import {
+  getAllAdmins,
+  getAdminProfile,
+  createSubAdmin,
+  updateAdmin,
+  deleteAdmin
+} from "../controllers/adminManagementController.js";
+import {
   getPaymentGatewaySettings,
   getHomePageSettings,
   updateHomePageSettings,
@@ -54,63 +62,79 @@ router.post("/validate-coupon", validateCoupon);
 /* Admin routes - require admin authentication */
 router.use(adminAuth);
 
-router.get("/dashboard", getDashboardStats);
-router.get("/settings/payment-methods", getPaymentGatewaySettings);
-router.patch("/settings/payment-methods", updatePaymentGatewaySettings);
-router.get("/settings/homepage", getHomePageSettings);
-router.patch("/settings/homepage", updateHomePageSettings);
-router.get("/payment-methods", getPaymentGatewaySettings);
-router.patch("/payment-methods", updatePaymentGatewaySettings);
-router.get("/homepage", getHomePageSettings);
-router.patch("/homepage", updateHomePageSettings);
+router.get("/me", getAdminProfile);
+
+// Admin management (super admin only)
+router.get("/admins", adminOnly, getAllAdmins);
+router.post("/admins", adminOnly, createSubAdmin);
+router.patch("/admins/:id", adminOnly, updateAdmin);
+router.delete("/admins/:id", adminOnly, deleteAdmin);
+
+router.get("/dashboard", requireAdminPermission("dashboard"), getDashboardStats);
+router.get(
+  "/settings/payment-methods",
+  requireAdminPermission("paymentMethods"),
+  getPaymentGatewaySettings
+);
+router.patch(
+  "/settings/payment-methods",
+  requireAdminPermission("paymentMethods"),
+  updatePaymentGatewaySettings
+);
+router.get("/settings/homepage", requireAdminPermission("homePage"), getHomePageSettings);
+router.patch("/settings/homepage", requireAdminPermission("homePage"), updateHomePageSettings);
+router.get("/payment-methods", requireAdminPermission("paymentMethods"), getPaymentGatewaySettings);
+router.patch("/payment-methods", requireAdminPermission("paymentMethods"), updatePaymentGatewaySettings);
+router.get("/homepage", requireAdminPermission("homePage"), getHomePageSettings);
+router.patch("/homepage", requireAdminPermission("homePage"), updateHomePageSettings);
 
 // User routes
-router.get("/users", getAllUsers);
-router.post("/users", createUser);
-router.patch("/users/:id", updateUser);
-router.post("/users/:id/wallet-adjust", adjustUserWallet);
-router.delete("/users/:id", deleteUser);
+router.get("/users", requireAdminPermission("users"), getAllUsers);
+router.post("/users", requireAdminPermission("users"), createUser);
+router.patch("/users/:id", requireAdminPermission("users"), updateUser);
+router.post("/users/:id/wallet-adjust", requireAdminPermission("users"), adjustUserWallet);
+router.delete("/users/:id", requireAdminPermission("users"), deleteUser);
 
 // Vendor routes
-router.get("/vendors", getAllVendors);
-router.post("/vendors", createVendor);
-router.patch("/vendors/:id/status", updateVendorStatus);
-router.delete("/vendors/:id", deleteVendor);
+router.get("/vendors", requireAdminPermission("vendors"), getAllVendors);
+router.post("/vendors", requireAdminPermission("vendors"), createVendor);
+router.patch("/vendors/:id/status", requireAdminPermission("vendors"), updateVendorStatus);
+router.delete("/vendors/:id", requireAdminPermission("vendors"), deleteVendor);
 
 // Booking routes
-router.get("/bookings", getAllBookings);
-router.patch("/bookings/:id/status", updateBookingStatus);
+router.get("/bookings", requireAdminPermission("bookings"), getAllBookings);
+router.patch("/bookings/:id/status", requireAdminPermission("bookings"), updateBookingStatus);
 
 // Payment routes
-router.get("/payments", getAllPayments);
-router.patch("/payments/:id/status", updatePaymentStatus);
-router.post("/payments/manual-credit", addManualVendorPayment);
+router.get("/payments", requireAdminPermission(["payments", "wallet"]), getAllPayments);
+router.patch("/payments/:id/status", requireAdminPermission("payments"), updatePaymentStatus);
+router.post("/payments/manual-credit", requireAdminPermission("payments"), addManualVendorPayment);
 
 // Service routes
-router.get("/services", getAllServicesAdmin);
-router.get("/services/taxonomy", getServiceTaxonomy);
-router.patch("/services/category/rename", renameServiceCategory);
-router.patch("/services/category/status", setCategoryStatus);
-router.patch("/services/subcategory/rename", renameServiceSubcategory);
-router.patch("/services/subcategory/status", setSubcategoryStatus);
-router.post("/services", createService);
-router.patch("/services/:id", updateService);
-router.patch("/services/:id/toggle", toggleServiceStatus);
-router.delete("/services/:id", deleteService);
+router.get("/services", requireAdminPermission("services"), getAllServicesAdmin);
+router.get("/services/taxonomy", requireAdminPermission("services"), getServiceTaxonomy);
+router.patch("/services/category/rename", requireAdminPermission("services"), renameServiceCategory);
+router.patch("/services/category/status", requireAdminPermission("services"), setCategoryStatus);
+router.patch("/services/subcategory/rename", requireAdminPermission("services"), renameServiceSubcategory);
+router.patch("/services/subcategory/status", requireAdminPermission("services"), setSubcategoryStatus);
+router.post("/services", requireAdminPermission("services"), createService);
+router.patch("/services/:id", requireAdminPermission("services"), updateService);
+router.patch("/services/:id/toggle", requireAdminPermission("services"), toggleServiceStatus);
+router.delete("/services/:id", requireAdminPermission("services"), deleteService);
 
 // Coupon routes
-router.get("/coupons", getAllCoupons);
-router.post("/coupons", createCoupon);
-router.patch("/coupons/:id", updateCoupon);
-router.patch("/coupons/:id/toggle", toggleCouponStatus);
-router.delete("/coupons/:id", deleteCoupon);
+router.get("/coupons", requireAdminPermission("coupons"), getAllCoupons);
+router.post("/coupons", requireAdminPermission("coupons"), createCoupon);
+router.patch("/coupons/:id", requireAdminPermission("coupons"), updateCoupon);
+router.patch("/coupons/:id/toggle", requireAdminPermission("coupons"), toggleCouponStatus);
+router.delete("/coupons/:id", requireAdminPermission("coupons"), deleteCoupon);
 
 // Review routes
-router.get("/reviews", getAllReviews);
-router.patch("/reviews/:id/status", updateReviewStatus);
-router.delete("/reviews/:id", deleteReview);
-router.get("/reviews/vendor/:vendorId", getVendorReviews);
-router.get("/reviews/user/:userId", getUserReviews);
-router.post("/reviews", createReview);
+router.get("/reviews", requireAdminPermission("reviews"), getAllReviews);
+router.patch("/reviews/:id/status", requireAdminPermission("reviews"), updateReviewStatus);
+router.delete("/reviews/:id", requireAdminPermission("reviews"), deleteReview);
+router.get("/reviews/vendor/:vendorId", requireAdminPermission("reviews"), getVendorReviews);
+router.get("/reviews/user/:userId", requireAdminPermission("reviews"), getUserReviews);
+router.post("/reviews", requireAdminPermission("reviews"), createReview);
 
 export default router;

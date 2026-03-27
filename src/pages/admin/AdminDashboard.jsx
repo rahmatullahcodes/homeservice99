@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_ENDPOINTS } from "../../config/api";
+import { getAdminUser, hasAdminPermission } from "../../utils/adminAccess";
 
 const STATUS_KEYS = ["Pending", "Scheduled", "InProgress", "Completed", "Cancelled"];
 
@@ -23,6 +24,7 @@ function toStatusMap(items) {
 }
 
 export default function AdminDashboard() {
+  const adminUser = getAdminUser();
   const [dashboard, setDashboard] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState("");
@@ -181,10 +183,18 @@ export default function AdminDashboard() {
       <div className="admin-section">
         <h3>Quick Actions</h3>
         <div className="quick-actions">
-          <Link to="/admin/vendors" className="btn-sm">Manage Vendors</Link>
-          <Link to="/admin/coupons" className="btn-sm">Create Coupon</Link>
-          <Link to="/admin/notifications" className="btn-sm">Send Notification</Link>
-          <Link to="/admin/reports" className="btn-sm outline">View Reports</Link>
+          {hasAdminPermission(adminUser, "vendors") && (
+            <Link to="/admin/vendors" className="btn-sm">Manage Vendors</Link>
+          )}
+          {hasAdminPermission(adminUser, "coupons") && (
+            <Link to="/admin/coupons" className="btn-sm">Create Coupon</Link>
+          )}
+          {hasAdminPermission(adminUser, "notifications") && (
+            <Link to="/admin/notifications" className="btn-sm">Send Notification</Link>
+          )}
+          {hasAdminPermission(adminUser, "reports") && (
+            <Link to="/admin/reports" className="btn-sm outline">View Reports</Link>
+          )}
         </div>
       </div>
     </div>
