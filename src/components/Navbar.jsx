@@ -7,6 +7,7 @@ const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.
 const GOOGLE_MAPS_API_KEY = import.meta.env.VITE_GOOGLE_MAPS_API_KEY;
 const GOOGLE_MAPS_SCRIPT_ID = "hs99-google-maps-script";
 const GOOGLE_MAPS_LIBRARIES = "places";
+const DEFAULT_LOCATION = "Sector 82, Noida";
 
 function loadGoogleMapsScript(apiKey) {
   if (!apiKey) {
@@ -97,7 +98,16 @@ export default function Navbar() {
   const routeLocation = useLocation();
   const { cart } = useCart();
 
-  const [location, setLocation] = useState(() => localStorage.getItem("selectedLocation") || "Sector 82, Noida");
+  const [location, setLocation] = useState(() => {
+    const storedLocation = localStorage.getItem("selectedLocation");
+    if (!storedLocation || storedLocation === DEFAULT_LOCATION) {
+      if (storedLocation === DEFAULT_LOCATION) {
+        localStorage.removeItem("selectedLocation");
+      }
+      return "";
+    }
+    return storedLocation;
+  });
   const [query, setQuery] = useState("");
   const [showLocationModal, setShowLocationModal] = useState(false);
   const [locationSearch, setLocationSearch] = useState("");
@@ -109,6 +119,7 @@ export default function Navbar() {
   const autocompleteServiceRef = useRef(null);
   const geocoderRef = useRef(null);
   const searchRequestIdRef = useRef(0);
+  const searchDebounceRef = useRef(null);
 
   const isLoggedIn = !!localStorage.getItem("token");
 
@@ -119,9 +130,15 @@ export default function Navbar() {
     isCheckoutRoute ||
     routeLocation.pathname.startsWith("/account");
   const showJoinAsPro = !isLoggedIn && !isCheckoutRoute;
+  const displayLocation = location?.trim() ? location : "Select location";
+  const isLocationPlaceholder = !location?.trim();
 
   useEffect(() => {
     if (!showLocationModal) {
+      if (searchDebounceRef.current) {
+        clearTimeout(searchDebounceRef.current);
+        searchDebounceRef.current = null;
+      }
       searchRequestIdRef.current += 1;
       setGoogleSuggestions([]);
       return;
@@ -174,14 +191,70 @@ export default function Navbar() {
     setShowLocationModal(false);
     setLocationSearch("");
     setGoogleSuggestions([]);
+    setGeoLoading(false);
     setGeoError("");
     setGeoSuccess(false);
+  }
+
+  async function fetchOsmSuggestions(value, requestId) {
+    const data = await fetchJsonWithTimeout(
+      `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&q=${encodeURIComponent(
+        value
+      )}`,
+      9000
+    );
+
+    if (searchRequestIdRef.current !== requestId) {
+      return;
+    }
+
+    if (!Array.isArray(data) || data.length === 0) {
+      setGoogleSuggestions([]);
+      return;
+    }
+
+    setGoogleSuggestions(
+      data.map((item) => {
+        const address = item.address || {};
+        const description =
+          buildAddressFromParts([
+            item.name,
+            address.suburb,
+            address.city_district,
+            address.city,
+            address.town,
+            address.state,
+            address.country,
+          ]) ||
+          item.display_name ||
+          value;
+
+        return {
+          id: item.place_id || `${item.osm_type}-${item.osm_id}`,
+          description,
+          placeId: null,
+        };
+      })
+    );
+  }
+
+  function scheduleOsmSuggestions(value) {
+    const requestId = searchRequestIdRef.current + 1;
+    searchRequestIdRef.current = requestId;
+    searchDebounceRef.current = setTimeout(() => {
+      fetchOsmSuggestions(value, requestId);
+    }, 350);
   }
 
   function handleLocationSearchChange(value) {
     setLocationSearch(value);
     setGeoError("");
     setGeoSuccess(false);
+
+    if (searchDebounceRef.current) {
+      clearTimeout(searchDebounceRef.current);
+      searchDebounceRef.current = null;
+    }
 
     if (!value.trim()) {
       searchRequestIdRef.current += 1;
@@ -216,12 +289,13 @@ export default function Navbar() {
             return;
           }
 
-          setGoogleSuggestions([]);
+          fetchOsmSuggestions(value, requestId);
         }
       );
       return;
     }
-    setGoogleSuggestions([]);
+
+    scheduleOsmSuggestions(value);
   }
 
   function handleGoogleSuggestionSelect(suggestion) {
@@ -573,7 +647,9 @@ export default function Navbar() {
         {/* Location Box - Click to open modal */}
         <div className="location-dropdown" onClick={() => setShowLocationModal(true)} style={{ cursor: "pointer" }}>
           <span className="location-icon">{"\u{1F4CD}"}</span>
-          <span className="location-text">{location}</span>
+          <span className={`location-text${isLocationPlaceholder ? " placeholder" : ""}`}>
+            {displayLocation}
+          </span>
           <span style={{ fontSize: "12px", color: "#9ca3af", marginLeft: "4px" }}>{"\u25BE"}</span>
         </div>
 
