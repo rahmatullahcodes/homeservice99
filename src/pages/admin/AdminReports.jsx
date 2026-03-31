@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS } from "../../config/api";
+import { BOOKING_STATUS_COLORS } from "../../data/adminReportsData";
 
 export default function AdminReports() {
   const [range, setRange] = useState("month");
@@ -273,12 +274,6 @@ export default function AdminReports() {
           <div style={{ display: "flex", flexDirection: "column", gap: "12px" }}>
             {bookingStatus.length > 0 ? (
               bookingStatus.map((item, i) => {
-                const statusColors = {
-                  "Completed": "#10b981",
-                  "Pending": "#f59e0b",
-                  "InProgress": "#3b82f6",
-                  "Cancelled": "#ef4444"
-                };
                 const percentage = dashStats?.totalBookings ? (item.count / dashStats.totalBookings * 100).toFixed(1) : 0;
                 return (
                   <div key={i}>
@@ -297,7 +292,7 @@ export default function AdminReports() {
                         style={{
                           width: `${percentage}%`,
                           height: "100%",
-                          backgroundColor: statusColors[item.status] || "#6b7280"
+                          backgroundColor: BOOKING_STATUS_COLORS[item.status] || "#6b7280"
                         }}
                       />
                     </div>

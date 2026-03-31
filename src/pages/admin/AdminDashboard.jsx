@@ -2,12 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link } from "react-router-dom";
 import { API_ENDPOINTS } from "../../config/api";
 import { getAdminUser, hasAdminPermission } from "../../utils/adminAccess";
-
-const STATUS_KEYS = ["Pending", "Scheduled", "InProgress", "Completed", "Cancelled"];
+import { ADMIN_DASHBOARD_STATUS_KEYS } from "../../data/adminDashboardData";
 
 function toStatusMap(items) {
   const map = {};
-  for (const key of STATUS_KEYS) {
+  for (const key of ADMIN_DASHBOARD_STATUS_KEYS) {
     map[key] = 0;
   }
   if (!Array.isArray(items)) {

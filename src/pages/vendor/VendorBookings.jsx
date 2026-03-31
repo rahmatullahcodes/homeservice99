@@ -365,6 +365,12 @@ export default function VendorBookings() {
                 <p style={{ margin: "0 0 4px 0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>Customer Phone</p>
                 <p style={{ margin: "0", fontSize: "14px" }}>{selectedBooking.user?.phone || "N/A"}</p>
               </div>
+              <div style={{ gridColumn: "1 / -1" }}>
+                <p style={{ margin: "0 0 4px 0", fontSize: "12px", color: "#6b7280", fontWeight: "600" }}>Service Address</p>
+                <p style={{ margin: "0", fontSize: "14px", wordBreak: "break-word" }}>
+                  {selectedBooking.customerAddress || selectedBooking.address || selectedBooking.user?.address || "N/A"}
+                </p>
+              </div>
             </div>
 
             <div style={{ borderTop: "1.5px solid #e5e7eb", paddingTop: "16px", marginTop: "16px" }}>

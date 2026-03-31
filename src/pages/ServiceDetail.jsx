@@ -4,6 +4,7 @@ import { useToast } from "../context/ToastContext";
 import { useEffect, useState } from "react";
 import { API_ENDPOINTS } from "../config/api";
 import { coerceServicesList, normalizeServiceRecord } from "../utils/serviceData";
+import { ensureServiceableLocation } from "../utils/serviceAvailability";
 
 export default function ServiceDetail() {
   const { id } = useParams();
@@ -171,6 +172,9 @@ export default function ServiceDetail() {
   }
 
   const handleAddToCart = () => {
+    if (!ensureServiceableLocation(addToast)) {
+      return;
+    }
     addToCart({
       id: service.id,
       title: service.title,

@@ -2,14 +2,7 @@ import { useEffect, useState } from "react";
 import { useToast } from "../../context/ToastContext";
 import { fetchUserMe, setStoredUser, updateUserProfile } from "../../utils/accountApi";
 import "../../styles/account.css";
-
-const EMPTY_PROFILE = {
-  name: "",
-  email: "",
-  phone: "",
-  bio: "",
-  avatar: ""
-};
+import { ACCOUNT_PROFILE_EMPTY } from "../../data/accountFormsData";
 
 export default function AccountProfile() {
   const { addToast } = useToast();
@@ -17,8 +10,8 @@ export default function AccountProfile() {
   const [loading, setLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
   const [errors, setErrors] = useState({});
-  const [initialProfile, setInitialProfile] = useState(EMPTY_PROFILE);
-  const [form, setForm] = useState(EMPTY_PROFILE);
+  const [initialProfile, setInitialProfile] = useState(ACCOUNT_PROFILE_EMPTY);
+  const [form, setForm] = useState(ACCOUNT_PROFILE_EMPTY);
 
   useEffect(() => {
     loadProfile();

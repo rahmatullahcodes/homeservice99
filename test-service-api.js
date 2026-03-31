@@ -1,6 +1,4 @@
 // Test script to verify service API endpoints
-import fetch from "node-fetch";
-
 const API_BASE_URL = "http://localhost:5000/api";
 
 async function testServiceAPI() {

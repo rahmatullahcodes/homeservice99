@@ -1,5 +1,3 @@
-import fetch from 'node-fetch';
-
 async function checkServers() {
   try {
     // Check backend

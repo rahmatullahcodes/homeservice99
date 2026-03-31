@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from "react";
 import { Link, useLocation, useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
+import { useToast } from "../context/ToastContext";
+import { getServiceabilityMessage, isServiceableLocation } from "../utils/serviceAvailability";
 import "./Navbar.css";
 
 const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.meta.url).href;
@@ -97,6 +99,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const routeLocation = useLocation();
   const { cart } = useCart();
+  const { addToast } = useToast();
 
   const [location, setLocation] = useState(() => {
     const storedLocation = localStorage.getItem("selectedLocation");
@@ -188,6 +191,12 @@ export default function Navbar() {
   function handleLocationSelect(selectedLocation) {
     setLocation(selectedLocation);
     localStorage.setItem("selectedLocation", selectedLocation);
+    if (typeof window !== "undefined") {
+      window.dispatchEvent(new CustomEvent("hs99-location-selected", { detail: { location: selectedLocation } }));
+    }
+    if (!isServiceableLocation(selectedLocation)) {
+      addToast(getServiceabilityMessage(selectedLocation), "warning", 6000);
+    }
     setShowLocationModal(false);
     setLocationSearch("");
     setGoogleSuggestions([]);
@@ -357,6 +366,63 @@ export default function Navbar() {
     return [...new Set(normalized)].join(", ");
   }
 
+  function extractGoogleComponent(components, type) {
+    if (!Array.isArray(components)) {
+      return "";
+    }
+
+    const match = components.find((component) => Array.isArray(component.types) && component.types.includes(type));
+    return match?.long_name || "";
+  }
+
+  function pickBestGoogleResult(results) {
+    if (!Array.isArray(results) || results.length === 0) {
+      return null;
+    }
+
+    const preferredTypes = [
+      "sublocality_level_1",
+      "sublocality",
+      "neighborhood",
+      "premise",
+      "route",
+      "street_address",
+      "locality",
+      "postal_town",
+      "administrative_area_level_2",
+      "administrative_area_level_1",
+    ];
+
+    for (const type of preferredTypes) {
+      const match = results.find((result) => Array.isArray(result.types) && result.types.includes(type));
+      if (match) {
+        return match;
+      }
+    }
+
+    return results[0];
+  }
+
+  function formatGoogleAddress(result) {
+    if (!result) {
+      return "";
+    }
+
+    const components = result.address_components || [];
+    const sublocality =
+      extractGoogleComponent(components, "sublocality_level_1") ||
+      extractGoogleComponent(components, "sublocality") ||
+      extractGoogleComponent(components, "neighborhood");
+    const locality =
+      extractGoogleComponent(components, "locality") ||
+      extractGoogleComponent(components, "postal_town") ||
+      extractGoogleComponent(components, "administrative_area_level_2");
+    const state = extractGoogleComponent(components, "administrative_area_level_1");
+    const country = extractGoogleComponent(components, "country");
+
+    return buildAddressFromParts([sublocality, locality, state, country]) || result.formatted_address || "";
+  }
+
   function reverseGeocodeWithGoogleJs(latitude, longitude) {
     if (!geocoderRef.current) {
       return Promise.resolve("");
@@ -368,7 +434,8 @@ export default function Navbar() {
         (results, status) => {
           const okStatus = window.google?.maps?.GeocoderStatus?.OK || "OK";
           if (status === okStatus && Array.isArray(results) && results.length > 0) {
-            resolve(results[0].formatted_address || "");
+            const bestResult = pickBestGoogleResult(results);
+            resolve(formatGoogleAddress(bestResult));
             return;
           }
 
@@ -425,7 +492,8 @@ export default function Navbar() {
       return "";
     }
 
-    return data.results[0].formatted_address || "";
+    const bestResult = pickBestGoogleResult(data.results);
+    return formatGoogleAddress(bestResult);
   }
 
   async function reverseGeocodeWithBigDataCloud(latitude, longitude) {
@@ -611,8 +679,8 @@ export default function Navbar() {
       },
       {
         enableHighAccuracy: true,
-        timeout: 18000,
-        maximumAge: 60000,
+        timeout: 20000,
+        maximumAge: 0,
       }
     );
   }

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { API_ENDPOINTS } from "../../config/api";
-
-const FILTER_STATUSES = ["All", "Success", "Pending", "Failed"];
+import { ADMIN_PAYMENT_FILTER_STATUSES } from "../../data/adminPaymentsData";
 
 function parsePayments(payload) {
   if (Array.isArray(payload?.payments)) return payload.payments;
@@ -234,7 +233,7 @@ export default function AdminPayments() {
 
       <div className="admin-section">
         <div className="quick-actions">
-          {FILTER_STATUSES.map((status) => (
+          {ADMIN_PAYMENT_FILTER_STATUSES.map((status) => (
             <button
               key={status}
               className={`btn-sm ${filterStatus === status ? "" : "outline"}`}

@@ -189,7 +189,14 @@ export default function AdminBookings() {
                 #{booking._id?.slice(-6) || "N/A"}
               </span>
               <span data-label="User">{booking.user?.name || "N/A"}</span>
-              <span data-label="Service">{booking.service || "N/A"}</span>
+              <span data-label="Service">
+                {booking.service || "N/A"}
+                {(booking.customerAddress || booking.address || booking.user?.address) && (
+                  <span style={{ display: "block", fontSize: "12px", color: "#6b7280", wordBreak: "break-word" }}>
+                    Address: {booking.customerAddress || booking.address || booking.user?.address}
+                  </span>
+                )}
+              </span>
               <span data-label="Vendor" style={{ fontSize: "13px", color: "var(--admin-muted)" }}>
                 {booking.vendor?.businessName || (booking.status === "Pending" ? "Open for vendors" : "N/A")}
               </span>

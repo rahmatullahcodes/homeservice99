@@ -1,5 +1,7 @@
 import { useState, useEffect } from "react";
 import { API_ENDPOINTS } from "../../config/api";
+import { ADMIN_SETTINGS_TABS } from "../../data/adminSettingsData";
+import { ADMIN_SETTINGS_DEFAULT_FORM } from "../../data/adminSettingsDefaults";
 
 export default function AdminSettings() {
   const [loading, setLoading] = useState(true);
@@ -9,31 +11,7 @@ export default function AdminSettings() {
   const [successMessage, setSuccessMessage] = useState("");
 
   // Form state
-  const [formData, setFormData] = useState({
-    platformCommission: 15,
-    gstTax: 18,
-    payoutCycle: "Weekly",
-    minimumPayoutAmount: 500,
-    maximumPayoutAmount: 100000,
-    maintenanceMode: false,
-    vendorSignupEnabled: true,
-    userSignupEnabled: true,
-    bookingsEnabled: true,
-    emailNotificationsEnabled: true,
-    smsNotificationsEnabled: true,
-    pushNotificationsEnabled: true,
-    emailService: "SendGrid",
-    emailFromAddress: "noreply@homeservice99.com",
-    smsService: "Twilio",
-    minBookingAdvanceHours: 2,
-    maxBookingAdvanceDays: 90,
-    cancellationDeadlineHours: 2,
-    cancellationRefundPercentage: 100,
-    reviewAllowedDaysAfter: 1,
-    minReviewLength: 10,
-    maxActiveBookingsPerUser: 10,
-    maxActiveListingsPerVendor: 50
-  });
+  const [formData, setFormData] = useState(ADMIN_SETTINGS_DEFAULT_FORM);
 
   useEffect(() => {
     fetchSettings();
@@ -147,13 +125,7 @@ export default function AdminSettings() {
     );
   }
 
-  const tabs = [
-    { id: "financial", label: "💰 Financial", icon: "💰" },
-    { id: "platform", label: "⚙️ Platform", icon: "⚙️" },
-    { id: "communication", label: "📧 Communication", icon: "📧" },
-    { id: "booking", label: "📅 Booking", icon: "📅" },
-    { id: "system", label: "🔧 System", icon: "🔧" }
-  ];
+  const tabs = ADMIN_SETTINGS_TABS;
 
   return (
     <div className="admin-settings">

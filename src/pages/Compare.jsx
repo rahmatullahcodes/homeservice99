@@ -1,12 +1,7 @@
+import { compareFeatures } from "../data/compareData";
+
 export default function Compare() {
-  const features = [
-    { name: "Warranty", cleaning: "48 hours", ac: "30 days", electrician: "15 days" },
-    { name: "Duration", cleaning: "4–5 hrs", ac: "60–90 min", electrician: "30–60 min" },
-    { name: "Materials", cleaning: "Included", ac: "Extra", electrician: "Extra" },
-    { name: "Support", cleaning: "Priority", ac: "Normal", electrician: "Normal" },
-    { name: "Cost", cleaning: "₹1,999", ac: "₹699", electrician: "₹249" },
-    { name: "Minimum Booking", cleaning: "1–3 BHK", ac: "All models", electrician: "All types" }
-  ];
+  const features = compareFeatures;
 
   return (
     <div className="container">

@@ -58,11 +58,25 @@ export default function Checkout() {
 
       setName((prev) => prev || savedUser.name || "");
       setPhone((prev) => prev || savedUser.phone || "");
-      setAddress((prev) => prev || savedUser.address || savedUser.city || "");
+      const storedLocation = localStorage.getItem("selectedLocation") || "";
+      setAddress((prev) => prev || savedUser.address || savedUser.city || storedLocation || "");
     } catch (error) {
       console.warn("Unable to prefill checkout details:", error);
     }
   }, [isLoggedIn]);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+
+    function handleLocationUpdate(event) {
+      const nextLocation = event?.detail?.location;
+      if (!nextLocation || typeof nextLocation !== "string") return;
+      setAddress((prev) => (prev && prev.trim() ? prev : nextLocation));
+    }
+
+    window.addEventListener("hs99-location-selected", handleLocationUpdate);
+    return () => window.removeEventListener("hs99-location-selected", handleLocationUpdate);
+  }, []);
 
   useEffect(() => {
     loadPaymentMethods();

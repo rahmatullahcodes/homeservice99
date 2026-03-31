@@ -1,8 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { API_ENDPOINTS } from "../../config/api";
-
-const STATUSES = ["Open", "In Progress", "Closed"];
-const PRIORITIES = ["High", "Medium", "Low"];
+import { SUPPORT_STATUSES, SUPPORT_PRIORITIES } from "../../data/adminSupportData";
 
 export default function AdminSupport() {
   const [tickets, setTickets] = useState([]);
@@ -190,11 +188,11 @@ export default function AdminSupport() {
         />
         <select value={filterStatus} onChange={(event) => setFilterStatus(event.target.value)} style={{ padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "8px" }}>
           <option value="all">All Status</option>
-          {STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
+          {SUPPORT_STATUSES.map((status) => <option key={status} value={status}>{status}</option>)}
         </select>
         <select value={filterPriority} onChange={(event) => setFilterPriority(event.target.value)} style={{ padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "8px" }}>
           <option value="all">All Priority</option>
-          {PRIORITIES.map((priority) => <option key={priority} value={priority}>{priority}</option>)}
+          {SUPPORT_PRIORITIES.map((priority) => <option key={priority} value={priority}>{priority}</option>)}
         </select>
         <select value={filterFrom} onChange={(event) => setFilterFrom(event.target.value)} style={{ padding: "10px 12px", border: "1px solid #d1d5db", borderRadius: "8px" }}>
           <option value="all">All Sources</option>
@@ -275,7 +273,7 @@ export default function AdminSupport() {
             <p><strong>Status:</strong> {selectedTicket.status || "N/A"}</p>
 
             <div style={{ display: "flex", gap: "8px", flexWrap: "wrap", marginTop: "12px" }}>
-              {STATUSES.map((status) => (
+              {SUPPORT_STATUSES.map((status) => (
                 <button
                   key={status}
                   className={`btn-sm ${selectedTicket.status === status ? "" : "outline"}`}

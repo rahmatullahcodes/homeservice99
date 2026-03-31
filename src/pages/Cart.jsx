@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { API_ENDPOINTS } from "../config/api";
+import { useToast } from "../context/ToastContext";
+import { ensureServiceableLocation } from "../utils/serviceAvailability";
 
 function parseCouponDiscount(coupon, subtotal) {
   if (!coupon) return 0;
@@ -39,6 +41,7 @@ export default function Cart() {
     clearAppliedCoupon
   } = useCart();
   const navigate = useNavigate();
+  const { addToast } = useToast();
 
   const [coupon, setCoupon] = useState("");
   const [couponLoading, setCouponLoading] = useState(false);
@@ -87,6 +90,13 @@ export default function Cart() {
   const total = cart.reduce((sum, item) => sum + Number(item.price || 0) * (Number(item.quantity) || 1), 0);
   const discount = parseCouponDiscount(appliedCoupon, total);
   const finalTotal = Math.max(total - discount, 0);
+
+  const handleCheckout = () => {
+    if (!ensureServiceableLocation(addToast)) {
+      return;
+    }
+    navigate("/checkout");
+  };
 
   return (
     <div className="container">
@@ -233,7 +243,7 @@ export default function Cart() {
                 <span>Rs {finalTotal.toFixed(0)}</span>
               </div>
 
-              <button className="btn-primary checkout-btn" onClick={() => navigate("/checkout")}>
+              <button className="btn-primary checkout-btn" onClick={handleCheckout}>
                 Proceed to Checkout
               </button>
             </div>

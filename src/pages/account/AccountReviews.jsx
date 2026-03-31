@@ -6,13 +6,7 @@ import {
   fetchUserReviews
 } from "../../utils/accountApi";
 import "../../styles/account.css";
-
-const INITIAL_FORM = {
-  bookingId: "",
-  rating: 5,
-  title: "",
-  comment: ""
-};
+import { ACCOUNT_REVIEW_INITIAL_FORM } from "../../data/accountFormsData";
 
 export default function AccountReviews() {
   const { addToast } = useToast();
@@ -24,7 +18,7 @@ export default function AccountReviews() {
   const [showForm, setShowForm] = useState(false);
   const [reviews, setReviews] = useState([]);
   const [reviewableBookings, setReviewableBookings] = useState([]);
-  const [formData, setFormData] = useState(INITIAL_FORM);
+  const [formData, setFormData] = useState(ACCOUNT_REVIEW_INITIAL_FORM);
 
   useEffect(() => {
     loadData();
@@ -76,7 +70,7 @@ export default function AccountReviews() {
       const review = await createUserReview(formData);
       setReviews((prev) => [review, ...prev]);
       setReviewableBookings((prev) => prev.filter((booking) => booking._id !== formData.bookingId));
-      setFormData(INITIAL_FORM);
+      setFormData(ACCOUNT_REVIEW_INITIAL_FORM);
       setShowForm(false);
       addToast("Review submitted", "success");
     } catch (err) {

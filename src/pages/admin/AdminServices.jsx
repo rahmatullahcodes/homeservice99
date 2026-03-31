@@ -1,47 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { API_ENDPOINTS } from "../../config/api";
 import { useToast } from "../../context/ToastContext";
+import { SECTION_KEYS, SECTION_ITEMS, INITIAL_FORM } from "../../data/adminServicesData";
 
 const MAX_IMAGE_SIZE_BYTES = 2 * 1024 * 1024;
-const SECTION_KEYS = {
-  CATEGORIES: "categories",
-  SUBCATEGORIES: "subcategories",
-  SERVICES: "services",
-  CREATE: "create"
-};
-
-const SECTION_ITEMS = [
-  {
-    key: SECTION_KEYS.CATEGORIES,
-    title: "Categories",
-    subtitle: "Parent level taxonomy management"
-  },
-  {
-    key: SECTION_KEYS.SUBCATEGORIES,
-    title: "Subcategories",
-    subtitle: "Category-wise child groups"
-  },
-  {
-    key: SECTION_KEYS.SERVICES,
-    title: "Service List",
-    subtitle: "Search, filter and moderate services"
-  },
-  {
-    key: SECTION_KEYS.CREATE,
-    title: "Add Service",
-    subtitle: "Create or edit service details"
-  }
-];
-
-const INITIAL_FORM = {
-  id: null,
-  title: "",
-  category: "",
-  subcategory: "",
-  price: "",
-  image: "",
-  active: true
-};
 
 function normalizeText(value) {
   return String(value || "").trim();

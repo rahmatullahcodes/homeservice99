@@ -7,13 +7,7 @@ import {
   normalizeAdminPermissions,
   setAdminUser
 } from "../../utils/adminAccess";
-
-const EMPTY_FORM = {
-  name: "",
-  email: "",
-  password: "",
-  permissions: []
-};
+import { ADMIN_EMPTY_FORM } from "../../data/adminAdminsData";
 
 export default function AdminAdmins() {
   const adminUser = getAdminUser();
@@ -22,7 +16,7 @@ export default function AdminAdmins() {
   const [error, setError] = useState("");
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingAdmin, setEditingAdmin] = useState(null);
-  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [formData, setFormData] = useState(ADMIN_EMPTY_FORM);
   const [saving, setSaving] = useState(false);
 
   const permissionKeys = useMemo(
@@ -78,7 +72,7 @@ export default function AdminAdmins() {
 
   function openCreateModal() {
     setEditingAdmin(null);
-    setFormData(EMPTY_FORM);
+    setFormData(ADMIN_EMPTY_FORM);
     setIsModalOpen(true);
   }
 
@@ -99,7 +93,7 @@ export default function AdminAdmins() {
     if (saving) return;
     setIsModalOpen(false);
     setEditingAdmin(null);
-    setFormData(EMPTY_FORM);
+    setFormData(ADMIN_EMPTY_FORM);
   }
 
   function togglePermission(key) {

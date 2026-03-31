@@ -8,8 +8,7 @@ import {
   updateUserAddress
 } from "../../utils/accountApi";
 import "../../styles/account.css";
-
-const EMPTY_FORM = { type: "Home", street: "", city: "", state: "", pincode: "" };
+import { ACCOUNT_ADDRESS_EMPTY_FORM } from "../../data/accountFormsData";
 
 export default function AccountAddresses() {
   const { addToast } = useToast();
@@ -19,7 +18,7 @@ export default function AccountAddresses() {
   const [addresses, setAddresses] = useState([]);
   const [showForm, setShowForm] = useState(false);
   const [editId, setEditId] = useState("");
-  const [formData, setFormData] = useState(EMPTY_FORM);
+  const [formData, setFormData] = useState(ACCOUNT_ADDRESS_EMPTY_FORM);
   const [errors, setErrors] = useState({});
 
   useEffect(() => {
@@ -82,7 +81,7 @@ export default function AccountAddresses() {
   function resetForm() {
     setShowForm(false);
     setEditId("");
-    setFormData(EMPTY_FORM);
+    setFormData(ACCOUNT_ADDRESS_EMPTY_FORM);
     setErrors({});
   }
 

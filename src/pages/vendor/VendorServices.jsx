@@ -3,30 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useVendor } from "../../context/VendorContext";
 import { API_ENDPOINTS } from "../../config/api";
 
-// Service Categories with Icons
-const SERVICE_CATEGORIES = [
-  { name: "AC Repair", icon: "❄️", color: "#60a5fa" },
-  { name: "Cleaning", icon: "🧹", color: "#34d399" },
-  { name: "Plumbing", icon: "🚿", color: "#2563eb" },
-  { name: "Electrical", icon: "⚡", color: "#fbbf24" },
-  { name: "Carpentry", icon: "🔨", color: "#f87171" },
-  { name: "Gardening", icon: "🌿", color: "#10b981" },
-  { name: "Painting", icon: "🎨", color: "#a78bfa" },
-  { name: "Appliance Repair", icon: "🔧", color: "#6366f1" },
-  { name: "Water Tank Cleaning", icon: "💧", color: "#06b6d4" },
-  { name: "Pest Control", icon: "🦟", color: "#ec4899" },
-  { name: "Home Maintenance", icon: "🏠", color: "#f59e0b" },
-  { name: "Other", icon: "📌", color: "#8b5cf6" }
-];
-
-// Pricing tiers for reference
-const PRICING_TIERS = [
-  { label: "Economy", range: "₹500 - ₹1,000", color: "#3b82f6" },
-  { label: "Standard", range: "₹1,000 - ₹3,000", color: "#10b981" },
-  { label: "Premium", range: "₹3,000 - ₹8,000", color: "#f59e0b" },
-  { label: "Luxury", range: "₹8,000+", color: "#8b5cf6" }
-];
-
+import { SERVICE_CATEGORIES, PRICING_TIERS } from "../../data/vendorServicesData";
 export default function VendorServices() {
   const navigate = useNavigate();
   const { vendor, isLoggedIn, loading: vendorLoading } = useVendor();
