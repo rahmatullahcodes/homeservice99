@@ -1,5 +1,5 @@
 import { DEFAULT_HOME_PAGE_SETTINGS, CURATED_VISIBILITY_KEY_MAP, BEAUTY_SUBCATEGORIES, getFeaturedServices, SERVICES_BY_CATEGORY, SUBCATEGORIES, OFFERS, homeDiscoveryTiles, CURATED_SERVICE_SECTION_DATA, MODAL_TITLE_MAP } from "../data/homePageData";
-import { useState, useRef, useEffect, useMemo } from "react";
+import { useState, useRef, useEffect, useMemo, Fragment } from "react";
 import { useNavigate } from "react-router-dom";
 import { useCart } from "../context/CartContext";
 import { useToast } from "../context/ToastContext";
@@ -12,6 +12,28 @@ import { buildServicesDataFromList, flattenServicesByCategory, pickFeaturedServi
 const assetImage = (fileName) => new URL(`../assets/images/${fileName}`, import.meta.url).href;
 
 const HOME_PAGE_CACHE_KEY = "hs99_home_page_settings";
+const DEFAULT_SECTION_ORDER = Array.isArray(DEFAULT_HOME_PAGE_SETTINGS.sectionOrder)
+  ? DEFAULT_HOME_PAGE_SETTINGS.sectionOrder
+  : [
+      "banners",
+      "hero",
+      "promoSlider",
+      "popularServices",
+      "getQuote",
+      "offersDiscounts",
+      "curatedServices",
+      "promoBanner1",
+      "promoBanner2",
+      "promoBanner3"
+    ];
+
+function normalizeSectionOrder(order, fallback = DEFAULT_SECTION_ORDER) {
+  const base = Array.isArray(fallback) && fallback.length ? fallback : DEFAULT_SECTION_ORDER;
+  const incoming = Array.isArray(order) ? order : [];
+  const filtered = incoming.filter((key) => base.includes(key));
+  const missing = base.filter((key) => !filtered.includes(key));
+  return [...filtered, ...missing];
+}
 
 const CURATED_SECTION_TEMPLATES = [
   {
@@ -79,6 +101,7 @@ function normalizeHomePageSettings(value = {}) {
       ...DEFAULT_HOME_PAGE_SETTINGS.sections,
       ...(incoming.sections || {})
     },
+    sectionOrder: normalizeSectionOrder(incoming.sectionOrder, DEFAULT_SECTION_ORDER),
     curatedSectionVisibility: {
       ...DEFAULT_HOME_PAGE_SETTINGS.curatedSectionVisibility,
       ...(incoming.curatedSectionVisibility || {})
@@ -668,90 +691,719 @@ export default function Home() {
     ? selectedSubcategory
     : (MODAL_TITLE_MAP[modalCategory] || `${modalCategory} Services`);
 
+  const sectionOrder = useMemo(
+    () => normalizeSectionOrder(homePageSettings.sectionOrder, DEFAULT_SECTION_ORDER),
+    [homePageSettings.sectionOrder]
+  );
+  const isDefaultSectionOrder = useMemo(
+    () => sectionOrder.join("|") === DEFAULT_SECTION_ORDER.join("|"),
+    [sectionOrder]
+  );
+
+  const promoBanner1Block = isSectionVisible("promoBanner1") ? (
+    <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
+      <div className="home-promo-banner-box" style={{
+        borderRadius: "16px",
+        width: "100%",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
+        overflow: "hidden",
+        background: "#e5e7eb"
+      }}>
+        <img
+          src={assetImage("banner1.png")}
+          alt="Electrician service banner"
+          loading="lazy"
+          decoding="async"
+          style={{
+            width: "100%",
+            height: "auto",
+            display: "block",
+            imageRendering: "auto"
+          }}
+        />
+      </div>
+    </section>
+  ) : null;
+
+  const promoBanner2Block = isSectionVisible("promoBanner2") ? (
+    <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
+      <div className="home-promo-banner-box" style={{
+        borderRadius: "16px",
+        width: "100%",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
+        overflow: "hidden",
+        background: "#e5e7eb"
+      }}>
+        <img
+          src={assetImage("banner2.png")}
+          alt="Home service promotion banner"
+          loading="lazy"
+          decoding="async"
+          style={{
+            width: "100%",
+            height: "auto",
+            display: "block",
+            imageRendering: "auto"
+          }}
+        />
+      </div>
+    </section>
+  ) : null;
+
+  const promoBanner3Block = isSectionVisible("promoBanner3") ? (
+    <section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
+      <div className="home-promo-banner-box" style={{
+        borderRadius: "16px",
+        width: "100%",
+        maxWidth: "1200px",
+        margin: "0 auto",
+        boxShadow: "0 12px 32px rgba(0, 0, 0, 0.2)",
+        overflow: "hidden",
+        background: "#e5e7eb"
+      }}>
+        <img
+          src={assetImage("banner3.png")}
+          alt="Home services discount banner"
+          loading="lazy"
+          decoding="async"
+          style={{
+            width: "100%",
+            height: "auto",
+            display: "block",
+            imageRendering: "auto"
+          }}
+        />
+      </div>
+    </section>
+  ) : null;
+
+  const sectionBlocks = {
+    banners: isSectionVisible("banners") ? <CMSBanners /> : null,
+    hero: isSectionVisible("hero") ? (
+      <section className="container hero hero-home fade-in">
+        <div className="hero-left-pane">
+
+          {/* <span className="hero-badge">? 50,000+ Happy Customers in {location}</span> */}
+
+          <h4 className="hero-title">{homePageSettings.heroTitle}</h4>
+
+          <div className="hero-metrics">
+            <span>{homePageSettings.heroStats.bookingsCompleted}</span>
+            <span>{homePageSettings.heroStats.averageRating}</span>
+            <span>{homePageSettings.heroStats.responseTime}</span>
+          </div>
+
+          {/* <p className="hero-subtitle">
+            Book verified professionals for cleaning, repairs, beauty, and maintenance in minutes. Transparent pricing, quality guaranteed, and payment after service completion.
+          </p> */}
+
+          {/* <div className="search-card">
+
+            <div className="search-location" onClick={getLocation} style={{ cursor: "pointer" }} aria-hidden="false">
+              {detecting ? "Detecting location..." : `${location} \u00B7 Change`}
+            </div>
+
+            <div className="search-input">
+              <input aria-label="Search services" placeholder="Search services (cleaning, AC repair, salon...)" />
+            </div>
+
+            <button type="button" className="btn-primary" onClick={() => navigate('/services')} aria-label="Find professionals">Find professionals</button>
+          </div> */}
+
+          
+
+          <div className="service-discovery-card">
+            <h5 className="service-discovery-title">{homePageSettings.discoveryTitle}</h5>
+            <div className="service-discovery-grid">
+              {homeDiscoveryTiles.map((tile) => (
+                <button
+                  key={tile.label}
+                  className="service-discovery-tile"
+                  onClick={() => openCategoryModal(tile.key)}
+                  type="button"
+                  aria-label={tile.label}
+                >
+                  <span className="service-discovery-icon-wrap">
+                    <img src={tile.icon} alt="" className="service-discovery-icon" loading="lazy" />
+                  </span>
+                  <span className="service-discovery-label">{tile.label}</span>
+                </button>
+              ))}
+            </div>
+          </div>
+      {/* <div className="search-helpers">
+            <div className="search-pill">Background-verified experts</div>
+            <div className="search-pill">Pay securely after service</div>
+          </div> */}
+        </div>
+
+        <div className="hero-right-pane">
+          <div className="hero-mosaic">
+            <div className="mosaic-item large">
+              <img src={assetImage("painterheader.jpg")} alt="Salon" />
+            </div>
+            <div className="mosaic-item">
+              <img src={assetImage("plumberheader.jpg")} alt="Massage" />
+            </div>
+            {/* <div className="mosaic-item">
+              <img src="https://i.postimg.cc/C1rGHLS1/834431670584630.jpg" alt="Repair" />
+            </div> */}
+            <div className="mosaic-item wide">
+              <img src="https://i.postimg.cc/1XzWsj5g/service.webp" alt="AC service" />
+            </div>
+             <div className="mosaic-item wide">
+              <img src={assetImage("male-electrician.jpg")} alt="AC service" />
+            </div>
+          </div>
+        </div>
+      </section>
+    ) : null,
+    promoSlider: isSectionVisible("promoSlider") ? (
+      <section className="container slide-up" style={{ marginTop: "20px", marginBottom: "8px", paddingBottom: "4px" }}>
+        <h2 className="section-title">Popular Services</h2>
+      
+
+        <div className="services-carousel-wrap">
+          <div
+            ref={promoSliderRef}
+            className="promo-slider home-services-track home-services-track--promo"
+            style={{
+              display: "flex",
+              gap: "16px",
+              overflowX: "auto",
+              scrollBehavior: "smooth",
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              paddingBottom: "12px",
+            }}
+          >
+            {[
+              { 
+                id: 1, 
+                img: assetImage("plumberheader.jpg"),
+                category: 'Plumber'
+              },
+              { 
+                id: 2, 
+                img: assetImage("electricianheader.jpg"),
+                category: 'Electrician'
+              },
+              { 
+                id: 3, 
+                img: assetImage("carpenter.jpg"),
+                category: 'Carpentry'
+              },
+              { 
+                id: 4, 
+                img: assetImage("painter.jpg"),
+                category: 'Painting'
+              },
+              { 
+                id: 5, 
+                img: assetImage("pestcontrol.jpg"),
+                category: 'Pest Control'
+              }
+            ].map((promo) => (
+              <div 
+                key={promo.id}
+                className="home-slider-card home-slider-card--promo"
+                style={{
+                  flex: "0 0 clamp(280px, 85vw, 360px)",
+                  minWidth: "clamp(280px, 85vw, 360px)",
+                  scrollSnapAlign: "start",
+                  height: "clamp(180px, 40vw, 220px)",
+                  borderRadius: "16px",
+                  overflow: "hidden",
+                  boxShadow: "0 4px 16px rgba(0, 0, 0, 0.1)",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-8px)";
+                  e.currentTarget.style.boxShadow = "0 12px 24px rgba(0, 0, 0, 0.15)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.1)";
+                }}
+                onClick={() => goToCategory(promo.category)}
+              >
+                {/* Image Only */}
+                <img 
+                  src={promo.img} 
+                  alt={`Promo ${promo.id}`}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    objectFit: "cover"
+                  }}
+                  onError={(e) => {
+                    e.target.src = "https://via.placeholder.com/360x220?text=Service+Image";
+                  }}
+                />
+              </div>
+            ))}
+          </div>
+        </div>
+        <button
+          className="services-carousel-arrow"
+          onClick={() => scrollCarousel(promoSliderRef, "right")}
+          style={{
+            position: "absolute",
+            right: "0",
+            top: "50%",
+            transform: "translateY(-50%)",
+            background: "rgba(255, 255, 255, 0.95)",
+            width: "44px",
+            height: "44px",
+            borderRadius: "50%",
+            border: "none",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            cursor: "pointer",
+            fontSize: "24px",
+            color: "#0f172a",
+            boxShadow: "0 2px 12px rgba(0, 0, 0, 0.15)",
+            zIndex: 10,
+            transition: "all 0.2s ease",
+            fontWeight: "bold",
+          }}
+          onMouseEnter={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 1)";
+            e.currentTarget.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+          }}
+          onMouseLeave={(e) => {
+            e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
+            e.currentTarget.style.boxShadow = "0 2px 12px rgba(0, 0, 0, 0.15)";
+          }}
+        >
+          &rarr;
+        </button>
+      </section>
+    ) : null,
+    popularServices: isSectionVisible("popularServices") ? (
+      <section className="container slide-up" style={{ marginTop: "24px", marginBottom: "8px", paddingBottom: "4px" }}>
+        <h2 className="section-title">{homePageSettings.popularServicesTitle}</h2>
+        
+
+        <div className="services-carousel-wrap">
+          <div 
+            className="home-services-track home-services-track--popular"
+            ref={popularServicesRef}
+            style={{
+              display: "flex",
+              gap: "12px",
+              overflowX: "auto",
+              scrollBehavior: "smooth",
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              paddingBottom: "4px"
+            }}
+          >
+            {featuredServices.map((service, index) => (
+              <div 
+                key={`${service.id}-${index}`}
+                className="home-slider-card home-slider-card--service"
+                style={{
+                  flex: "0 0 240px",
+                  display: "flex",
+                  flexDirection: "column",
+                  cursor: "pointer",
+                  transition: "all 0.3s ease",
+                  borderRadius: "12px",
+                  overflow: "hidden",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.08)",
+                  background: "#fff"
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.transform = "translateY(-4px)";
+                  e.currentTarget.style.boxShadow = "0 8px 16px rgba(0, 0, 0, 0.12)";
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.transform = "translateY(0)";
+                  e.currentTarget.style.boxShadow = "0 2px 8px rgba(0, 0, 0, 0.08)";
+                }}
+                onClick={() => {
+                  goToCategory(service.category);
+                }}
+              >
+                {/* Service Image */}
+                <div style={{
+                  width: "100%",
+                  height: "156px",
+                  overflow: "hidden",
+                  background: "#f1f5f9",
+                  position: "relative"
+                }}>
+                  <img 
+                    src={service.image} 
+                    alt={service.title}
+                    style={{
+                      width: "100%",
+                      height: "100%",
+                      objectFit: "cover"
+                    }}
+                    onError={(e) => {
+                      e.target.src = "https://via.placeholder.com/240x140?text=" + service.category;
+                    }}
+                  />
+                </div>
+                
+                {/* Service Body */}
+                <div style={{
+                  padding: "10px",
+                  flex: 1,
+                  display: "flex",
+                  flexDirection: "column"
+                }}>
+                  {/* Title */}
+                  <h3 style={{
+                    margin: "0 0 5px 0",
+                    fontSize: "12px",
+                    fontWeight: "600",
+                    color: "#0f172a",
+                    lineHeight: "1.4"
+                  }}>
+                    {service.title}
+                  </h3>
+                  
+                  {/* Rating & Instant Badge */}
+                  <div style={{ 
+                    display: "flex",
+                    alignItems: "center",
+                    gap: "4px",
+                    marginBottom: "5px",
+                    fontSize: "10px"
+                  }}>
+                    <span style={{ color: "#0f172a", fontWeight: "500" }}>
+                      &#9733; {service.rating}
+                    </span>
+                    <span style={{ color: "#6b7280" }}>
+                      {"\u2022"} Instant
+                    </span>
+                  </div>
+                  
+                  {/* Price */}
+                  <div style={{
+                    marginTop: "auto",
+                    paddingTop: "5px",
+                    borderTop: "1px solid #e5e7eb"
+                  }}>
+                    <div style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "6px"
+                    }}>
+                      <strong style={{
+                        fontSize: "13px",
+                        color: "#0f172a"
+                      }}>
+                        &#8377;{service.price}
+                      </strong>
+                      <span style={{
+                        fontSize: "10px",
+                        color: "#6b7280",
+                        textDecoration: "line-through"
+                      }}>
+                        &#8377;{Math.round(service.price * 1.3)}
+                      </span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <button
+            className="services-carousel-arrow"
+            onClick={() => scrollCarousel(popularServicesRef, "right")}
+            style={{
+              position: "absolute",
+              right: "0",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "rgba(255, 255, 255, 0.95)",
+              width: "44px",
+              height: "44px",
+              borderRadius: "50%",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              fontSize: "24px",
+              color: "#0f172a",
+              boxShadow: "0 2px 12px rgba(0, 0, 0, 0.15)",
+              zIndex: 10,
+              transition: "all 0.2s ease",
+              fontWeight: "bold"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 1)";
+              e.currentTarget.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
+              e.currentTarget.style.boxShadow = "0 2px 12px rgba(0, 0, 0, 0.15)";
+            }}
+          >
+            &rarr;
+          </button>
+        </div>
+      </section>
+    ) : null,
+    getQuote: isSectionVisible("getQuote") ? (
+      <section className="container slide-up" style={{ marginTop: "24px", paddingTop: "4px" }}>
+        <h2 className="section-title">{homePageSettings.getQuoteTitle}</h2>
+       
+
+        <div className="services-carousel-wrap">
+          <div
+            className="home-services-track home-services-track--quote"
+            ref={getQuoteRef}
+            style={{
+              display: "flex",
+              gap: "16px",
+              overflowX: "auto",
+              scrollBehavior: "smooth",
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none"
+            }}
+          >
+          {OFFERS.map((offer) => (
+            <div 
+              key={offer.id}
+              className="home-slider-card home-slider-card--offer"
+              style={{
+                flex: "0 0 clamp(200px, 85vw, 250px)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                cursor: "pointer",
+                transition: "all 0.3s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+              }}>
+              <img 
+                src={offer.img} 
+                alt={offer.title}
+                style={{
+                  width: "100%",
+                  height: "156px",
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+                }}
+              />
+              <p style={{
+                margin: "0",
+                fontSize: "12px",
+                fontWeight: "600",
+                color: "#0f172a",
+                textAlign: "center",
+                lineHeight: "1.3"
+              }}>
+                {offer.title}
+              </p>
+            </div>
+          ))}
+          </div>
+          <button
+            className="services-carousel-arrow"
+            onClick={() => scrollCarousel(getQuoteRef, "right")}
+            style={{
+              position: "absolute",
+              right: "0",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "rgba(255, 255, 255, 0.95)",
+              width: "44px",
+              height: "44px",
+              borderRadius: "50%",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              fontSize: "24px",
+              color: "#0f172a",
+              boxShadow: "0 2px 12px rgba(0, 0, 0, 0.15)",
+              zIndex: 10,
+              transition: "all 0.2s ease",
+              fontWeight: "bold"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 1)";
+              e.currentTarget.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
+              e.currentTarget.style.boxShadow = "0 2px 12px rgba(0, 0, 0, 0.15)";
+            }}
+          >
+            &rarr;
+          </button>
+        </div>
+      </section>
+    ) : null,
+    offersDiscounts: isSectionVisible("offersDiscounts") ? (
+      <section className="container slide-up" style={{ marginTop: "24px", paddingTop: "6px" }}>
+        <h2 className="section-title">{homePageSettings.offersDiscountsTitle}</h2>
+       
+
+        <div className="services-carousel-wrap">
+          <div
+            className="home-services-track home-services-track--offers"
+            ref={offersRef}
+            style={{
+              display: "flex",
+              gap: "6px",
+              overflowX: "auto",
+              scrollBehavior: "smooth",
+              WebkitOverflowScrolling: "touch",
+              scrollbarWidth: "none",
+              msOverflowStyle: "none"
+            }}
+          >
+          {OFFERS.map((offer) => (
+            <div 
+              key={offer.id}
+              className="home-slider-card home-slider-card--offer"
+              style={{
+                flex: "0 0 clamp(200px, 85vw, 250px)",
+                display: "flex",
+                flexDirection: "column",
+                gap: "8px",
+                cursor: "pointer",
+                transition: "all 0.3s ease"
+              }}
+              onMouseEnter={(e) => {
+                e.currentTarget.style.transform = "translateY(-4px)";
+              }}
+              onMouseLeave={(e) => {
+                e.currentTarget.style.transform = "translateY(0)";
+              }}>
+              <img 
+                src={offer.img} 
+                alt={offer.title}
+                style={{
+                  width: "100%",
+                  height: "156px",
+                  objectFit: "cover",
+                  borderRadius: "10px",
+                  boxShadow: "0 2px 8px rgba(0, 0, 0, 0.1)"
+                }}
+              />
+              <p style={{
+                margin: "0",
+                fontSize: "12px",
+                fontWeight: "600",
+                color: "#0f172a",
+                textAlign: "center",
+                lineHeight: "1.3"
+              }}>
+                {offer.title}
+              </p>
+            </div>
+          ))}
+          </div>
+          <button
+            className="services-carousel-arrow"
+            onClick={() => scrollCarousel(offersRef, "right")}
+            style={{
+              position: "absolute",
+              right: "0",
+              top: "50%",
+              transform: "translateY(-50%)",
+              background: "rgba(255, 255, 255, 0.95)",
+              width: "44px",
+              height: "44px",
+              borderRadius: "50%",
+              border: "none",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              cursor: "pointer",
+              fontSize: "24px",
+              color: "#0f172a",
+              boxShadow: "0 2px 12px rgba(0, 0, 0, 0.15)",
+              zIndex: 10,
+              transition: "all 0.2s ease",
+              fontWeight: "bold"
+            }}
+            onMouseEnter={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 1)";
+              e.currentTarget.style.boxShadow = "0 4px 16px rgba(0, 0, 0, 0.2)";
+            }}
+            onMouseLeave={(e) => {
+              e.currentTarget.style.background = "rgba(255, 255, 255, 0.95)";
+              e.currentTarget.style.boxShadow = "0 2px 12px rgba(0, 0, 0, 0.15)";
+            }}
+          >
+            &rarr;
+          </button>
+        </div>
+      </section>
+    ) : null,
+    curatedServices: isSectionVisible("curatedServices") ? (
+      isDefaultSectionOrder ? (
+        <>
+          {isCuratedSectionVisible(curatedServiceSections[0]?.key)
+            ? renderUnifiedServiceSection(curatedServiceSections[0])
+            : null}
+          {isCuratedSectionVisible(curatedServiceSections[1]?.key)
+            ? renderUnifiedServiceSection(curatedServiceSections[1])
+            : null}
+          {promoBanner1Block}
+          {isCuratedSectionVisible(curatedServiceSections[2]?.key)
+            ? renderUnifiedServiceSection(curatedServiceSections[2])
+            : null}
+          {isCuratedSectionVisible(curatedServiceSections[3]?.key)
+            ? renderUnifiedServiceSection(curatedServiceSections[3])
+            : null}
+          {isCuratedSectionVisible(curatedServiceSections[4]?.key)
+            ? renderUnifiedServiceSection(curatedServiceSections[4])
+            : null}
+          {promoBanner2Block}
+          {isCuratedSectionVisible(curatedServiceSections[5]?.key)
+            ? renderUnifiedServiceSection(curatedServiceSections[5])
+            : null}
+          {isCuratedSectionVisible(curatedServiceSections[6]?.key)
+            ? renderUnifiedServiceSection(curatedServiceSections[6])
+            : null}
+          {promoBanner3Block}
+        </>
+      ) : (
+        <>
+          {curatedServiceSections.map((section) =>
+            isCuratedSectionVisible(section.key) ? renderUnifiedServiceSection(section) : null
+          )}
+        </>
+      )
+    ) : null,
+    promoBanner1: isDefaultSectionOrder ? null : promoBanner1Block,
+    promoBanner2: isDefaultSectionOrder ? null : promoBanner2Block,
+    promoBanner3: isDefaultSectionOrder ? null : promoBanner3Block
+  };
+
   return (
     <div className="home-page-white">
-      {isSectionVisible("banners") ? <CMSBanners /> : null}
-
-{/* HERO SECTION */}
-{isSectionVisible("hero") ? (
-<section className="container hero hero-home fade-in">
-  <div className="hero-left-pane">
-
-    {/* <span className="hero-badge">? 50,000+ Happy Customers in {location}</span> */}
-
-    <h4 className="hero-title">{homePageSettings.heroTitle}</h4>
-
-    <div className="hero-metrics">
-      <span>{homePageSettings.heroStats.bookingsCompleted}</span>
-      <span>{homePageSettings.heroStats.averageRating}</span>
-      <span>{homePageSettings.heroStats.responseTime}</span>
-    </div>
-
-    {/* <p className="hero-subtitle">
-      Book verified professionals for cleaning, repairs, beauty, and maintenance in minutes. Transparent pricing, quality guaranteed, and payment after service completion.
-    </p> */}
-
-    {/* <div className="search-card">
-
-      <div className="search-location" onClick={getLocation} style={{ cursor: "pointer" }} aria-hidden="false">
-        {detecting ? "Detecting location..." : `${location} \u00B7 Change`}
-      </div>
-
-      <div className="search-input">
-        <input aria-label="Search services" placeholder="Search services (cleaning, AC repair, salon...)" />
-      </div>
-
-      <button type="button" className="btn-primary" onClick={() => navigate('/services')} aria-label="Find professionals">Find professionals</button>
-    </div> */}
-
-    
-
-    <div className="service-discovery-card">
-      <h5 className="service-discovery-title">{homePageSettings.discoveryTitle}</h5>
-      <div className="service-discovery-grid">
-        {homeDiscoveryTiles.map((tile) => (
-          <button
-            key={tile.label}
-            className="service-discovery-tile"
-            onClick={() => openCategoryModal(tile.key)}
-            type="button"
-            aria-label={tile.label}
-          >
-            <span className="service-discovery-icon-wrap">
-              <img src={tile.icon} alt="" className="service-discovery-icon" loading="lazy" />
-            </span>
-            <span className="service-discovery-label">{tile.label}</span>
-          </button>
-        ))}
-      </div>
-    </div>
-{/* <div className="search-helpers">
-      <div className="search-pill">Background-verified experts</div>
-      <div className="search-pill">Pay securely after service</div>
-    </div> */}
-  </div>
-
-  <div className="hero-right-pane">
-    <div className="hero-mosaic">
-      <div className="mosaic-item large">
-        <img src={assetImage("painterheader.jpg")} alt="Salon" />
-      </div>
-      <div className="mosaic-item">
-        <img src={assetImage("plumberheader.jpg")} alt="Massage" />
-      </div>
-      {/* <div className="mosaic-item">
-        <img src="https://i.postimg.cc/C1rGHLS1/834431670584630.jpg" alt="Repair" />
-      </div> */}
-      <div className="mosaic-item wide">
-        <img src="https://i.postimg.cc/1XzWsj5g/service.webp" alt="AC service" />
-      </div>
-       <div className="mosaic-item wide">
-        <img src={assetImage("male-electrician.jpg")} alt="AC service" />
-      </div>
-    </div>
-  </div>
-</section>
-) : null}
+      {sectionOrder.map((key) => (
+        <Fragment key={key}>
+          {sectionBlocks[key] ?? null}
+        </Fragment>
+      ))}
 
 {/* CATEGORY QUICK-MODAL WITH SUBCATEGORIES */}
 {modalOpen && (
@@ -1979,621 +2631,6 @@ export default function Home() {
     </div>
   </div>
 )}
-
-{/* PROMOTIONAL SLIDER SECTION */}
-{isSectionVisible("promoSlider") ? (
-<section className="container slide-up" style={{ marginTop: "48px" }}>
-  <div className="services-carousel-wrap">
-    <div style={{ position: 'relative', overflow: 'hidden' }}>
-      <div 
-        ref={promoSliderRef}
-        className="promo-slider home-services-track home-services-track--promo"
-        style={{ 
-          display: 'flex',
-          gap: '20px',
-          overflowX: 'auto',
-          scrollBehavior: 'smooth',
-          WebkitOverflowScrolling: 'touch',
-          scrollSnapType: 'x mandatory',
-          scrollbarWidth: 'none',
-          msOverflowStyle: 'none'
-        }}
-      >
-        {[
-          { 
-            id: 1, 
-            img: assetImage("Ac_service.jpg"),
-            category: 'Appliances'
-          },
-          { 
-            id: 2, 
-            img: assetImage("plumber.jpg"),
-            category: 'Plumber'
-          },
-          { 
-            id: 3, 
-            img: assetImage("carpenter.jpg"),
-            category: 'Carpentry'
-          },
-          { 
-            id: 4, 
-            img: assetImage("painter.jpg"),
-            category: 'Painting'
-          },
-          { 
-            id: 5, 
-            img: assetImage("pestcontrol.jpg"),
-            category: 'Pest Control'
-          }
-        ].map((promo) => (
-          <div 
-            key={promo.id}
-            className="home-slider-card home-slider-card--promo"
-            style={{
-              flex: '0 0 clamp(280px, 85vw, 360px)',
-              minWidth: 'clamp(280px, 85vw, 360px)',
-              scrollSnapAlign: 'start',
-              height: 'clamp(180px, 40vw, 220px)',
-              borderRadius: '16px',
-              overflow: 'hidden',
-              boxShadow: '0 4px 16px rgba(0, 0, 0, 0.1)',
-              cursor: 'pointer',
-              transition: 'all 0.3s ease'
-            }}
-            onMouseEnter={(e) => {
-              e.currentTarget.style.transform = 'translateY(-8px)';
-              e.currentTarget.style.boxShadow = '0 12px 24px rgba(0, 0, 0, 0.15)';
-            }}
-            onMouseLeave={(e) => {
-              e.currentTarget.style.transform = 'translateY(0)';
-              e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.1)';
-            }}
-            onClick={() => goToCategory(promo.category)}
-          >
-            {/* Image Only */}
-            <img 
-              src={promo.img} 
-              alt={`Promo ${promo.id}`}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover'
-              }}
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/360x220?text=Service+Image';
-              }}
-            />
-          </div>
-        ))}
-      </div>
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(promoSliderRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      &rarr;
-    </button>
-  </div>
-</section>
-) : null}
-
-{/* FEATURED SERVICES CARDS - HORIZONTAL CAROUSEL */}
-{isSectionVisible("popularServices") ? (
-<section className="container slide-up" style={{ marginTop: "24px", marginBottom: "8px", paddingBottom: "4px" }}>
-  <h2 className="section-title">{homePageSettings.popularServicesTitle}</h2>
-  
-
-  <div className="services-carousel-wrap">
-    <div 
-      className="home-services-track home-services-track--popular"
-      ref={popularServicesRef}
-      style={{
-        display: 'flex',
-        gap: '12px',
-        overflowX: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none',
-        paddingBottom: '4px'
-      }}
-    >
-      {featuredServices.map((service, index) => (
-        <div 
-          key={`${service.id}-${index}`}
-          className="home-slider-card home-slider-card--service"
-          style={{
-            flex: '0 0 240px',
-            display: 'flex',
-            flexDirection: 'column',
-            cursor: 'pointer',
-            transition: 'all 0.3s ease',
-            borderRadius: '12px',
-            overflow: 'hidden',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.08)',
-            background: '#fff'
-          }}
-          onMouseEnter={(e) => {
-            e.currentTarget.style.transform = 'translateY(-4px)';
-            e.currentTarget.style.boxShadow = '0 8px 16px rgba(0, 0, 0, 0.12)';
-          }}
-          onMouseLeave={(e) => {
-            e.currentTarget.style.transform = 'translateY(0)';
-            e.currentTarget.style.boxShadow = '0 2px 8px rgba(0, 0, 0, 0.08)';
-          }}
-          onClick={() => {
-            goToCategory(service.category);
-          }}
-        >
-          {/* Service Image */}
-          <div style={{
-            width: '100%',
-            height: '156px',
-            overflow: 'hidden',
-            background: '#f1f5f9',
-            position: 'relative'
-          }}>
-            <img 
-              src={service.image} 
-              alt={service.title}
-              style={{
-                width: '100%',
-                height: '100%',
-                objectFit: 'cover'
-              }}
-              onError={(e) => {
-                e.target.src = 'https://via.placeholder.com/240x140?text=' + service.category;
-              }}
-            />
-          </div>
-          
-          {/* Service Body */}
-          <div style={{
-            padding: '10px',
-            flex: 1,
-            display: 'flex',
-            flexDirection: 'column'
-          }}>
-            {/* Title */}
-            <h3 style={{
-              margin: '0 0 5px 0',
-              fontSize: '12px',
-              fontWeight: '600',
-              color: '#0f172a',
-              lineHeight: '1.4'
-            }}>
-              {service.title}
-            </h3>
-            
-            {/* Rating & Instant Badge */}
-            <div style={{ 
-              display: 'flex',
-              alignItems: 'center',
-              gap: '4px',
-              marginBottom: '5px',
-              fontSize: '10px'
-            }}>
-              <span style={{ color: '#0f172a', fontWeight: '500' }}>
-                &#9733; {service.rating}
-              </span>
-              <span style={{ color: '#6b7280' }}>
-                {"\u2022"} Instant
-              </span>
-            </div>
-            
-            {/* Price */}
-            <div style={{
-              marginTop: 'auto',
-              paddingTop: '5px',
-              borderTop: '1px solid #e5e7eb'
-            }}>
-              <div style={{
-                display: 'flex',
-                alignItems: 'center',
-                gap: '6px'
-              }}>
-                <strong style={{
-                  fontSize: '13px',
-                  color: '#0f172a'
-                }}>
-                  &#8377;{service.price}
-                </strong>
-                <span style={{
-                  fontSize: '10px',
-                  color: '#6b7280',
-                  textDecoration: 'line-through'
-                }}>
-                  &#8377;{Math.round(service.price * 1.3)}
-                </span>
-              </div>
-            </div>
-          </div>
-        </div>
-      ))}
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(popularServicesRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      &rarr;
-    </button>
-  </div>
-</section>
-) : null}
-
-{/* GET QUOTE - PROFESSIONAL SLIDER */}
-{isSectionVisible("getQuote") ? (
-<section className="container slide-up" style={{ marginTop: "24px", paddingTop: "4px" }}>
-  <h2 className="section-title">{homePageSettings.getQuoteTitle}</h2>
- 
-
-  <div className="services-carousel-wrap">
-    <div
-      className="home-services-track home-services-track--quote"
-      ref={getQuoteRef}
-      style={{
-        display: 'flex',
-        gap: '16px',
-        overflowX: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
-      }}
-    >
-    {OFFERS.map((offer) => (
-      <div 
-        key={offer.id}
-        className="home-slider-card home-slider-card--offer"
-        style={{
-          flex: '0 0 clamp(200px, 85vw, 250px)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-4px)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-        }}>
-        <img 
-          src={offer.img} 
-          alt={offer.title}
-          style={{
-            width: '100%',
-            height: '156px',
-            objectFit: 'cover',
-            borderRadius: '10px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-          }}
-        />
-        <p style={{
-          margin: '0',
-          fontSize: '12px',
-          fontWeight: '600',
-          color: '#0f172a',
-          textAlign: 'center',
-          lineHeight: '1.3'
-        }}>
-          {offer.title}
-        </p>
-      </div>
-    ))}
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(getQuoteRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      &rarr;
-    </button>
-  </div>
-</section>
-) : null}
-
-{/* OFFERS & DISCOUNTS - PROFESSIONAL SLIDER */}
-{isSectionVisible("offersDiscounts") ? (
-<section className="container slide-up" style={{ marginTop: "24px", paddingTop: "6px" }}>
-  <h2 className="section-title">{homePageSettings.offersDiscountsTitle}</h2>
- 
-
-  <div className="services-carousel-wrap">
-    <div
-      className="home-services-track home-services-track--offers"
-      ref={offersRef}
-      style={{
-        display: 'flex',
-        gap: '6px',
-        overflowX: 'auto',
-        scrollBehavior: 'smooth',
-        WebkitOverflowScrolling: 'touch',
-        scrollbarWidth: 'none',
-        msOverflowStyle: 'none'
-      }}
-    >
-    {OFFERS.map((offer) => (
-      <div 
-        key={offer.id}
-        className="home-slider-card home-slider-card--offer"
-        style={{
-          flex: '0 0 clamp(200px, 85vw, 250px)',
-          display: 'flex',
-          flexDirection: 'column',
-          gap: '8px',
-          cursor: 'pointer',
-          transition: 'all 0.3s ease'
-        }}
-        onMouseEnter={(e) => {
-          e.currentTarget.style.transform = 'translateY(-4px)';
-        }}
-        onMouseLeave={(e) => {
-          e.currentTarget.style.transform = 'translateY(0)';
-        }}>
-        <img 
-          src={offer.img} 
-          alt={offer.title}
-          style={{
-            width: '100%',
-            height: '156px',
-            objectFit: 'cover',
-            borderRadius: '10px',
-            boxShadow: '0 2px 8px rgba(0, 0, 0, 0.1)'
-          }}
-        />
-        <p style={{
-          margin: '0',
-          fontSize: '12px',
-          fontWeight: '600',
-          color: '#0f172a',
-          textAlign: 'center',
-          lineHeight: '1.3'
-        }}>
-          {offer.title}
-        </p>
-      </div>
-    ))}
-    </div>
-    <button
-      className="services-carousel-arrow"
-      onClick={() => scrollCarousel(offersRef, 'right')}
-      style={{
-        position: 'absolute',
-        right: '0',
-        top: '50%',
-        transform: 'translateY(-50%)',
-        background: 'rgba(255, 255, 255, 0.95)',
-        width: '44px',
-        height: '44px',
-        borderRadius: '50%',
-        border: 'none',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-        cursor: 'pointer',
-        fontSize: '24px',
-        color: '#0f172a',
-        boxShadow: '0 2px 12px rgba(0, 0, 0, 0.15)',
-        zIndex: 10,
-        transition: 'all 0.2s ease',
-        fontWeight: 'bold'
-      }}
-      onMouseEnter={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 1)';
-        e.currentTarget.style.boxShadow = '0 4px 16px rgba(0, 0, 0, 0.2)';
-      }}
-      onMouseLeave={(e) => {
-        e.currentTarget.style.background = 'rgba(255, 255, 255, 0.95)';
-        e.currentTarget.style.boxShadow = '0 2px 12px rgba(0, 0, 0, 0.15)';
-      }}
-    >
-      &rarr;
-    </button>
-  </div>
-</section>
-) : null}
-
-{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[0]?.key)
-  ? renderUnifiedServiceSection(curatedServiceSections[0])
-  : null}
-
-{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[1]?.key)
-  ? renderUnifiedServiceSection(curatedServiceSections[1])
-  : null}
-
-{/* ADS BANNER - After Massage for Men */}
-{isSectionVisible("promoBanner1") ? (
-<section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
-  <div className="home-promo-banner-box" style={{
-    borderRadius: '16px',
-    width: '100%',
-    maxWidth: '1200px',
-    margin: '0 auto',
-    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
-    overflow: 'hidden',
-    background: '#e5e7eb'
-  }}>
-    <img
-      src={assetImage("banner1.png")}
-      alt="Electrician service banner"
-      loading="lazy"
-      decoding="async"
-      style={{
-        width: '100%',
-        height: 'auto',
-        display: 'block',
-        imageRendering: 'auto'
-      }}
-    />
-  </div>
-</section>
-) : null}
-
-{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[2]?.key)
-  ? renderUnifiedServiceSection(curatedServiceSections[2])
-  : null}
-
-{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[3]?.key)
-  ? renderUnifiedServiceSection(curatedServiceSections[3])
-  : null}
-
-{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[4]?.key)
-  ? renderUnifiedServiceSection(curatedServiceSections[4])
-  : null}
-
-{/* ADS BANNER - After Massage for Men */}
-{isSectionVisible("promoBanner2") ? (
-<section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
-  <div className="home-promo-banner-box" style={{
-    borderRadius: '16px',
-    width: '100%',
-    maxWidth: '1200px',
-    margin: '0 auto',
-    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
-    overflow: 'hidden',
-    background: '#e5e7eb'
-  }}>
-    <img
-      src={assetImage("banner2.png")}
-      alt="Home service promotion banner"
-      loading="lazy"
-      decoding="async"
-      style={{
-        width: '100%',
-        height: 'auto',
-        display: 'block',
-        imageRendering: 'auto'
-      }}
-    />
-  </div>
-</section>
-) : null}
-
-{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[5]?.key)
-  ? renderUnifiedServiceSection(curatedServiceSections[5])
-  : null}
-
-{isSectionVisible("curatedServices") && isCuratedSectionVisible(curatedServiceSections[6]?.key)
-  ? renderUnifiedServiceSection(curatedServiceSections[6])
-  : null}
-
-{/* ADS BANNER - After Massage for Men */}
-{isSectionVisible("promoBanner3") ? (
-<section className="container slide-up" style={{ marginTop: "32px", marginBottom: "20px" }}>
-  <div className="home-promo-banner-box" style={{
-    borderRadius: '16px',
-    width: '100%',
-    maxWidth: '1200px',
-    margin: '0 auto',
-    boxShadow: '0 12px 32px rgba(0, 0, 0, 0.2)',
-    overflow: 'hidden',
-    background: '#e5e7eb'
-  }}>
-    <img
-      src={assetImage("banner3.png")}
-      alt="Home services discount banner"
-      loading="lazy"
-      decoding="async"
-      style={{
-        width: '100%',
-        height: 'auto',
-        display: 'block',
-        imageRendering: 'auto'
-      }}
-    />
-  </div>
-</section>
-) : null}
-
-
 
 {/* FAQ SECTION */}
 {/* <section className="container slide-up" style={{ marginTop: "12px", marginBottom: "20px" }}>

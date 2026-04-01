@@ -152,6 +152,21 @@ const homePageSettingsSchema = new mongoose.Schema(
     },
     heroStats: { type: homeHeroStatsSchema, default: () => ({}) },
     sections: { type: homeSectionVisibilitySchema, default: () => ({}) },
+    sectionOrder: {
+      type: [String],
+      default: () => ([
+        "banners",
+        "hero",
+        "promoSlider",
+        "popularServices",
+        "getQuote",
+        "offersDiscounts",
+        "curatedServices",
+        "promoBanner1",
+        "promoBanner2",
+        "promoBanner3"
+      ])
+    },
     curatedSectionVisibility: {
       type: homeCuratedSectionVisibilitySchema,
       default: () => ({})

@@ -21,6 +21,18 @@ export const DEFAULT_HOME_PAGE_SETTINGS = {
     promoBanner2: true,
     promoBanner3: true
   },
+  sectionOrder: [
+    "banners",
+    "hero",
+    "promoSlider",
+    "popularServices",
+    "getQuote",
+    "offersDiscounts",
+    "curatedServices",
+    "promoBanner1",
+    "promoBanner2",
+    "promoBanner3"
+  ],
   curatedSectionVisibility: {
     salonMen: true,
     massageMen: true,

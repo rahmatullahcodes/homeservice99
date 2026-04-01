@@ -6,6 +6,19 @@ import {
   updatePaymentGatewaySettings as savePaymentGatewaySettings
 } from "../services/paymentGatewayService.js";
 
+const HOME_PAGE_SECTION_ORDER = [
+  "banners",
+  "hero",
+  "promoSlider",
+  "popularServices",
+  "getQuote",
+  "offersDiscounts",
+  "curatedServices",
+  "promoBanner1",
+  "promoBanner2",
+  "promoBanner3"
+];
+
 const HOME_PAGE_DEFAULTS = {
   heroTitle: "Trusted Home Services at Your Doorstep",
   discoveryTitle: "What are you looking for?",
@@ -29,6 +42,7 @@ const HOME_PAGE_DEFAULTS = {
     promoBanner2: true,
     promoBanner3: true
   },
+  sectionOrder: HOME_PAGE_SECTION_ORDER,
   curatedSectionVisibility: {
     salonMen: true,
     massageMen: true,
@@ -49,6 +63,14 @@ function cleanBoolean(value, fallback) {
   return typeof value === "boolean" ? value : fallback;
 }
 
+function normalizeSectionOrder(value, fallback = HOME_PAGE_SECTION_ORDER) {
+  const base = Array.isArray(fallback) && fallback.length > 0 ? fallback : HOME_PAGE_SECTION_ORDER;
+  const incoming = Array.isArray(value) ? value : [];
+  const filtered = incoming.filter((key) => base.includes(key));
+  const missing = base.filter((key) => !filtered.includes(key));
+  return [...filtered, ...missing];
+}
+
 function normalizeHomePageSettings(value = {}, base = HOME_PAGE_DEFAULTS) {
   const source = value && typeof value === "object" ? value : {};
   const mergedBase = {
@@ -65,7 +87,8 @@ function normalizeHomePageSettings(value = {}, base = HOME_PAGE_DEFAULTS) {
     curatedSectionVisibility: {
       ...HOME_PAGE_DEFAULTS.curatedSectionVisibility,
       ...(base.curatedSectionVisibility || {})
-    }
+    },
+    sectionOrder: normalizeSectionOrder(base.sectionOrder || HOME_PAGE_DEFAULTS.sectionOrder)
   };
 
   return {
@@ -91,6 +114,7 @@ function normalizeHomePageSettings(value = {}, base = HOME_PAGE_DEFAULTS) {
       promoBanner2: cleanBoolean(source.sections?.promoBanner2, mergedBase.sections.promoBanner2),
       promoBanner3: cleanBoolean(source.sections?.promoBanner3, mergedBase.sections.promoBanner3)
     },
+    sectionOrder: normalizeSectionOrder(source.sectionOrder, mergedBase.sectionOrder),
     curatedSectionVisibility: {
       salonMen: cleanBoolean(source.curatedSectionVisibility?.salonMen, mergedBase.curatedSectionVisibility.salonMen),
       massageMen: cleanBoolean(source.curatedSectionVisibility?.massageMen, mergedBase.curatedSectionVisibility.massageMen),

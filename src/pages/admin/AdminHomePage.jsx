@@ -3,10 +3,24 @@ import { API_ENDPOINTS } from "../../config/api";
 import { useToast } from "../../context/ToastContext";
 import { DEFAULT_HOME_PAGE_SETTINGS, SECTION_LABELS, CURATED_LABELS } from "../../data/adminHomePageData";
 
+const SECTION_KEYS = SECTION_LABELS.map((item) => item.key);
+const SECTION_LABEL_MAP = SECTION_LABELS.reduce((acc, item) => {
+  acc[item.key] = item.label;
+  return acc;
+}, {});
+
 const HOME_PAGE_CACHE_KEY = "hs99_home_page_settings";
 
 async function parseJson(response) {
   return response.json().catch(() => ({}));
+}
+
+function normalizeSectionOrder(order, fallback = SECTION_KEYS) {
+  const base = Array.isArray(fallback) && fallback.length ? fallback : SECTION_KEYS;
+  const incoming = Array.isArray(order) ? order : [];
+  const filtered = incoming.filter((key) => base.includes(key));
+  const missing = base.filter((key) => !filtered.includes(key));
+  return [...filtered, ...missing];
 }
 
 function buildMergedHomePageForm(homePage = {}) {
@@ -21,6 +35,10 @@ function buildMergedHomePageForm(homePage = {}) {
       ...DEFAULT_HOME_PAGE_SETTINGS.sections,
       ...(homePage?.sections || {})
     },
+    sectionOrder: normalizeSectionOrder(
+      homePage?.sectionOrder,
+      DEFAULT_HOME_PAGE_SETTINGS.sectionOrder || SECTION_KEYS
+    ),
     curatedSectionVisibility: {
       ...DEFAULT_HOME_PAGE_SETTINGS.curatedSectionVisibility,
       ...(homePage?.curatedSectionVisibility || {})
@@ -167,6 +185,26 @@ export default function AdminHomePage() {
     }));
   }
 
+  function moveSection(key, direction) {
+    setForm((prev) => {
+      const order = normalizeSectionOrder(
+        prev.sectionOrder,
+        DEFAULT_HOME_PAGE_SETTINGS.sectionOrder || SECTION_KEYS
+      );
+      const index = order.indexOf(key);
+      const nextIndex = index + direction;
+      if (index < 0 || nextIndex < 0 || nextIndex >= order.length) {
+        return prev;
+      }
+      const nextOrder = [...order];
+      [nextOrder[index], nextOrder[nextIndex]] = [nextOrder[nextIndex], nextOrder[index]];
+      return {
+        ...prev,
+        sectionOrder: nextOrder
+      };
+    });
+  }
+
   function updateCuratedToggle(key, value) {
     setForm((prev) => ({
       ...prev,
@@ -281,16 +319,53 @@ export default function AdminHomePage() {
 
           <div className="detail-box mt-24">
             <h3 style={{ marginTop: 0, marginBottom: 12 }}>Visibility Controls</h3>
-            <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(220px, 1fr))", gap: "12px" }}>
-              {SECTION_LABELS.map((item) => (
-                <label key={item.key} style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "14px" }}>
-                  <input
-                    type="checkbox"
-                    checked={Boolean(form.sections[item.key])}
-                    onChange={(event) => updateSectionToggle(item.key, event.target.checked)}
-                  />
-                  {item.label}
-                </label>
+            <div style={{ display: "flex", flexDirection: "column", gap: "10px" }}>
+              {normalizeSectionOrder(
+                form.sectionOrder,
+                DEFAULT_HOME_PAGE_SETTINGS.sectionOrder || SECTION_KEYS
+              ).map((key, index, list) => (
+                <div
+                  key={key}
+                  style={{
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "space-between",
+                    gap: "12px",
+                    border: "1px solid #e5e7eb",
+                    borderRadius: "10px",
+                    padding: "10px 12px",
+                    background: "#fff"
+                  }}
+                >
+                  <label style={{ display: "flex", alignItems: "center", gap: "10px", fontSize: "14px" }}>
+                    <input
+                      type="checkbox"
+                      checked={Boolean(form.sections[key])}
+                      onChange={(event) => updateSectionToggle(key, event.target.checked)}
+                    />
+                    {SECTION_LABEL_MAP[key] || key}
+                  </label>
+                  <div style={{ display: "flex", gap: "6px" }}>
+                    <button
+                      type="button"
+                      className="btn-sm outline"
+                      onClick={() => moveSection(key, -1)}
+                      disabled={index === 0}
+                      aria-label="Move section up"
+                    >
+                      ↑
+                    </button>
+                    <button
+                      type="button"
+                      className="btn-sm outline"
+                      onClick={() => moveSection(key, 1)}
+                      disabled={index === list.length - 1}
+                      aria-label="Move section down"
+                    >
+                      ↓
+                    </button>
+                  </div>
+                </div>
               ))}
             </div>
           </div>
